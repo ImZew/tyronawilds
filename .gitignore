@@ -1,0 +1,82 @@
+# ============================
+# Java 21 / Maven / Spring Boot
+# ============================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# ============================
+# Node.js / Next.js / Frontend
+# ============================
+node_modules/
+.next/
+out/
+build/
+dist/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# ============================
+# Environment & Secrets
+# ============================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ============================
+# Docker & Local Data
+# ============================
+.docker/
+docker-data/
+postgres-data/
+redis-data/
+rabbitmq-data/
+
+# ============================
+# IDEs & Editors
+# ============================
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+!.vscode/extensions.json
+.settings/
+.classpath
+.project
+.factorypath
+*.swp
+*.swo
+*~
+
+# ============================
+# OS Generated
+# ============================
+.DS_Store
+Thumbs.db
+Desktop.ini
