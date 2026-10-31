@@ -22,7 +22,7 @@
     <modules>
         <module>contratos-compartidos</module>
         <!-- <module>api-gateway</module> -->
-        <!-- <module>identidad-service</module> -->
+        <module>identidad-service</module>
         <!-- <module>oferta-service</module> -->
         <!-- <module>reservas-service</module> -->
         <!-- <module>recomendacion-service</module> -->
