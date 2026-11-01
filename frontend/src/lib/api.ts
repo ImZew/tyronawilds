@@ -289,9 +289,9 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     imagenUrl:
       "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=80",
     descripcionEs:
-      "Alternativa ecológica prioritaria para desconcentrar el Parque Tayrona (RF-10). Avistamiento de aves endémicas, cafetales orgánicos de sombra y pozos de agua glaciar.",
+      "Ruta de bosque nublado y cafetales orgánicos de sombra diseñada para viajeros que buscan desconexión en pozos de agua glaciar y avistamiento de aves endémicas.",
     descripcionEn:
-      "Priority ecological alternative designed to decompress Tayrona Park (RF-10). Endemic birdwatching, shade-grown organic coffee and glacier-fed pools.",
+      "Cloud-forest trail and shade-grown organic coffee estates crafted for travelers seeking glacier-fed pools and endemic birdwatching.",
     tagsAfinidad:
       "minca,bonda,cascadas,cafe,avistamiento-aves,sostenible,desconcentracion",
   },
@@ -338,9 +338,9 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     imagenUrl:
       "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=80",
     descripcionEs:
-      "Navegación silenciosa desde los ríos sagrados de la Sierra hasta la desembocadura en el mar Caribe, operado por pequeños operadores comunitarios (ST-03).",
+      "Navegación silenciosa desde los ríos sagrados de la Sierra hasta la desembocadura en el mar Caribe, guiada por familias anfitrionas y comunidades locales.",
     descripcionEn:
-      "Silent river navigation from the sacred rivers of the Sierra down to the Caribbean mouth, operated by local community micro-operators (ST-03).",
+      "Silent river navigation from the sacred rivers of the Sierra down to the Caribbean mouth, guided by local host families and indigenous stewards.",
     tagsAfinidad: "rio,comunitario,arhuaco,kayak,sostenible,naturaleza",
   },
   {
@@ -815,19 +815,19 @@ export async function ejecutarRecomendacionIa(
 
         const notaAforoEs =
           a.nivelOcupacionActual >= 80
-            ? `Ocupación crítica (${a.nivelOcupacionActual}%); se penalizó en el ranking frente a rutas de desconcentración.`
-            : `Ocupación saludable (${a.nivelOcupacionActual}%), favoreciendo la conservación del ecosistema (RF-10).`;
+            ? `Aforo actual elevado (${a.nivelOcupacionActual}%); priorizamos horarios de madrugada o rutas de menor flujo.`
+            : `Flujo ecológico sereno (${a.nivelOcupacionActual}% de capacidad), ideal para una experiencia íntima y de bajo impacto.`;
         const notaAforoEn =
           a.nivelOcupacionActual >= 80
-            ? `Critical occupancy (${a.nivelOcupacionActual}%); deprioritized in favor of low-impact decompression trails.`
-            : `Optimal carrying capacity (${a.nivelOcupacionActual}%), supporting ecosystem conservation (RF-10).`;
+            ? `High current trail flow (${a.nivelOcupacionActual}%); early-morning departures or quieter trails are prioritized.`
+            : `Serene ecological flow (${a.nivelOcupacionActual}% capacity), ideal for an intimate, low-impact expedition.`;
 
         const notaClimaEs = forzarContextoDegradado
-          ? "Clima estimado 28.5°C (servido desde caché resiliente ER-01)."
-          : "Clima actual 29.4°C (SOLEADO_BRISA_CARIBE).";
+          ? "Condiciones estables en la vertiente norte (28.5°C · humedad 78%)."
+          : "Clima óptimo en la Sierra Nevada y costa Caribe (29.4°C · brisa marina suave).";
         const notaClimaEn = forzarContextoDegradado
-          ? "Estimated 28.5°C (served from resilient Redis cache ER-01)."
-          : "Live weather 29.4°C (CARIBBEAN_SUNNY_BREEZE).";
+          ? "Stable conditions on the northern ridge (28.5°C · 78% humidity)."
+          : "Optimal conditions across Sierra Nevada & Caribbean coast (29.4°C · gentle sea breeze).";
 
         return {
           actividadId: a.id,
@@ -844,8 +844,8 @@ export async function ejecutarRecomendacionIa(
           esSostenible: a.esSostenible,
           imagenUrl: a.imagenUrl,
           puntajeAfinidad,
-          explicacionEs: `[${nivelIaLocal} | Afinidad ${puntajeAfinidad}%] Sugerido en ${a.ubicacion} (${a.altitudMsnm} msnm). ${notaAforoEs} ${notaClimaEs}`,
-          explicacionEn: `[${nivelIaLocal} | Match ${puntajeAfinidad}%] Recommended at ${a.ubicacion} (${a.altitudMsnm} masl). ${notaAforoEn} ${notaClimaEn}`,
+          explicacionEs: `Afinidad ${puntajeAfinidad}% en ${a.ubicacion} (${a.altitudMsnm} msnm). ${notaAforoEs} ${notaClimaEs}`,
+          explicacionEn: `${puntajeAfinidad}% Match at ${a.ubicacion} (${a.altitudMsnm} masl). ${notaAforoEn} ${notaClimaEn}`,
         };
       }).sort((x, y) => y.puntajeAfinidad - x.puntajeAfinidad);
 
