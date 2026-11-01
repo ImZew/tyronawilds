@@ -46,6 +46,7 @@ import {
   obtenerFichaTecnicaExpedicion,
   obtenerIndicadoresCapacidad,
 } from "@/lib/api";
+import { registrarEventoAnalitica } from "@/lib/analytics";
 
 type EstiloViajeId =
   | "AVENTURA_EXTREMA"
@@ -55,6 +56,14 @@ type EstiloViajeId =
 
 type PresupuestoId = "ESENCIAL" | "COMPLETO" | "SIGNATURE";
 type RitmoId = "CONTEMPLATIVO" | "ACTIVO" | "DESAFIO";
+
+interface ErroresFormularioCheckout {
+  cupos?: string;
+  nombre?: string;
+  documento?: string;
+  email?: string;
+  habeasData?: string;
+}
 
 const ESTILOS_BAQUIANO: Record<
   EstiloViajeId,
@@ -138,7 +147,7 @@ export default function TyronaWildsCommercialStorefront() {
     []
   );
 
-  // Drawer de Producto Completo + Checkout Comercial
+  // Drawer de Producto Completo + Checkout Comercial con Validación de Campos
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<ActividadTuristica | null>(null);
   const [indiceFotoActiva, setIndiceFotoActiva] = useState<number>(0);
@@ -151,6 +160,9 @@ export default function TyronaWildsCommercialStorefront() {
   );
   const [documentoViajero, setDocumentoViajero] =
     useState<string>("CC 1082940122");
+  const [aceptaHabeasData, setAceptaHabeasData] = useState<boolean>(true);
+  const [erroresCheckout, setErroresCheckout] =
+    useState<ErroresFormularioCheckout>({});
   const [procesandoReserva, setProcesandoReserva] = useState<boolean>(false);
   const [resultadoReserva, setResultadoReserva] =
     useState<RespuestaCrearReserva | null>(null);
@@ -176,6 +188,7 @@ export default function TyronaWildsCommercialStorefront() {
   }, [altoContraste]);
 
   const cargarStorefront = useCallback(async () => {
+    registrarEventoAnalitica("PAGE_VIEW", { page: "/" });
     const [resOfertas, resContexto, resDisp, resInd, resIa] = await Promise.all(
       [
         obtenerCatalogoOfertas(),
@@ -208,7 +221,15 @@ export default function TyronaWildsCommercialStorefront() {
     setActividadSeleccionada(actividad);
     setIndiceFotoActiva(0);
     setResultadoReserva(null);
+    setErroresCheckout({});
     setCantidadCupos(2);
+
+    registrarEventoAnalitica("EXPEDITION_DRAWER_OPEN", {
+      codigoServicio: actividad.codigoServicio,
+      slug: actividad.slug,
+      precioCop: actividad.precioCop,
+    });
+
     const resDisp = await obtenerDisponibilidades(actividad.id);
     const horariosActividad = resDisp.data;
     setDisponibilidades((prev) => {
@@ -220,9 +241,49 @@ export default function TyronaWildsCommercialStorefront() {
     }
   };
 
+  // Validación estricta campo por campo del formulario de Checkout
+  const validarFormularioCheckout = (): boolean => {
+    const nuevosErrores: ErroresFormularioCheckout = {};
+    const nombreLimpio = nombreViajero.trim();
+    const docLimpio = documentoViajero.trim();
+    const emailLimpio = emailViajero.trim();
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!Number.isInteger(cantidadCupos) || cantidadCupos < 1 || cantidadCupos > 16) {
+      nuevosErrores.cupos =
+        "Ingresa entre 1 y 16 viajeros por reserva grupal.";
+    }
+    if (nombreLimpio.length < 4 || /[<>]/.test(nombreLimpio)) {
+      nuevosErrores.nombre =
+        "Ingresa el nombre y apellido válidos del expedicionario titular.";
+    }
+    if (docLimpio.length < 5 || /[<>]/.test(docLimpio)) {
+      nuevosErrores.documento =
+        "Documento o pasaporte requerido para póliza PNN / ICANH.";
+    }
+    if (!regexEmail.test(emailLimpio)) {
+      nuevosErrores.email =
+        "Ingresa un correo electrónico válido para recibir el pasaporte.";
+    }
+    if (!aceptaHabeasData) {
+      nuevosErrores.habeasData =
+        "Debes autorizar el tratamiento de datos (Ley 1581 de 2012) y aceptar los términos RNT.";
+    }
+
+    setErroresCheckout(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   // Ejecutar Checkout conectado al backend
   const manejarConfirmarCheckout = async () => {
     if (!actividadSeleccionada) return;
+    if (!validarFormularioCheckout()) {
+      registrarEventoAnalitica("CHECKOUT_VALIDATION_ERROR", {
+        codigoServicio: actividadSeleccionada.codigoServicio,
+      });
+      return;
+    }
+
     const horariosAct = disponibilidades.filter(
       (d) => d.actividadId === actividadSeleccionada.id
     );
@@ -240,6 +301,11 @@ export default function TyronaWildsCommercialStorefront() {
     setResultadoReserva(respuesta);
 
     if (respuesta.exito && respuesta.reserva) {
+      registrarEventoAnalitica("CHECKOUT_CONVERSION", {
+        codigoReserva: respuesta.reserva.codigoReserva,
+        montoTotalCop: respuesta.reserva.montoTotalCop,
+        cupos: cantidadCupos,
+      });
       setDisponibilidades((prev) =>
         prev.map((item) =>
           item.id === disp.id
@@ -267,6 +333,12 @@ export default function TyronaWildsCommercialStorefront() {
     setPresupuesto(nuevoPresupuesto);
     setRitmo(nuevoRitmo);
     setEjecutandoIa(true);
+
+    registrarEventoAnalitica("BAQUIANO_AI_QUERY", {
+      estilo: nuevoEstilo,
+      presupuesto: nuevoPresupuesto,
+      ritmo: nuevoRitmo,
+    });
 
     const tagsRitmo =
       nuevoRitmo === "DESAFIO"
@@ -329,20 +401,20 @@ export default function TyronaWildsCommercialStorefront() {
     : 78;
 
   return (
-    <div className="min-h-screen bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
       {/* =====================================================================
           BARRA SUPERIOR EDITORIAL Y TELEMETRÍA CLIMÁTICA REAL
       ====================================================================== */}
       <header className="sticky top-0 z-40 border-b border-sand/15 bg-obsidian/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-6 py-3.5">
-          <div className="flex items-center gap-4">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-3.5">
+          <div className="flex items-center gap-3 sm:gap-4">
             <a
               href="#hero"
-              className="font-display text-2xl tracking-[0.14em] text-sand hover:text-terracotta transition-colors"
+              className="font-display text-xl sm:text-2xl tracking-[0.14em] text-sand hover:text-terracotta transition-colors"
             >
               TYRONAWILDS<span className="text-terracotta">™</span>
             </a>
-            <div className="hidden sm:flex items-center gap-2 border border-sand/20 bg-obsidian px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-sand/75">
+            <div className="hidden md:flex items-center gap-2 border border-sand/20 bg-obsidian px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-sand/75">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               <span>SANTA MARTA · SIERRA NEVADA &amp; CARIBE</span>
             </div>
@@ -375,7 +447,7 @@ export default function TyronaWildsCommercialStorefront() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIdioma(idioma === "es" ? "en" : "es")}
@@ -410,7 +482,7 @@ export default function TyronaWildsCommercialStorefront() {
       ====================================================================== */}
       <section
         id="hero"
-        className="relative min-h-[88vh] w-full overflow-hidden border-b border-sand/15 flex flex-col justify-between"
+        className="relative min-h-[86vh] w-full overflow-hidden border-b border-sand/15 flex flex-col justify-between"
       >
         <div className="absolute inset-0 z-0">
           <img
@@ -429,9 +501,9 @@ export default function TyronaWildsCommercialStorefront() {
         </div>
 
         {/* Fila Superior del HUD de Expedición */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 pt-8 font-mono text-xs uppercase tracking-[0.16em] text-sand/80">
-          <div className="flex items-center gap-3">
-            <Compass className="h-4 w-4 text-terracotta" />
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 pt-6 sm:px-6 sm:pt-8 font-mono text-[11px] sm:text-xs uppercase tracking-[0.14em] text-sand/80">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Compass className="h-4 w-4 shrink-0 text-terracotta" />
             <span>11°14&apos;27&quot;N 74°11&apos;56&quot;W // SANTA MARTA, CO</span>
             <span className="hidden md:inline text-sand/40">//</span>
             <span className="hidden md:inline text-sand/65">
@@ -439,21 +511,21 @@ export default function TyronaWildsCommercialStorefront() {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 border border-sand/20 bg-obsidian/80 px-3.5 py-1.5 backdrop-blur-md">
-            <Sun className="h-4 w-4 text-terracotta" />
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 border border-sand/20 bg-obsidian/80 px-3 py-1.5 backdrop-blur-md">
+            <Sun className="h-4 w-4 shrink-0 text-terracotta" />
             <span>
               {idioma === "es"
                 ? `SIERRA NEVADA ${tempActual}°C · HUMEDAD ${humedadActual}% · VIENTO 14 KM/H`
                 : `SIERRA NEVADA ${tempActual}°C · HUMIDITY ${humedadActual}% · WIND 14 KM/H`}
             </span>
-            <Wind className="h-3.5 w-3.5 text-emerald-400" />
+            <Wind className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
           </div>
         </div>
 
         {/* Titular Monumental Escalonado */}
-        <div className="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-6 py-12">
-          <div className="mb-4 inline-flex items-center gap-2 border border-terracotta/50 bg-terracotta/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-            <Radio className="h-3.5 w-3.5 animate-pulse" />
+        <div className="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-4 py-10 sm:px-6 sm:py-12">
+          <div className="mb-4 inline-flex items-center gap-2 border border-terracotta/50 bg-terracotta/10 px-3 py-1 font-mono text-[10px] sm:text-xs uppercase tracking-[0.18em] text-terracotta">
+            <Radio className="h-3.5 w-3.5 shrink-0 animate-pulse" />
             <span>
               {idioma === "es"
                 ? "EXPEDICIONES DE CONSERVACIÓN Y ALTA MONTAÑA · SANTA MARTA"
@@ -462,27 +534,27 @@ export default function TyronaWildsCommercialStorefront() {
           </div>
 
           <h1 className="font-display uppercase leading-[0.86] tracking-[-0.02em]">
-            <span className="block text-[clamp(4.4rem,11.5vw,10.5rem)] text-sand">
+            <span className="block text-[clamp(3.6rem,11.5vw,10.5rem)] text-sand">
               {idioma === "es" ? "PIERDE" : "LOSE"}
             </span>
-            <span className="block pl-[6vw] text-[clamp(4.4rem,11.5vw,10.5rem)] text-terracotta">
+            <span className="block pl-[4vw] sm:pl-[6vw] text-[clamp(3.6rem,11.5vw,10.5rem)] text-terracotta">
               {idioma === "es" ? "EL MAPA" : "THE MAP"}
             </span>
           </h1>
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-6 lg:col-start-2 border-l-2 border-terracotta pl-5">
-              <p className="text-base md:text-lg text-sand/85 leading-relaxed">
+            <div className="lg:col-span-6 lg:col-start-2 border-l-2 border-terracotta pl-4 sm:pl-5">
+              <p className="text-sm sm:text-base md:text-lg text-sand/85 leading-relaxed">
                 {idioma === "es"
                   ? "Desde los arrecifes coralinos del Parque Tayrona hasta las terrazas líticas de Teyuna a 1.200 metros sobre el nivel del mar. Travesías curadas junto a comunidades indígenas y guías locales con cupos diarios estrictamente limitados para proteger cada ecosistema."
                   : "From the coral reefs of Tayrona National Park to the ancient stone terraces of Teyuna at 1,200 meters above sea level. Expeditions curated alongside indigenous elders and local guides with strictly limited daily departures to protect every ecosystem."}
               </p>
             </div>
 
-            <div className="lg:col-span-5 flex flex-wrap items-center gap-4 lg:justify-end">
+            <div className="lg:col-span-5 flex flex-wrap items-center gap-3 sm:gap-4 lg:justify-end">
               <a
                 href="#expediciones"
-                className="inline-flex items-center gap-3 bg-terracotta px-7 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
+                className="inline-flex w-full sm:w-auto justify-center items-center gap-3 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
               >
                 <span>
                   {idioma === "es"
@@ -493,7 +565,7 @@ export default function TyronaWildsCommercialStorefront() {
               </a>
               <a
                 href="#baquiano-ai"
-                className="inline-flex items-center gap-2 border border-sand/30 bg-obsidian/80 px-5 py-4 font-mono text-xs uppercase tracking-[0.18em] text-sand hover:border-terracotta transition-colors"
+                className="inline-flex w-full sm:w-auto justify-center items-center gap-2 border border-sand/30 bg-obsidian/80 px-5 py-4 font-mono text-xs uppercase tracking-[0.18em] text-sand hover:border-terracotta transition-colors"
               >
                 <Sparkles className="h-4 w-4 text-terracotta" />
                 <span>
@@ -507,8 +579,8 @@ export default function TyronaWildsCommercialStorefront() {
         </div>
 
         {/* Barra Inferior del Hero */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-between border-t border-sand/15 px-6 py-4 font-mono text-xs uppercase tracking-[0.2em] text-sand/70">
-          <div className="flex items-center gap-3">
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-between border-t border-sand/15 px-4 py-4 sm:px-6 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-sand/70">
+          <div className="flex items-center gap-2.5">
             <span className="inline-block h-2 w-2 bg-terracotta" />
             <span>SCROLL TO EXPLORE // SIERRA NEVADA &amp; CARIBE</span>
           </div>
@@ -528,21 +600,21 @@ export default function TyronaWildsCommercialStorefront() {
       ====================================================================== */}
       <section
         id="expediciones"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-6 py-16"
+        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
       >
         <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
           <div>
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
               // 01 · COLECCIÓN DE EXPEDICIONES CERTIFICADAS
             </div>
-            <h2 className="mt-2 font-display text-5xl md:text-6xl uppercase tracking-tight text-sand">
+            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
               {idioma === "es"
                 ? "TRAVESÍAS & ESTADO DEL SENDERO"
                 : "EXPEDITIONS & TRAIL CONDITIONS"}
             </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {[
               { id: "TODAS", labelEs: "TODAS (06)", labelEn: "ALL (06)" },
               {
@@ -570,7 +642,7 @@ export default function TyronaWildsCommercialStorefront() {
                 key={cat.id}
                 type="button"
                 onClick={() => setFiltroCategoria(cat.id)}
-                className={`border px-3.5 py-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+                className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
                   filtroCategoria === cat.id
                     ? "border-terracotta bg-terracotta text-sand font-bold"
                     : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
@@ -583,7 +655,7 @@ export default function TyronaWildsCommercialStorefront() {
             <button
               type="button"
               onClick={() => setSoloBajaCarga(!soloBajaCarga)}
-              className={`border px-3.5 py-2 font-mono text-xs uppercase tracking-wider transition-colors ${
+              className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
                 soloBajaCarga
                   ? "border-emerald-400 bg-emerald-950/60 text-emerald-300 font-bold"
                   : "border-sand/20 bg-obsidian text-sand/75 hover:border-emerald-400/50"
@@ -605,15 +677,15 @@ export default function TyronaWildsCommercialStorefront() {
               <article
                 key={act.id}
                 onClick={() => abrirDrawerExpedicion(act)}
-                className="group relative flex cursor-pointer flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-6 transition-colors hover:bg-jungle/25"
+                className="group relative flex cursor-pointer flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-5 sm:p-6 transition-colors hover:bg-jungle/25"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/65">
-                    <span>
+                    <span className="truncate">
                       0{index + 1} //{" "}
                       {idioma === "es" ? ficha.duracionEs : ficha.duracionEn}
                     </span>
-                    <span className="flex items-center gap-1 text-terracotta">
+                    <span className="flex shrink-0 items-center gap-1 text-terracotta">
                       <Mountain className="h-3.5 w-3.5" />
                       {act.altitudMsnm} MSNM
                     </span>
@@ -623,6 +695,7 @@ export default function TyronaWildsCommercialStorefront() {
                     <img
                       src={act.imagenUrl}
                       alt={idioma === "es" ? act.nombreEs : act.nombreEn}
+                      loading="lazy"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-85"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
@@ -645,9 +718,11 @@ export default function TyronaWildsCommercialStorefront() {
                     )}
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta">
-                    <span>{act.ubicacion}</span>
-                    <span className="text-sand/55">{ficha.operadorLicenciaRnt.split("·")[0]}</span>
+                  <div className="mt-4 flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta">
+                    <span className="truncate">{act.ubicacion}</span>
+                    <span className="shrink-0 text-sand/55">
+                      {ficha.operadorLicenciaRnt.split("·")[0]}
+                    </span>
                   </div>
                   <h3 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide text-sand group-hover:text-terracotta transition-colors">
                     {idioma === "es" ? act.nombreEs : act.nombreEn}
@@ -696,7 +771,7 @@ export default function TyronaWildsCommercialStorefront() {
                     </div>
                   )}
 
-                  <div className="mt-5 flex items-center justify-between gap-4">
+                  <div className="mt-5 flex items-center justify-between gap-3">
                     <div>
                       <span className="block font-mono text-[10px] uppercase tracking-wider text-sand/50">
                         {idioma === "es"
@@ -714,7 +789,7 @@ export default function TyronaWildsCommercialStorefront() {
                         e.stopPropagation();
                         abrirDrawerExpedicion(act);
                       }}
-                      className="inline-flex items-center gap-2 bg-sand px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-sand transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-sand px-3.5 py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-sand transition-colors"
                     >
                       <span>
                         {idioma === "es"
@@ -744,19 +819,19 @@ export default function TyronaWildsCommercialStorefront() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative h-full w-full max-w-4xl overflow-y-auto border-l border-sand/25 bg-obsidian p-6 md:p-10 shadow-2xl"
+            className="relative h-full w-full max-w-4xl overflow-y-auto border-l border-sand/25 bg-obsidian p-4 sm:p-6 md:p-10 shadow-2xl"
           >
             {/* Barra Superior del Drawer */}
             <div className="flex items-start justify-between gap-4 border-b border-sand/15 pb-5">
               <div>
-                <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-terracotta">
                   <span>{actividadSeleccionada.ubicacion}</span>
                   <span>·</span>
                   <span>{actividadSeleccionada.coordenadasHud}</span>
                 </div>
                 <h2
                   id="titulo-drawer-expedicion"
-                  className="mt-1 font-display text-4xl md:text-5xl uppercase leading-none text-sand"
+                  className="mt-1 font-display text-3xl sm:text-4xl md:text-5xl uppercase leading-none text-sand"
                 >
                   {idioma === "es"
                     ? actividadSeleccionada.nombreEs
@@ -767,15 +842,15 @@ export default function TyronaWildsCommercialStorefront() {
               <button
                 type="button"
                 onClick={() => setActividadSeleccionada(null)}
-                className="shrink-0 border border-sand/30 px-3.5 py-2 font-mono text-xs uppercase text-sand hover:border-terracotta hover:text-terracotta transition-colors"
+                className="shrink-0 border border-sand/30 px-3 py-2 font-mono text-xs uppercase text-sand hover:border-terracotta hover:text-terracotta transition-colors"
               >
-                {idioma === "es" ? "CERRAR [ESC]" : "CLOSE [ESC]"}
+                {idioma === "es" ? "CERRAR [X]" : "CLOSE [X]"}
               </button>
             </div>
 
             {/* Galería Visual Interactiva */}
             <div className="mt-6">
-              <div className="relative h-72 md:h-96 w-full overflow-hidden border border-sand/20 bg-jungle/20">
+              <div className="relative h-60 sm:h-72 md:h-96 w-full overflow-hidden border border-sand/20 bg-jungle/20">
                 <img
                   src={
                     fichaActiva.galeriaImagenes[indiceFotoActiva] ||
@@ -784,18 +859,19 @@ export default function TyronaWildsCommercialStorefront() {
                   alt={actividadSeleccionada.nombreEs}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute bottom-3 left-3 bg-obsidian/85 border border-sand/20 px-3 py-1 font-mono text-xs uppercase text-sand">
-                  {fichaActiva.operadorNombre} · {fichaActiva.operadorLicenciaRnt}
+                <div className="absolute bottom-3 left-3 right-3 sm:right-auto bg-obsidian/85 border border-sand/20 px-3 py-1 font-mono text-[11px] sm:text-xs uppercase text-sand truncate">
+                  {fichaActiva.operadorNombre} ·{" "}
+                  {fichaActiva.operadorLicenciaRnt}
                 </div>
               </div>
 
-              <div className="mt-3 grid grid-cols-3 gap-3">
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
                 {fichaActiva.galeriaImagenes.map((imgUrl, idx) => (
                   <button
                     key={imgUrl + idx}
                     type="button"
                     onClick={() => setIndiceFotoActiva(idx)}
-                    className={`relative h-20 overflow-hidden border transition-all ${
+                    className={`relative h-16 sm:h-20 overflow-hidden border transition-all ${
                       indiceFotoActiva === idx
                         ? "border-terracotta ring-1 ring-terracotta"
                         : "border-sand/20 opacity-60 hover:opacity-100"
@@ -822,7 +898,7 @@ export default function TyronaWildsCommercialStorefront() {
                   {actividadSeleccionada.altitudMsnm} MSNM
                 </strong>
               </div>
-              <div className="border-r border-sand/15 pr-3">
+              <div className="sm:border-r border-sand/15 pr-3">
                 <span className="block text-[10px] uppercase text-sand/55">
                   DURACIÓN
                 </span>
@@ -904,9 +980,9 @@ export default function TyronaWildsCommercialStorefront() {
             </div>
 
             {/* Bloque de Checkout Comercial y Selección de Salida */}
-            <div className="mt-8 border-t-2 border-terracotta bg-jungle/15 p-6">
+            <div className="mt-8 border-t-2 border-terracotta bg-jungle/15 p-4 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="font-display text-3xl uppercase text-sand">
+                <h3 className="font-display text-2xl sm:text-3xl uppercase text-sand">
                   {idioma === "es"
                     ? "CHECKOUT & EMISIÓN DE PERMISO DE INGRESO"
                     : "EXPEDITION CHECKOUT & PERMIT ISSUANCE"}
@@ -962,8 +1038,8 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
               </div>
 
-              {/* Paso 2: Datos del Expedicionario Principal y Cupos */}
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-4">
+              {/* Paso 2: Datos del Expedicionario Principal con Validación Visual */}
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <label
                     htmlFor="checkout-cupos"
@@ -979,14 +1055,27 @@ export default function TyronaWildsCommercialStorefront() {
                       min={1}
                       max={16}
                       value={cantidadCupos}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setCantidadCupos(
                           Math.max(1, parseInt(e.target.value || "1", 10))
-                        )
-                      }
-                      className="w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                        );
+                        setErroresCheckout((prev) => ({
+                          ...prev,
+                          cupos: undefined,
+                        }));
+                      }}
+                      className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                        erroresCheckout.cupos
+                          ? "border-terracotta"
+                          : "border-sand/30 focus:border-terracotta"
+                      }`}
                     />
                   </div>
+                  {erroresCheckout.cupos && (
+                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                      {erroresCheckout.cupos}
+                    </span>
+                  )}
                 </div>
 
                 <div>
@@ -1000,9 +1089,24 @@ export default function TyronaWildsCommercialStorefront() {
                     id="checkout-nombre"
                     type="text"
                     value={nombreViajero}
-                    onChange={(e) => setNombreViajero(e.target.value)}
-                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                    onChange={(e) => {
+                      setNombreViajero(e.target.value);
+                      setErroresCheckout((prev) => ({
+                        ...prev,
+                        nombre: undefined,
+                      }));
+                    }}
+                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                      erroresCheckout.nombre
+                        ? "border-terracotta"
+                        : "border-sand/30 focus:border-terracotta"
+                    }`}
                   />
+                  {erroresCheckout.nombre && (
+                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                      {erroresCheckout.nombre}
+                    </span>
+                  )}
                 </div>
 
                 <div>
@@ -1016,9 +1120,24 @@ export default function TyronaWildsCommercialStorefront() {
                     id="checkout-doc"
                     type="text"
                     value={documentoViajero}
-                    onChange={(e) => setDocumentoViajero(e.target.value)}
-                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                    onChange={(e) => {
+                      setDocumentoViajero(e.target.value);
+                      setErroresCheckout((prev) => ({
+                        ...prev,
+                        documento: undefined,
+                      }));
+                    }}
+                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                      erroresCheckout.documento
+                        ? "border-terracotta"
+                        : "border-sand/30 focus:border-terracotta"
+                    }`}
                   />
+                  {erroresCheckout.documento && (
+                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                      {erroresCheckout.documento}
+                    </span>
+                  )}
                 </div>
 
                 <div>
@@ -1032,10 +1151,65 @@ export default function TyronaWildsCommercialStorefront() {
                     id="checkout-email"
                     type="email"
                     value={emailViajero}
-                    onChange={(e) => setEmailViajero(e.target.value)}
-                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                    onChange={(e) => {
+                      setEmailViajero(e.target.value);
+                      setErroresCheckout((prev) => ({
+                        ...prev,
+                        email: undefined,
+                      }));
+                    }}
+                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                      erroresCheckout.email
+                        ? "border-terracotta"
+                        : "border-sand/30 focus:border-terracotta"
+                    }`}
                   />
+                  {erroresCheckout.email && (
+                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                      {erroresCheckout.email}
+                    </span>
+                  )}
                 </div>
+              </div>
+
+              {/* Casilla de Consentimiento Habeas Data (Ley 1581 de 2012) */}
+              <div className="mt-4">
+                <label className="flex items-start gap-2.5 font-mono text-xs text-sand/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={aceptaHabeasData}
+                    onChange={(e) => {
+                      setAceptaHabeasData(e.target.checked);
+                      setErroresCheckout((prev) => ({
+                        ...prev,
+                        habeasData: undefined,
+                      }));
+                    }}
+                    className="mt-0.5 h-4 w-4 accent-terracotta"
+                  />
+                  <span>
+                    Autorizo el tratamiento de mis datos personales conforme a la{" "}
+                    <Link
+                      href="/privacidad"
+                      className="text-terracotta underline hover:text-sand"
+                    >
+                      Ley 1581 de 2012 (Política de Privacidad)
+                    </Link>{" "}
+                    y acepto los{" "}
+                    <Link
+                      href="/terminos"
+                      className="text-terracotta underline hover:text-sand"
+                    >
+                      Términos y Condiciones RNT
+                    </Link>
+                    .
+                  </span>
+                </label>
+                {erroresCheckout.habeasData && (
+                  <span className="mt-1 block font-mono text-[11px] text-terracotta">
+                    {erroresCheckout.habeasData}
+                  </span>
+                )}
               </div>
 
               {/* Resumen de Pago */}
@@ -1139,9 +1313,7 @@ export default function TyronaWildsCommercialStorefront() {
                     <div>
                       <div className="flex items-center gap-2 font-bold text-terracotta">
                         <XCircle className="h-4 w-4" />
-                        <span>
-                          CUPO COMPLETO EN LA FECHA SELECCIONADA
-                        </span>
+                        <span>CUPO COMPLETO EN LA FECHA SELECCIONADA</span>
                       </div>
                       <p className="mt-1.5 text-sand/85">
                         {resultadoReserva.errorMensaje}
@@ -1164,7 +1336,7 @@ export default function TyronaWildsCommercialStorefront() {
       ====================================================================== */}
       <section
         id="baquiano-ai"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-6 py-16"
+        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
       >
         <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
           <div>
@@ -1172,7 +1344,7 @@ export default function TyronaWildsCommercialStorefront() {
               <CompassIcon className="h-4 w-4" />
               <span>// 02 · BAQUIANO AI — CONCIERGE DE EXPEDICIONES</span>
             </div>
-            <h2 className="mt-2 font-display text-5xl md:text-6xl uppercase tracking-tight text-sand">
+            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
               {idioma === "es"
                 ? "CURADURÍA INTELIGENTE DE TRAVESÍAS"
                 : "BESPOKE EXPEDITION CONCIERGE"}
@@ -1188,7 +1360,7 @@ export default function TyronaWildsCommercialStorefront() {
 
         {/* Selector de Perfil de Viajero: Estilo, Presupuesto y Ritmo */}
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-5 space-y-6 border border-sand/20 bg-jungle/15 p-6">
+          <div className="lg:col-span-5 space-y-6 border border-sand/20 bg-jungle/15 p-4 sm:p-6">
             <div>
               <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
                 1. ELIGE TU ESTILO DE EXPEDICIÓN
@@ -1229,7 +1401,7 @@ export default function TyronaWildsCommercialStorefront() {
               <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
                 2. RANGO DE INVERSIÓN POR VIAJERO
               </span>
-              <div className="mt-2.5 grid grid-cols-3 gap-2 font-mono text-[11px]">
+              <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
                 {[
                   {
                     id: "ESENCIAL" as PresupuestoId,
@@ -1270,7 +1442,7 @@ export default function TyronaWildsCommercialStorefront() {
               <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
                 3. RITMO DE MARCHA EN TERRENO
               </span>
-              <div className="mt-2.5 grid grid-cols-3 gap-2 font-mono text-[11px]">
+              <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
                 {[
                   {
                     id: "CONTEMPLATIVO" as RitmoId,
@@ -1330,7 +1502,7 @@ export default function TyronaWildsCommercialStorefront() {
             <div>
               {/* Nota Editorial de Contexto Climático */}
               <div className="border border-sand/20 bg-obsidian p-4 font-mono text-xs text-sand/85">
-                <div className="flex items-center justify-between text-terracotta font-bold uppercase">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-terracotta font-bold uppercase">
                   <span>NOTA DEL BAQUIANO AI · CLIMA ACTUAL {tempActual}°C</span>
                   <span>HUMEDAD {humedadActual}%</span>
                 </div>
@@ -1448,14 +1620,14 @@ export default function TyronaWildsCommercialStorefront() {
       ====================================================================== */}
       <section
         id="sostenibilidad"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-6 py-16"
+        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
       >
         <div className="flex flex-col justify-between gap-4 border-b border-sand/15 pb-6 lg:flex-row lg:items-end">
           <div>
             <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
               // 03 · COMPROMISO DE CONSERVACIÓN · SIERRA NEVADA &amp; PARQUE TAYRONA
             </div>
-            <h2 className="mt-2 font-display text-5xl uppercase tracking-tight text-sand">
+            <h2 className="mt-2 font-display text-4xl sm:text-5xl uppercase tracking-tight text-sand">
               PULSO DE LOS ECOSISTEMAS EN VIVO
             </h2>
           </div>
@@ -1464,7 +1636,7 @@ export default function TyronaWildsCommercialStorefront() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {indicadores.map((ind) => (
             <div
               key={ind.id}
@@ -1528,16 +1700,27 @@ export default function TyronaWildsCommercialStorefront() {
       </section>
 
       {/* =====================================================================
-          FOOTER COMERCIAL + ENLACE DISCRETO SYSTEM STATUS // LAB
+          FOOTER COMERCIAL CON PÁGINAS LEGALES (LEY 1581) + ENLACE DISCRETO /LAB
       ====================================================================== */}
-      <footer className="mx-auto max-w-[1440px] border-x border-sand/15 px-6 py-10 font-mono text-xs text-sand/60">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <footer className="mx-auto max-w-[1440px] border-x border-sand/15 px-4 py-10 sm:px-6 font-mono text-xs text-sand/60">
+        <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div>
             <span className="font-bold text-sand">TYRONAWILDS™</span> // SANTA
-            MARTA, COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
+            MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
           </div>
-          <div className="flex flex-wrap items-center gap-6">
-            <span>RNT CERTIFICADO · SOSTENIBILIDAD TAYRONA &amp; TEYUNA</span>
+          <div className="flex flex-wrap items-center gap-5">
+            <Link
+              href="/privacidad"
+              className="hover:text-terracotta transition-colors"
+            >
+              Privacidad &amp; Habeas Data (Ley 1581)
+            </Link>
+            <Link
+              href="/terminos"
+              className="hover:text-terracotta transition-colors"
+            >
+              Términos RNT &amp; PNN
+            </Link>
             <Link
               href="/lab"
               className="border border-sand/15 px-2.5 py-1 text-[10px] uppercase tracking-widest text-sand/45 hover:border-terracotta hover:text-terracotta transition-colors"
