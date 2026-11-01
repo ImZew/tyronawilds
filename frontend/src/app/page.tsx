@@ -18,8 +18,15 @@ import {
   Clock,
   Users,
   ChevronRight,
+  ChevronDown,
   Radio,
   Wind,
+  ShieldCheck,
+  MapPin,
+  Award,
+  Check,
+  CreditCard,
+  Compass as CompassIcon,
 } from "lucide-react";
 import {
   ACTORES_SESION,
@@ -36,8 +43,76 @@ import {
   obtenerCatalogoOfertas,
   obtenerContextoTerritorial,
   obtenerDisponibilidades,
+  obtenerFichaTecnicaExpedicion,
   obtenerIndicadoresCapacidad,
 } from "@/lib/api";
+
+type EstiloViajeId =
+  | "AVENTURA_EXTREMA"
+  | "CONEXION_ANCESTRAL"
+  | "BIODIVERSIDAD_CALMA"
+  | "INMERSION_CARIBE";
+
+type PresupuestoId = "ESENCIAL" | "COMPLETO" | "SIGNATURE";
+type RitmoId = "CONTEMPLATIVO" | "ACTIVO" | "DESAFIO";
+
+const ESTILOS_BAQUIANO: Record<
+  EstiloViajeId,
+  {
+    tituloEs: string;
+    tituloEn: string;
+    subEs: string;
+    subEn: string;
+    tags: string;
+    notaEditorialEs: string;
+    notaEditorialEn: string;
+  }
+> = {
+  AVENTURA_EXTREMA: {
+    tituloEs: "Aventura Extrema",
+    tituloEn: "Extreme Adventure",
+    subEs: "Alta montaña, selva húmeda y ascenso vertical",
+    subEn: "High mountain, rainforest & vertical ascent",
+    tags: "trekking, sierra-nevada, selva, arqueologia, senderismo",
+    notaEditorialEs:
+      "Priorizamos rutas de desnivel pronunciado en la Sierra Nevada donde las mañanas despejadas favorecen el ascenso bajo dosel selvático.",
+    notaEditorialEn:
+      "Prioritizing steep elevation trails in the Sierra Nevada where clear mornings favor ascents beneath the rainforest canopy.",
+  },
+  CONEXION_ANCESTRAL: {
+    tituloEs: "Conexión Ancestral",
+    tituloEn: "Ancestral Connection",
+    subEs: "Territorios Kogui, Arhuacos y legado histórico",
+    subEn: "Kogui & Arhuaco territories and living heritage",
+    tags: "ancestral, arhuaco, comunitario, rio, cultura, historia",
+    notaEditorialEs:
+      "Seleccionamos travesías guiadas por sabedores locales y cuencas sagradas que conectan los picos nevados con la historia colonial.",
+    notaEditorialEn:
+      "Curating journeys led by indigenous stewards and historians across sacred river basins and colonial heritage sites.",
+  },
+  BIODIVERSIDAD_CALMA: {
+    tituloEs: "Biodiversidad & Calma",
+    tituloEn: "Biodiversity & Calm",
+    subEs: "Bosque de niebla, aves endémicas y aguas glaciares",
+    subEn: "Cloud forest, endemic birds & glacier pools",
+    tags: "minca, bonda, cascadas, cafe, avistamiento-aves, sostenible",
+    notaEditorialEs:
+      "Enfocamos tu recorrido en los pisos térmicos frescos de Minca y Bonda (650 msnm), lejos de las zonas de alto flujo costero.",
+    notaEditorialEn:
+      "Focusing your journey on the cool cloud-forest elevations of Minca and Bonda (650 masl), away from high-traffic coastal trails.",
+  },
+  INMERSION_CARIBE: {
+    tituloEs: "Inmersión Caribe",
+    tituloEn: "Caribbean Immersion",
+    subEs: "Arrecifes coralinos, apnea y bahías graníticas",
+    subEn: "Coral reefs, freediving & granitic bays",
+    tags: "playa, tayrona, buceo, taganga, coral, marino, caribe",
+    notaEditorialEs:
+      "Aprovechamos la visibilidad submarina actual entre Isla Aguja y las bahías del Parque Tayrona con brisa suave del noreste.",
+    notaEditorialEn:
+      "Leveraging today's underwater visibility between Isla Aguja and Tayrona's granitic bays with gentle northeast trade winds.",
+  },
+};
 
 function formatearCop(valor: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -63,23 +138,34 @@ export default function TyronaWildsCommercialStorefront() {
     []
   );
 
-  // Modal de Reserva Comercial
+  // Drawer de Producto Completo + Checkout Comercial
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<ActividadTuristica | null>(null);
+  const [indiceFotoActiva, setIndiceFotoActiva] = useState<number>(0);
   const [horarioSeleccionadoId, setHorarioSeleccionadoId] =
     useState<string>("");
   const [cantidadCupos, setCantidadCupos] = useState<number>(2);
+  const [nombreViajero, setNombreViajero] = useState<string>("Valeria Mejía");
+  const [emailViajero, setEmailViajero] = useState<string>(
+    "valeria@expedicion.co"
+  );
+  const [documentoViajero, setDocumentoViajero] =
+    useState<string>("CC 1082940122");
   const [procesandoReserva, setProcesandoReserva] = useState<boolean>(false);
   const [resultadoReserva, setResultadoReserva] =
     useState<RespuestaCrearReserva | null>(null);
 
-  // Recomendaciones editoriales
-  const [interesesIa, setInteresesIa] = useState<string>(
-    "trekking, sierra-nevada, sostenible, cascadas, minca"
+  // BAQUIANO AI — Concierge de Expediciones
+  const [estiloViaje, setEstiloViaje] = useState<EstiloViajeId>(
+    "BIODIVERSIDAD_CALMA"
   );
+  const [presupuesto, setPresupuesto] = useState<PresupuestoId>("SIGNATURE");
+  const [ritmo, setRitmo] = useState<RitmoId>("ACTIVO");
   const [resultadoIa, setResultadoIa] =
     useState<ResultadoRecomendacionIa | null>(null);
   const [ejecutandoIa, setEjecutandoIa] = useState<boolean>(false);
+  const [mostrarRazonamientoMotor, setMostrarRazonamientoMotor] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (altoContraste) {
@@ -98,7 +184,7 @@ export default function TyronaWildsCommercialStorefront() {
         obtenerIndicadoresCapacidad(),
         ejecutarRecomendacionIa(
           ACTORES_SESION.TURISTA,
-          "trekking, sierra-nevada, sostenible, cascadas, minca",
+          ESTILOS_BAQUIANO.BIODIVERSIDAD_CALMA.tags,
           true,
           false,
           "PERSONALIZADO"
@@ -117,8 +203,10 @@ export default function TyronaWildsCommercialStorefront() {
     cargarStorefront();
   }, [cargarStorefront]);
 
-  const abrirModalReserva = async (actividad: ActividadTuristica) => {
+  // Abrir Drawer de Expedición Completa y Checkout
+  const abrirDrawerExpedicion = async (actividad: ActividadTuristica) => {
     setActividadSeleccionada(actividad);
+    setIndiceFotoActiva(0);
     setResultadoReserva(null);
     setCantidadCupos(2);
     const resDisp = await obtenerDisponibilidades(actividad.id);
@@ -132,7 +220,8 @@ export default function TyronaWildsCommercialStorefront() {
     }
   };
 
-  const manejarConfirmarReserva = async () => {
+  // Ejecutar Checkout conectado al backend
+  const manejarConfirmarCheckout = async () => {
     if (!actividadSeleccionada) return;
     const horariosAct = disponibilidades.filter(
       (d) => d.actividadId === actividadSeleccionada.id
@@ -168,11 +257,29 @@ export default function TyronaWildsCommercialStorefront() {
     setProcesandoReserva(false);
   };
 
-  const manejarEjecutarIa = async () => {
+  // Ejecutar Baquiano AI Concierge
+  const manejarConsultarBaquiano = async (
+    nuevoEstilo: EstiloViajeId = estiloViaje,
+    nuevoPresupuesto: PresupuestoId = presupuesto,
+    nuevoRitmo: RitmoId = ritmo
+  ) => {
+    setEstiloViaje(nuevoEstilo);
+    setPresupuesto(nuevoPresupuesto);
+    setRitmo(nuevoRitmo);
     setEjecutandoIa(true);
+
+    const tagsRitmo =
+      nuevoRitmo === "DESAFIO"
+        ? "trekking, sierra-nevada, senderismo"
+        : nuevoRitmo === "CONTEMPLATIVO"
+        ? "minca, rio, historia, sostenible"
+        : "naturaleza, caribe";
+
+    const tagsCombinados = `${ESTILOS_BAQUIANO[nuevoEstilo].tags}, ${tagsRitmo}`;
+
     const res = await ejecutarRecomendacionIa(
       ACTORES_SESION.TURISTA,
-      interesesIa,
+      tagsCombinados,
       true,
       false,
       "PERSONALIZADO"
@@ -191,19 +298,40 @@ export default function TyronaWildsCommercialStorefront() {
     return true;
   });
 
+  const recomendacionesFiltradasPorPresupuesto = (
+    resultadoIa?.recomendaciones || []
+  ).filter((rec) => {
+    if (presupuesto === "ESENCIAL") return rec.precioCop <= 260000;
+    if (presupuesto === "COMPLETO") return rec.precioCop <= 400000;
+    return true;
+  });
+
+  const recomendacionesVisibles =
+    recomendacionesFiltradasPorPresupuesto.length > 0
+      ? recomendacionesFiltradasPorPresupuesto.slice(0, 3)
+      : (resultadoIa?.recomendaciones || []).slice(0, 3);
+
   const horariosModal = actividadSeleccionada
     ? disponibilidades.filter(
         (d) => d.actividadId === actividadSeleccionada.id
       )
     : [];
 
-  const tempActual = contexto ? Math.round(contexto.clima.temperaturaCelsius) : 29;
-  const humedadActual = contexto ? contexto.clima.humedadRelativaPorcentaje : 78;
+  const fichaActiva = actividadSeleccionada
+    ? obtenerFichaTecnicaExpedicion(actividadSeleccionada.codigoServicio)
+    : null;
+
+  const tempActual = contexto
+    ? Math.round(contexto.clima.temperaturaCelsius)
+    : 29;
+  const humedadActual = contexto
+    ? contexto.clima.humedadRelativaPorcentaje
+    : 78;
 
   return (
     <div className="min-h-screen bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
       {/* =====================================================================
-          BARRA SUPERIOR EDITORIAL Y HUD DE EXPEDICIÓN
+          BARRA SUPERIOR EDITORIAL Y TELEMETRÍA CLIMÁTICA REAL
       ====================================================================== */}
       <header className="sticky top-0 z-40 border-b border-sand/15 bg-obsidian/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-6 py-3.5">
@@ -231,10 +359,10 @@ export default function TyronaWildsCommercialStorefront() {
               01 // {idioma === "es" ? "EXPEDICIONES" : "EXPEDITIONS"}
             </a>
             <a
-              href="#concierge-ia"
+              href="#baquiano-ai"
               className="hover:text-terracotta transition-colors"
             >
-              02 // {idioma === "es" ? "CURADURÍA A MEDIDA" : "BESPOKE CURATION"}
+              02 // {idioma === "es" ? "BAQUIANO AI" : "BAQUIANO AI"}
             </a>
             <a
               href="#sostenibilidad"
@@ -364,12 +492,14 @@ export default function TyronaWildsCommercialStorefront() {
                 <ArrowUpRight className="h-4 w-4" />
               </a>
               <a
-                href="#concierge-ia"
+                href="#baquiano-ai"
                 className="inline-flex items-center gap-2 border border-sand/30 bg-obsidian/80 px-5 py-4 font-mono text-xs uppercase tracking-[0.18em] text-sand hover:border-terracotta transition-colors"
               >
                 <Sparkles className="h-4 w-4 text-terracotta" />
                 <span>
-                  {idioma === "es" ? "DISEÑAR MI RUTA" : "DESIGN MY ROUTE"}
+                  {idioma === "es"
+                    ? "CONSULTAR A BAQUIANO AI"
+                    : "ASK BAQUIANO AI"}
                 </span>
               </a>
             </div>
@@ -394,7 +524,7 @@ export default function TyronaWildsCommercialStorefront() {
       </section>
 
       {/* =====================================================================
-          SECCIÓN 2: CATÁLOGO DE EXPEDICIONES Y AFORO DEL ECOSISTEMA
+          SECCIÓN 2: CATÁLOGO DE EXPEDICIONES CON ACCESO A FICHA TÉCNICA COMPLETA
       ====================================================================== */}
       <section
         id="expediciones"
@@ -470,14 +600,19 @@ export default function TyronaWildsCommercialStorefront() {
         <div className="mt-10 grid grid-cols-1 gap-0 border-t border-l border-sand/15 md:grid-cols-2 lg:grid-cols-3">
           {actividadesFiltradas.map((act, index) => {
             const altaCongestion = act.nivelOcupacionActual >= 80;
+            const ficha = obtenerFichaTecnicaExpedicion(act.codigoServicio);
             return (
               <article
                 key={act.id}
-                className="group relative flex flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-6 transition-colors hover:bg-jungle/25"
+                onClick={() => abrirDrawerExpedicion(act)}
+                className="group relative flex cursor-pointer flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-6 transition-colors hover:bg-jungle/25"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/65">
-                    <span>0{index + 1} // EXPEDICIÓN GUIADA</span>
+                    <span>
+                      0{index + 1} //{" "}
+                      {idioma === "es" ? ficha.duracionEs : ficha.duracionEn}
+                    </span>
                     <span className="flex items-center gap-1 text-terracotta">
                       <Mountain className="h-3.5 w-3.5" />
                       {act.altitudMsnm} MSNM
@@ -510,10 +645,11 @@ export default function TyronaWildsCommercialStorefront() {
                     )}
                   </div>
 
-                  <div className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-terracotta">
-                    {act.ubicacion}
+                  <div className="mt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta">
+                    <span>{act.ubicacion}</span>
+                    <span className="text-sand/55">{ficha.operadorLicenciaRnt.split("·")[0]}</span>
                   </div>
-                  <h3 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide text-sand">
+                  <h3 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide text-sand group-hover:text-terracotta transition-colors">
                     {idioma === "es" ? act.nombreEs : act.nombreEn}
                   </h3>
                   <p className="mt-3 text-sm text-sand/75 leading-relaxed">
@@ -574,11 +710,16 @@ export default function TyronaWildsCommercialStorefront() {
 
                     <button
                       type="button"
-                      onClick={() => abrirModalReserva(act)}
-                      className="inline-flex items-center gap-2 bg-sand px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        abrirDrawerExpedicion(act);
+                      }}
+                      className="inline-flex items-center gap-2 bg-sand px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-sand transition-colors"
                     >
                       <span>
-                        {idioma === "es" ? "RESERVAR CUPO" : "BOOK EXPEDITION"}
+                        {idioma === "es"
+                          ? "VER FICHA & RESERVAR"
+                          : "ITINERARY & BOOK"}
                       </span>
                       <ChevronRight className="h-4 w-4" />
                     </button>
@@ -591,45 +732,197 @@ export default function TyronaWildsCommercialStorefront() {
       </section>
 
       {/* =====================================================================
-          MODAL DE RESERVA DE EXPEDICIÓN
+          DRAWER / MODAL DE PRODUCTO COMPLETO (GALERÍA, FICHA TÉCNICA Y CHECKOUT)
       ====================================================================== */}
-      {actividadSeleccionada && (
+      {actividadSeleccionada && fichaActiva && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-labelledby="titulo-modal-reserva"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-obsidian/85 p-4 backdrop-blur-sm"
+          aria-labelledby="titulo-drawer-expedicion"
+          className="fixed inset-0 z-50 flex justify-end bg-obsidian/85 backdrop-blur-sm"
+          onClick={() => setActividadSeleccionada(null)}
         >
-          <div className="relative w-full max-w-2xl border border-sand/30 bg-obsidian p-6 md:p-8 shadow-2xl">
-            <div className="flex items-start justify-between border-b border-sand/15 pb-4">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative h-full w-full max-w-4xl overflow-y-auto border-l border-sand/25 bg-obsidian p-6 md:p-10 shadow-2xl"
+          >
+            {/* Barra Superior del Drawer */}
+            <div className="flex items-start justify-between gap-4 border-b border-sand/15 pb-5">
               <div>
-                <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                  // RESERVA DE CUPO GARANTIZADO · {actividadSeleccionada.ubicacion}
-                </span>
-                <h3
-                  id="titulo-modal-reserva"
-                  className="mt-1 font-display text-4xl uppercase text-sand"
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
+                  <span>{actividadSeleccionada.ubicacion}</span>
+                  <span>·</span>
+                  <span>{actividadSeleccionada.coordenadasHud}</span>
+                </div>
+                <h2
+                  id="titulo-drawer-expedicion"
+                  className="mt-1 font-display text-4xl md:text-5xl uppercase leading-none text-sand"
                 >
                   {idioma === "es"
                     ? actividadSeleccionada.nombreEs
                     : actividadSeleccionada.nombreEn}
-                </h3>
+                </h2>
               </div>
+
               <button
                 type="button"
                 onClick={() => setActividadSeleccionada(null)}
-                className="border border-sand/25 px-3 py-1 font-mono text-xs uppercase text-sand hover:border-terracotta hover:text-terracotta"
+                className="shrink-0 border border-sand/30 px-3.5 py-2 font-mono text-xs uppercase text-sand hover:border-terracotta hover:text-terracotta transition-colors"
               >
-                CERRAR [X]
+                {idioma === "es" ? "CERRAR [ESC]" : "CLOSE [ESC]"}
               </button>
             </div>
 
-            <div className="mt-6 space-y-5">
+            {/* Galería Visual Interactiva */}
+            <div className="mt-6">
+              <div className="relative h-72 md:h-96 w-full overflow-hidden border border-sand/20 bg-jungle/20">
+                <img
+                  src={
+                    fichaActiva.galeriaImagenes[indiceFotoActiva] ||
+                    actividadSeleccionada.imagenUrl
+                  }
+                  alt={actividadSeleccionada.nombreEs}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute bottom-3 left-3 bg-obsidian/85 border border-sand/20 px-3 py-1 font-mono text-xs uppercase text-sand">
+                  {fichaActiva.operadorNombre} · {fichaActiva.operadorLicenciaRnt}
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                {fichaActiva.galeriaImagenes.map((imgUrl, idx) => (
+                  <button
+                    key={imgUrl + idx}
+                    type="button"
+                    onClick={() => setIndiceFotoActiva(idx)}
+                    className={`relative h-20 overflow-hidden border transition-all ${
+                      indiceFotoActiva === idx
+                        ? "border-terracotta ring-1 ring-terracotta"
+                        : "border-sand/20 opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={`Vista ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ficha Técnica de la Expedición */}
+            <div className="mt-8 grid grid-cols-2 gap-3 border border-sand/20 bg-jungle/15 p-4 font-mono text-xs sm:grid-cols-4">
+              <div className="border-r border-sand/15 pr-3">
+                <span className="block text-[10px] uppercase text-sand/55">
+                  ALTITUD MÁXIMA
+                </span>
+                <strong className="mt-1 flex items-center gap-1 text-sm text-sand">
+                  <Mountain className="h-3.5 w-3.5 text-terracotta" />
+                  {actividadSeleccionada.altitudMsnm} MSNM
+                </strong>
+              </div>
+              <div className="border-r border-sand/15 pr-3">
+                <span className="block text-[10px] uppercase text-sand/55">
+                  DURACIÓN
+                </span>
+                <strong className="mt-1 block text-sand">
+                  {idioma === "es"
+                    ? fichaActiva.duracionEs
+                    : fichaActiva.duracionEn}
+                </strong>
+              </div>
+              <div className="border-r border-sand/15 pr-3">
+                <span className="block text-[10px] uppercase text-sand/55">
+                  EXIGENCIA
+                </span>
+                <strong className="mt-1 block text-sand">
+                  {idioma === "es"
+                    ? fichaActiva.dificultadEs
+                    : fichaActiva.dificultadEn}
+                </strong>
+              </div>
               <div>
+                <span className="block text-[10px] uppercase text-sand/55">
+                  OPERADOR LOCAL
+                </span>
+                <strong className="mt-1 flex items-center gap-1 text-emerald-400">
+                  <Award className="h-3.5 w-3.5" />
+                  {fichaActiva.operadorLicenciaRnt.split("·")[0]}
+                </strong>
+              </div>
+            </div>
+
+            {/* Itinerario y Qué Incluye */}
+            <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="border border-sand/15 bg-obsidian p-5">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
+                  // HITOS DEL ITINERARIO
+                </h3>
+                <ul className="mt-3 space-y-2.5 font-mono text-xs text-sand/85">
+                  {(idioma === "es"
+                    ? fichaActiva.hitosItinerarioEs
+                    : fichaActiva.hitosItinerarioEn
+                  ).map((hito, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-terracotta font-bold">
+                        0{i + 1}.
+                      </span>
+                      <span>{hito}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 border-t border-sand/15 pt-3 font-mono text-[11px] text-sand/70">
+                  <span className="flex items-center gap-1.5 text-sand font-bold">
+                    <MapPin className="h-3.5 w-3.5 text-terracotta" />
+                    PUNTO DE ENCUENTRO:
+                  </span>
+                  <span className="mt-1 block">
+                    {idioma === "es"
+                      ? fichaActiva.puntoEncuentroEs
+                      : fichaActiva.puntoEncuentroEn}
+                  </span>
+                </div>
+              </div>
+
+              <div className="border border-sand/15 bg-obsidian p-5">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400">
+                  // QUÉ INCLUYE TU EXPEDICIÓN
+                </h3>
+                <ul className="mt-3 space-y-2.5 font-mono text-xs text-sand/85">
+                  {(idioma === "es"
+                    ? fichaActiva.incluyeEs
+                    : fichaActiva.incluyeEn
+                  ).map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Bloque de Checkout Comercial y Selección de Salida */}
+            <div className="mt-8 border-t-2 border-terracotta bg-jungle/15 p-6">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-display text-3xl uppercase text-sand">
+                  {idioma === "es"
+                    ? "CHECKOUT & EMISIÓN DE PERMISO DE INGRESO"
+                    : "EXPEDITION CHECKOUT & PERMIT ISSUANCE"}
+                </h3>
+                <span className="flex items-center gap-1.5 font-mono text-xs text-emerald-400">
+                  <ShieldCheck className="h-4 w-4" />
+                  CUPO GARANTIZADO EN TIEMPO REAL
+                </span>
+              </div>
+
+              {/* Paso 1: Fecha y Horario */}
+              <div className="mt-5">
                 <label className="block font-mono text-xs uppercase tracking-wider text-sand/75">
-                  1. SELECCIONA TU SALIDA PROGRAMADA:
+                  1. SELECCIONA FECHA DE SALIDA PROGRAMADA:
                 </label>
-                <div className="mt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {horariosModal.map((h) => (
                     <button
                       key={h.id}
@@ -638,7 +931,7 @@ export default function TyronaWildsCommercialStorefront() {
                         setHorarioSeleccionadoId(h.id);
                         setResultadoReserva(null);
                       }}
-                      className={`border p-3 text-left font-mono text-xs transition-colors ${
+                      className={`border p-3.5 text-left font-mono text-xs transition-colors ${
                         horarioSeleccionadoId === h.id
                           ? "border-terracotta bg-terracotta/15 text-sand"
                           : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
@@ -656,11 +949,11 @@ export default function TyronaWildsCommercialStorefront() {
                       </div>
                       <div className="mt-2 flex items-center justify-between text-[11px]">
                         <span>
-                          CUPOS DISPONIBLES:{" "}
+                          CUPOS RESTANTES:{" "}
                           <strong className="text-emerald-400">
                             {h.cuposDisponibles}
                           </strong>{" "}
-                          / {h.capacidadTotal}
+                          DE {h.capacidadTotal}
                         </span>
                         <span>{formatearCop(h.precioUnitarioCop)}</span>
                       </div>
@@ -669,18 +962,19 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {/* Paso 2: Datos del Expedicionario Principal y Cupos */}
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-4">
                 <div>
                   <label
-                    htmlFor="input-cupos"
-                    className="block font-mono text-xs uppercase tracking-wider text-sand/75"
+                    htmlFor="checkout-cupos"
+                    className="block font-mono text-[11px] uppercase text-sand/70"
                   >
-                    2. NÚMERO DE EXPEDICIONARIOS:
+                    VIAJEROS
                   </label>
-                  <div className="mt-2 flex items-center gap-2">
+                  <div className="mt-1.5 flex items-center gap-2">
                     <Users className="h-4 w-4 text-terracotta" />
                     <input
-                      id="input-cupos"
+                      id="checkout-cupos"
                       type="number"
                       min={1}
                       max={16}
@@ -690,19 +984,82 @@ export default function TyronaWildsCommercialStorefront() {
                           Math.max(1, parseInt(e.target.value || "1", 10))
                         )
                       }
-                      className="w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-sm text-sand focus:border-terracotta focus:outline-none"
+                      className="w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
                     />
                   </div>
                 </div>
 
-                <div className="border border-sand/15 bg-jungle/20 p-3 font-mono text-xs">
-                  <span className="block text-sand/60">RESUMEN DE RESERVA:</span>
-                  <span className="mt-1 block font-bold text-sand">
-                    {cantidadCupos}{" "}
-                    {cantidadCupos === 1 ? "Expedicionario" : "Expedicionarios"}
+                <div>
+                  <label
+                    htmlFor="checkout-nombre"
+                    className="block font-mono text-[11px] uppercase text-sand/70"
+                  >
+                    EXPEDICIONARIO TITULAR
+                  </label>
+                  <input
+                    id="checkout-nombre"
+                    type="text"
+                    value={nombreViajero}
+                    onChange={(e) => setNombreViajero(e.target.value)}
+                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="checkout-doc"
+                    className="block font-mono text-[11px] uppercase text-sand/70"
+                  >
+                    DOCUMENTO / PASAPORTE
+                  </label>
+                  <input
+                    id="checkout-doc"
+                    type="text"
+                    value={documentoViajero}
+                    onChange={(e) => setDocumentoViajero(e.target.value)}
+                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="checkout-email"
+                    className="block font-mono text-[11px] uppercase text-sand/70"
+                  >
+                    EMAIL DE CONFIRMACIÓN
+                  </label>
+                  <input
+                    id="checkout-email"
+                    type="email"
+                    value={emailViajero}
+                    onChange={(e) => setEmailViajero(e.target.value)}
+                    className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Resumen de Pago */}
+              <div className="mt-5 border border-sand/20 bg-obsidian p-4 font-mono text-xs">
+                <div className="flex justify-between text-sand/75">
+                  <span>
+                    Expedición ({cantidadCupos} x{" "}
+                    {formatearCop(actividadSeleccionada.precioCop)})
                   </span>
-                  <span className="mt-1 block text-terracotta">
-                    TOTAL:{" "}
+                  <span>
+                    {formatearCop(
+                      actividadSeleccionada.precioCop * cantidadCupos
+                    )}
+                  </span>
+                </div>
+                <div className="mt-1.5 flex justify-between text-emerald-400">
+                  <span>
+                    Tasa Ambiental Parques Nacionales / Contribución Comunitaria
+                  </span>
+                  <span>INCLUIDA ($0 COP)</span>
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-sand/15 pt-3 text-sm font-bold text-sand">
+                  <span>TOTAL A PAGAR</span>
+                  <span className="text-lg text-terracotta">
                     {formatearCop(
                       actividadSeleccionada.precioCop * cantidadCupos
                     )}
@@ -710,57 +1067,87 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
               </div>
 
-              <div className="pt-2">
-                <button
-                  type="button"
-                  disabled={procesandoReserva}
-                  onClick={manejarConfirmarReserva}
-                  className="w-full bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember disabled:opacity-50"
-                >
+              {/* Botón de Confirmación */}
+              <button
+                type="button"
+                disabled={procesandoReserva}
+                onClick={manejarConfirmarCheckout}
+                className="mt-5 w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+              >
+                <CreditCard className="h-4 w-4" />
+                <span>
                   {procesandoReserva
-                    ? "VERIFICANDO DISPONIBILIDAD EN EL SENDERO..."
-                    : "CONFIRMAR RESERVA DE EXPEDICIÓN"}
-                </button>
-              </div>
+                    ? "EMITIENDO CÓDIGO DE RESERVA Y PERMISOS..."
+                    : "CONFIRMAR Y EMITIR RESERVA DE EXPEDICIÓN"}
+                </span>
+              </button>
 
+              {/* Voucher / Resultado de Reserva */}
               {resultadoReserva && (
                 <div
-                  className={`mt-4 border p-4 font-mono text-xs ${
+                  className={`mt-5 border p-5 font-mono text-xs ${
                     resultadoReserva.exito
-                      ? "border-emerald-400/50 bg-emerald-950/30 text-emerald-200"
+                      ? "border-emerald-400 bg-emerald-950/35 text-sand"
                       : "border-terracotta bg-terracotta/15 text-sand"
                   }`}
                 >
-                  <div className="flex items-center justify-between font-bold uppercase">
-                    <span className="flex items-center gap-2">
-                      {resultadoReserva.exito ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-terracotta" />
-                      )}
-                      {resultadoReserva.exito
-                        ? `EXPEDICIÓN CONFIRMADA · PASAPORTE ${resultadoReserva.reserva?.codigoReserva}`
-                        : "CUPOS COMPLETOS PARA ESTA SALIDA"}
-                    </span>
-                  </div>
-
                   {resultadoReserva.exito && resultadoReserva.reserva ? (
-                    <div className="mt-2 space-y-1 text-sand/85">
-                      <p>
-                        Cupos reservados: {resultadoReserva.reserva.cantidadCupos}{" "}
-                        · Total:{" "}
-                        {formatearCop(resultadoReserva.reserva.montoTotalCop)}
-                      </p>
-                      <p className="text-emerald-300">
-                        Tu permiso de ingreso y coordenadas de encuentro con el
-                        guía local han sido emitidos.
+                    <div>
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-400/30 pb-3">
+                        <span className="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                          <CheckCircle2 className="h-5 w-5" />
+                          RESERVA CONFIRMADA · CÓDIGO{" "}
+                          {resultadoReserva.reserva.codigoReserva}
+                        </span>
+                        <span className="bg-emerald-400/20 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
+                          ESTADO: {resultadoReserva.reserva.estadoReserva}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3 text-[11px] text-sand/85">
+                        <div>
+                          <span className="block text-sand/50">TITULAR:</span>
+                          <strong>
+                            {nombreViajero} ({documentoViajero})
+                          </strong>
+                        </div>
+                        <div>
+                          <span className="block text-sand/50">
+                            CUPOS ASEGURADOS:
+                          </span>
+                          <strong>
+                            {resultadoReserva.reserva.cantidadCupos}{" "}
+                            Expedicionarios
+                          </strong>
+                        </div>
+                        <div>
+                          <span className="block text-sand/50">
+                            MONTO TOTAL:
+                          </span>
+                          <strong>
+                            {formatearCop(
+                              resultadoReserva.reserva.montoTotalCop
+                            )}
+                          </strong>
+                        </div>
+                      </div>
+                      <p className="mt-3 text-[11px] text-emerald-300">
+                        Hemos enviado las coordenadas GPS de encuentro y tu
+                        póliza de ingreso a <strong>{emailViajero}</strong>.
                       </p>
                     </div>
                   ) : (
-                    <div className="mt-2 space-y-1.5">
-                      <p>{resultadoReserva.errorMensaje}</p>
-                      <p className="text-amber-300">
-                        <strong>PRÓXIMA SALIDA DISPONIBLE:</strong>{" "}
+                    <div>
+                      <div className="flex items-center gap-2 font-bold text-terracotta">
+                        <XCircle className="h-4 w-4" />
+                        <span>
+                          CUPO COMPLETO EN LA FECHA SELECCIONADA
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-sand/85">
+                        {resultadoReserva.errorMensaje}
+                      </p>
+                      <p className="mt-2 text-amber-300">
+                        <strong>SALIDA ALTERNATIVA DISPONIBLE:</strong>{" "}
                         {resultadoReserva.horariosAlternativos}
                       </p>
                     </div>
@@ -773,114 +1160,285 @@ export default function TyronaWildsCommercialStorefront() {
       )}
 
       {/* =====================================================================
-          SECCIÓN 3: CURADURÍA INTELIGENTE DE EXPEDICIONES
+          SECCIÓN 3: BAQUIANO AI — CONCIERGE DE EXPEDICIONES
       ====================================================================== */}
       <section
-        id="concierge-ia"
+        id="baquiano-ai"
         className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-6 py-16"
       >
         <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
           <div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-              // 02 · CONCIERGE DE EXPEDICIONES EN TIEMPO REAL
+            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
+              <CompassIcon className="h-4 w-4" />
+              <span>// 02 · BAQUIANO AI — CONCIERGE DE EXPEDICIONES</span>
             </div>
             <h2 className="mt-2 font-display text-5xl md:text-6xl uppercase tracking-tight text-sand">
               {idioma === "es"
-                ? "RUTAS CURADAS SEGÚN CLIMA & PERFIL"
-                : "ROUTES CURATED BY WEATHER & PROFILE"}
+                ? "CURADURÍA INTELIGENTE DE TRAVESÍAS"
+                : "BESPOKE EXPEDITION CONCIERGE"}
             </h2>
           </div>
+
+          <p className="max-w-md font-mono text-xs text-sand/70 leading-relaxed">
+            {idioma === "es"
+              ? "Nuestro baquiano digital cruza tu estilo de exploración con el clima actual en la Sierra Nevada y el flujo real de cada sendero."
+              : "Our digital concierge matches your exploration style with live Sierra Nevada weather and real-time trail occupancy."}
+          </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="lg:col-span-4 border border-sand/20 bg-jungle/15 p-6">
-            <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
-              <Sparkles className="h-4 w-4" />
-              <span>PREFERENCIAS DEL VIAJERO</span>
-            </div>
-
-            <div className="mt-4 space-y-4">
-              <div>
-                <label
-                  htmlFor="input-intereses-ia"
-                  className="block font-mono text-xs uppercase text-sand/75"
-                >
-                  TERRENO, RITMO Y EXPERIENCIA BUSCADA:
-                </label>
-                <input
-                  id="input-intereses-ia"
-                  type="text"
-                  value={interesesIa}
-                  onChange={(e) => setInteresesIa(e.target.value)}
-                  className="mt-1.5 w-full border border-sand/25 bg-obsidian px-3.5 py-2.5 font-mono text-xs text-sand focus:border-terracotta focus:outline-none"
-                />
+        {/* Selector de Perfil de Viajero: Estilo, Presupuesto y Ritmo */}
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-5 space-y-6 border border-sand/20 bg-jungle/15 p-6">
+            <div>
+              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
+                1. ELIGE TU ESTILO DE EXPEDICIÓN
+              </span>
+              <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {(Object.keys(ESTILOS_BAQUIANO) as EstiloViajeId[]).map(
+                  (id) => {
+                    const item = ESTILOS_BAQUIANO[id];
+                    const activo = estiloViaje === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() =>
+                          manejarConsultarBaquiano(id, presupuesto, ritmo)
+                        }
+                        className={`border p-3.5 text-left transition-colors ${
+                          activo
+                            ? "border-terracotta bg-terracotta/15 text-sand"
+                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                        }`}
+                      >
+                        <div className="font-mono text-xs font-bold uppercase">
+                          {idioma === "es" ? item.tituloEs : item.tituloEn}
+                        </div>
+                        <div className="mt-1 font-mono text-[10px] text-sand/60 leading-snug">
+                          {idioma === "es" ? item.subEs : item.subEn}
+                        </div>
+                      </button>
+                    );
+                  }
+                )}
               </div>
-
-              <button
-                type="button"
-                disabled={ejecutandoIa}
-                onClick={manejarEjecutarIa}
-                className="w-full flex items-center justify-center gap-2 bg-sand px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
-              >
-                <RefreshCw
-                  className={`h-4 w-4 ${ejecutandoIa ? "animate-spin" : ""}`}
-                />
-                <span>
-                  {ejecutandoIa
-                    ? "ANALIZANDO CLIMA Y SENDEROS..."
-                    : "ACTUALIZAR RECOMENDACIONES"}
-                </span>
-              </button>
             </div>
+
+            {/* Presupuesto por Viajero */}
+            <div>
+              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
+                2. RANGO DE INVERSIÓN POR VIAJERO
+              </span>
+              <div className="mt-2.5 grid grid-cols-3 gap-2 font-mono text-[11px]">
+                {[
+                  {
+                    id: "ESENCIAL" as PresupuestoId,
+                    labelEs: "ESENCIAL (<$260K)",
+                    labelEn: "ESSENTIAL (<$260K)",
+                  },
+                  {
+                    id: "COMPLETO" as PresupuestoId,
+                    labelEs: "JORNADA (<$400K)",
+                    labelEn: "FULL DAY (<$400K)",
+                  },
+                  {
+                    id: "SIGNATURE" as PresupuestoId,
+                    labelEs: "SIGNATURE / TEYUNA",
+                    labelEn: "SIGNATURE / ALL",
+                  },
+                ].map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() =>
+                      manejarConsultarBaquiano(estiloViaje, p.id, ritmo)
+                    }
+                    className={`border py-2.5 px-2 uppercase transition-colors ${
+                      presupuesto === p.id
+                        ? "border-sand bg-sand text-obsidian font-bold"
+                        : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                    }`}
+                  >
+                    {idioma === "es" ? p.labelEs : p.labelEn}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ritmo de Marcha */}
+            <div>
+              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
+                3. RITMO DE MARCHA EN TERRENO
+              </span>
+              <div className="mt-2.5 grid grid-cols-3 gap-2 font-mono text-[11px]">
+                {[
+                  {
+                    id: "CONTEMPLATIVO" as RitmoId,
+                    labelEs: "CONTEMPLATIVO",
+                    labelEn: "RELAXED",
+                  },
+                  {
+                    id: "ACTIVO" as RitmoId,
+                    labelEs: "PASO ACTIVO",
+                    labelEn: "ACTIVE PACE",
+                  },
+                  {
+                    id: "DESAFIO" as RitmoId,
+                    labelEs: "DESAFÍO CUMBRE",
+                    labelEn: "SUMMIT TREK",
+                  },
+                ].map((r) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() =>
+                      manejarConsultarBaquiano(estiloViaje, presupuesto, r.id)
+                    }
+                    className={`border py-2.5 px-2 uppercase transition-colors ${
+                      ritmo === r.id
+                        ? "border-terracotta bg-terracotta text-sand font-bold"
+                        : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                    }`}
+                  >
+                    {idioma === "es" ? r.labelEs : r.labelEn}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              disabled={ejecutandoIa}
+              onClick={() =>
+                manejarConsultarBaquiano(estiloViaje, presupuesto, ritmo)
+              }
+              className="w-full flex items-center justify-center gap-2 bg-sand px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${ejecutandoIa ? "animate-spin" : ""}`}
+              />
+              <span>
+                {ejecutandoIa
+                  ? "CONSULTANDO BAQUIANO AI..."
+                  : "RECALCULAR RUTA IDEAL"}
+              </span>
+            </button>
           </div>
 
-          <div className="lg:col-span-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {(resultadoIa?.recomendaciones || []).slice(0, 3).map((rec, idx) => (
-              <div
-                key={rec.actividadId}
-                className="flex flex-col justify-between border border-sand/20 bg-obsidian p-5"
-              >
-                <div>
-                  <div className="flex items-center justify-between font-mono text-xs">
-                    <span className="bg-terracotta px-2.5 py-0.5 font-bold text-sand">
-                      SELECCIÓN #{idx + 1} · {rec.puntajeAfinidad}%
-                    </span>
-                    <span className="text-sand/65">
-                      AFORO: {rec.nivelOcupacionActual}%
-                    </span>
-                  </div>
-
-                  <h3 className="mt-3 font-display text-3xl uppercase text-sand">
-                    {idioma === "es" ? rec.nombreEs : rec.nombreEn}
-                  </h3>
-                  <div className="mt-1 font-mono text-[11px] text-terracotta">
-                    {rec.ubicacion} · {rec.coordenadasHud}
-                  </div>
-
-                  <div className="mt-4 border-l-2 border-emerald-400 bg-jungle/30 p-3.5 font-mono text-xs leading-relaxed text-sand/90">
-                    {idioma === "es" ? rec.explicacionEs : rec.explicacionEn}
-                  </div>
+          {/* Resultados Curados por Baquiano AI */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
+            <div>
+              {/* Nota Editorial de Contexto Climático */}
+              <div className="border border-sand/20 bg-obsidian p-4 font-mono text-xs text-sand/85">
+                <div className="flex items-center justify-between text-terracotta font-bold uppercase">
+                  <span>NOTA DEL BAQUIANO AI · CLIMA ACTUAL {tempActual}°C</span>
+                  <span>HUMEDAD {humedadActual}%</span>
                 </div>
-
-                <div className="mt-5 flex items-center justify-between border-t border-sand/15 pt-3 font-mono text-xs">
-                  <span className="font-bold text-sand">
-                    {formatearCop(rec.precioCop)}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const act = actividades.find(
-                        (a) => a.id === rec.actividadId
-                      );
-                      if (act) abrirModalReserva(act);
-                    }}
-                    className="text-terracotta hover:underline uppercase font-bold"
-                  >
-                    {idioma === "es" ? "RESERVAR ->" : "BOOK ->"}
-                  </button>
-                </div>
+                <p className="mt-1.5 leading-relaxed">
+                  {idioma === "es"
+                    ? ESTILOS_BAQUIANO[estiloViaje].notaEditorialEs
+                    : ESTILOS_BAQUIANO[estiloViaje].notaEditorialEn}
+                </p>
               </div>
-            ))}
+
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+                {recomendacionesVisibles.map((rec, idx) => (
+                  <div
+                    key={rec.actividadId}
+                    className="flex flex-col justify-between border border-sand/20 bg-obsidian p-5 hover:border-terracotta/60 transition-colors"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between font-mono text-xs">
+                        <span className="bg-terracotta px-2.5 py-0.5 font-bold text-sand">
+                          #{idx + 1} · {rec.puntajeAfinidad}% AFINIDAD
+                        </span>
+                        <span className="text-sand/60">
+                          {rec.altitudMsnm}m
+                        </span>
+                      </div>
+
+                      <h3 className="mt-3 font-display text-2xl uppercase text-sand">
+                        {idioma === "es" ? rec.nombreEs : rec.nombreEn}
+                      </h3>
+                      <div className="mt-1 font-mono text-[11px] text-terracotta">
+                        {rec.ubicacion}
+                      </div>
+
+                      <div className="mt-4 border-l-2 border-emerald-400 bg-jungle/25 p-3 font-mono text-[11px] leading-relaxed text-sand/90">
+                        {idioma === "es"
+                          ? rec.explicacionEs
+                          : rec.explicacionEn}
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex items-center justify-between border-t border-sand/15 pt-3 font-mono text-xs">
+                      <span className="font-bold text-sand">
+                        {formatearCop(rec.precioCop)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const act = actividades.find(
+                            (a) => a.id === rec.actividadId
+                          );
+                          if (act) abrirDrawerExpedicion(act);
+                        }}
+                        className="text-terracotta hover:underline uppercase font-bold"
+                      >
+                        {idioma === "es" ? "ABRIR FICHA ->" : "OPEN ->"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Acordeón Opcional Discreto: "Ver razonamiento del motor" */}
+            <div className="mt-6 border-t border-sand/15 pt-4">
+              <button
+                type="button"
+                onClick={() =>
+                  setMostrarRazonamientoMotor(!mostrarRazonamientoMotor)
+                }
+                className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/50 hover:text-sand transition-colors"
+              >
+                <ChevronDown
+                  className={`h-3.5 w-3.5 transition-transform ${
+                    mostrarRazonamientoMotor ? "rotate-180" : ""
+                  }`}
+                />
+                <span>
+                  {idioma === "es"
+                    ? "Ver razonamiento del motor"
+                    : "View engine reasoning"}
+                </span>
+              </button>
+
+              {mostrarRazonamientoMotor && resultadoIa && (
+                <div className="mt-3 border border-sand/15 bg-obsidian p-4 font-mono text-[11px] text-sand/70">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-sand/10">
+                    <span>
+                      PIPELINE DE DECISIÓN VECTORIAL ({resultadoIa.correlacionId})
+                    </span>
+                    <span className="text-emerald-400">
+                      MODO: {resultadoIa.nivelIaAplicado}
+                    </span>
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                    {resultadoIa.trazaEstados.map((estado, i) => (
+                      <React.Fragment key={estado}>
+                        <span className="border border-sand/20 bg-jungle/20 px-2.5 py-1 text-[10px] text-sand">
+                          {estado}
+                        </span>
+                        {i < resultadoIa.trazaEstados.length - 1 && (
+                          <span className="text-terracotta">-&gt;</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

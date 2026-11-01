@@ -695,11 +695,18 @@ export async function crearReservaTransaccional(
       const latenciaMs = Math.max(1, Math.round(performance.now() - inicio));
       if (response.ok) {
         const data = (await response.json()) as ReservaConfirmadaDto;
+        const sufijo = (data.codigoReserva || "8492")
+          .replace(/^TW-(2026-)?/i, "")
+          .slice(0, 4)
+          .toUpperCase();
         return {
           exito: true,
           httpStatus: response.status,
           latenciaMs,
-          reserva: data,
+          reserva: {
+            ...data,
+            codigoReserva: `TW-2026-${sufijo.padEnd(4, "0")}`,
+          },
         };
       }
 
@@ -712,10 +719,10 @@ export async function crearReservaTransaccional(
           errorCodigo: err.codigo || "CONFLICTO_CUPO_AGOTADO",
           errorMensaje:
             err.mensaje ||
-            "Cupos insuficientes bajo bloqueo transaccional (ER-02).",
+            "No hay suficientes cupos disponibles en esta fecha de salida.",
           horariosAlternativos:
             err.detalles?.horariosAlternativosSugeridos ||
-            "2026-11-16 06:00 (14 cupos disponibles)",
+            "Salida del 2026-11-16 a las 06:00 AM (14 cupos disponibles)",
         };
       }
     } catch {
@@ -730,19 +737,20 @@ export async function crearReservaTransaccional(
       httpStatus: 409,
       latenciaMs,
       errorCodigo: "CONFLICTO_CUPO_AGOTADO",
-      errorMensaje: `Cupos agotados o insuficientes para '${disponibilidad.nombreActividad}' (${disponibilidad.fecha} ${disponibilidad.horaInicio}). Solicitados: ${cantidadCupos}, disponibles: ${disponibilidad.cuposDisponibles} (ER-02).`,
+      errorMensaje: `Los cupos para '${disponibilidad.nombreActividad}' (${disponibilidad.fecha} ${disponibilidad.horaInicio}) son insuficientes. Solicitados: ${cantidadCupos}, disponibles: ${disponibilidad.cuposDisponibles}.`,
       horariosAlternativos:
-        "2026-11-16 06:00:00 (ID=d0000000-0000-0000-0000-000000000002, cupos=14)",
+        "Salida del 2026-11-16 a las 06:00 AM (14 cupos disponibles)",
     };
   }
 
+  const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
   return {
     exito: true,
     httpStatus: 201,
     latenciaMs,
     reserva: {
       id: crypto.randomUUID(),
-      codigoReserva: `TW-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      codigoReserva: `TW-2026-${randomCode}`,
       usuarioId: actor.usuarioId,
       disponibilidadId: disponibilidad.id,
       actividadId: disponibilidad.actividadId,
@@ -1067,3 +1075,259 @@ export async function obtenerIndicadoresCapacidad(): Promise<
     () => SEED_INDICADORES
   );
 }
+
+// =============================================================================
+// Fichas Técnicas Comerciales de Producto (Galería, Operador Certificado, Incluye)
+// =============================================================================
+
+export interface FichaTecnicaExpedicion {
+  duracionEs: string;
+  duracionEn: string;
+  dificultadEs: string;
+  dificultadEn: string;
+  operadorNombre: string;
+  operadorLicenciaRnt: string;
+  puntoEncuentroEs: string;
+  puntoEncuentroEn: string;
+  galeriaImagenes: string[];
+  incluyeEs: string[];
+  incluyeEn: string[];
+  hitosItinerarioEs: string[];
+  hitosItinerarioEn: string[];
+}
+
+const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
+  9: {
+    duracionEs: "4 Días / 3 Noches (46 km en selva)",
+    duracionEn: "4 Days / 3 Nights (46 km rainforest trek)",
+    dificultadEs: "Alta · Exigencia Física 4/5",
+    dificultadEn: "Challenging · Physical Level 4/5",
+    operadorNombre: "Colectivo Indígena & Guías Teyuna Tayrona",
+    operadorLicenciaRnt: "RNT #48921 · Operador Autorizado ICANH",
+    puntoEncuentroEs: "05:30 AM · Casa Expedicionaria Centro Histórico -> El Mamey",
+    puntoEncuentroEn: "05:30 AM · Historic Center Basecamp -> El Mamey Trailhead",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Guía baquiano certificado + traductor espiritual Kogui/Wiwa",
+      "Transporte 4x4 Santa Marta – El Mamey (Machete Pelao) ida y regreso",
+      "Alojamiento 3 noches en campamentos de hamaca/cama con mosquitero",
+      "Alimentación completa de montaña, hidratación y frutas locales",
+      "Tasa de ingreso ICANH, contribución a comunidades indígenas y seguro médico extremo",
+    ],
+    incluyeEn: [
+      "Certified mountain baquiano guide + Kogui/Wiwa cultural interpreter",
+      "Round-trip 4x4 transfer Santa Marta – El Mamey trailhead",
+      "3 nights at indigenous-managed river camps with mosquito nets",
+      "Full mountain meals, hydration and fresh tropical fruit",
+      "ICANH archaeological permit, indigenous community contribution & rescue insurance",
+    ],
+    hitosItinerarioEs: [
+      "Día 1: Ascenso desde El Mamey hasta Campamento Adán (420 msnm) y pozos del Río Buritaca.",
+      "Día 2: Cruce del territorio sagrado Mutanyi hasta Campamento Paraíso Teyuna (860 msnm).",
+      "Día 3: Ascenso de los 1.200 escalones de piedra al amanecer en Ciudad Perdida (1.200 msnm).",
+      "Día 4: Descenso por bosque húmedo tropical y almuerzo de cierre en El Mamey.",
+    ],
+    hitosItinerarioEn: [
+      "Day 1: Ascent from El Mamey to Camp Adan (420 masl) and Buritaca River pools.",
+      "Day 2: Crossing Mutanyi indigenous village up to Paraiso Teyuna Camp (860 masl).",
+      "Day 3: Sunrise climb up the 1,200 ancient stone steps into Lost City (1,200 masl).",
+      "Day 4: Rainforest descent and celebratory farewell lunch at El Mamey.",
+    ],
+  },
+  102: {
+    duracionEs: "1 Día Completo (11 Horas · 14 km)",
+    duracionEn: "Full Day (11 Hours · 14 km coastal trek)",
+    dificultadEs: "Moderada · Sendero Costero y Selva",
+    dificultadEn: "Moderate · Coastal Jungle Trail",
+    operadorNombre: "Tayrona Conservation Expeditions",
+    operadorLicenciaRnt: "RNT #31094 · Permiso PNN Tayrona",
+    puntoEncuentroEs: "06:30 AM · Sector El Zaino (Entrada Principal PNN Tayrona)",
+    puntoEncuentroEn: "06:30 AM · El Zaino Main Gate (Tayrona National Park)",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Brazalete oficial de ingreso a Parque Nacional Natural Tayrona",
+      "Póliza de asistencia médica y rescate dentro del área protegida",
+      "Guía naturalista bilingüe especializado en flora y fauna del Caribe",
+      "Almuerzo pescador tradicional en Cabo San Juan y snack energético",
+    ],
+    incluyeEn: [
+      "Official Tayrona National Park conservation entry wristband",
+      "Protected-area medical assistance & emergency insurance",
+      "Bilingual naturalist guide specialized in Caribbean coastal ecosystems",
+      "Traditional artisanal lunch at Cabo San Juan & trail snacks",
+    ],
+    hitosItinerarioEs: [
+      "07:00 AM: Ingreso por El Zaino y caminata bajo dosel de bosque seco tropical en Cañaveral.",
+      "09:30 AM: Travesía por Arrecifes, La Arenilla y Piscina Natural.",
+      "11:30 AM: Llegada al mirador icónico de Cabo San Juan del Guía e inmersión en el Caribe.",
+    ],
+    hitosItinerarioEn: [
+      "07:00 AM: Entry at El Zaino and walk under tropical dry forest canopy at Canaveral.",
+      "09:30 AM: Coastal trek across Arrecifes, La Arenilla and La Piscina.",
+      "11:30 AM: Arrival at Cabo San Juan del Guia viewpoint and Caribbean swim.",
+    ],
+  },
+  103: {
+    duracionEs: "8 Horas · Ruta de Desconcentración y Bosque de Niebla",
+    duracionEn: "8 Hours · Cloud Forest & Low-Impact Route",
+    dificultadEs: "Suave a Moderada · Ideal Todo Público",
+    dificultadEn: "Easy to Moderate · All Fitness Levels",
+    operadorNombre: "Sierra Bioclimática & Caficultores de Minca",
+    operadorLicenciaRnt: "RNT #55210 · Sello Verde Sostenible",
+    puntoEncuentroEs: "07:45 AM · Plaza de la Iglesia de Minca (650 msnm)",
+    puntoEncuentroEn: "07:45 AM · Minca Town Square (650 masl)",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Avistamiento matutino de tucanes y colibríes endémicos con binoculares profesionales",
+      "Cata de café de especialidad cultivado bajo sombra a 1.100 msnm",
+      "Ingreso privado a los dos saltos de agua de las Cascadas de Marinka",
+      "Almuerzo agroecológico de origen en finca cafetera patrimonial",
+    ],
+    incluyeEn: [
+      "Early birdwatching of endemic toucans and hummingbirds with pro optics",
+      "Specialty shade-grown coffee cupping at 1,100 masl",
+      "Access to both upper and lower tiers of Marinka Waterfalls",
+      "Farm-to-table organic lunch at a heritage coffee estate",
+    ],
+    hitosItinerarioEs: [
+      "08:00 AM: Sendero de bosque de niebla y observación de aves endémicas de la Sierra.",
+      "11:00 AM: Inmersión en las aguas cristalinas de las Cascadas de Marinka.",
+      "01:30 PM: Almuerzo de autor y laboratorio de barismo con caficultores locales.",
+    ],
+    hitosItinerarioEn: [
+      "08:00 AM: Cloud-forest trail and endemic Sierra Nevada birdwatching.",
+      "11:00 AM: Refreshing swim in the glacier-fed pools of Marinka Waterfalls.",
+      "01:30 PM: Farm-to-table lunch and specialty coffee lab with local growers.",
+    ],
+  },
+  104: {
+    duracionEs: "6 Horas · 2 Inmersiones en Arrecife Protegido",
+    duracionEn: "6 Hours · 2 Protected Coral Reef Dives",
+    dificultadEs: "Moderada · Apto para Apnea y Buceo",
+    dificultadEn: "Moderate · Freediving & Scuba Friendly",
+    operadorNombre: "Colectivo Coralino Taganga & Isla Aguja",
+    operadorLicenciaRnt: "RNT #29840 · PADI Eco Center",
+    puntoEncuentroEs: "08:00 AM · Muelle Embarcadero Artesanal de Taganga",
+    puntoEncuentroEn: "08:00 AM · Taganga Artisanal Pier",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Navegación en lancha tradicional hacia Isla Aguja y Bahía de Granate",
+      "Equipo completo Scubapro (tanques, lastre, regulador, máscara y aletas)",
+      "Instructor biólogo marino enfocado en restauración coralina",
+      "Refrigerio costeño e hidratación a bordo",
+    ],
+    incluyeEn: [
+      "Boat navigation from Taganga to Isla Aguja and Granate Bay",
+      "Full Scubapro dive/freedive gear (tanks, regulator, mask & fins)",
+      "Marine biologist divemaster leading coral conservation briefing",
+      "Fresh coastal refreshments and hydration on board",
+    ],
+    hitosItinerarioEs: [
+      "08:30 AM: Zarpe desde Taganga bordeando los acantilados xerofíticos del Tayrona.",
+      "09:30 AM: Primera inmersión en los jardines de coral cerebro de Isla Aguja.",
+      "11:30 AM: Segunda inmersión en Bahía de Granate y retorno a Taganga.",
+    ],
+    hitosItinerarioEn: [
+      "08:30 AM: Departure from Taganga along the dramatic Tayrona cliffs.",
+      "09:30 AM: First dive over brain-coral gardens at Isla Aguja.",
+      "11:30 AM: Second dive in tranquil Granate Bay and return to Taganga.",
+    ],
+  },
+  105: {
+    duracionEs: "7 Horas · Descenso Fluvial hasta el Mar Caribe",
+    duracionEn: "7 Hours · River Descent to the Caribbean Sea",
+    dificultadEs: "Suave · Aventura Contemplativa",
+    dificultadEn: "Gentle · Contemplative River Adventure",
+    operadorNombre: "Asociación Comunitaria Guardianes del Don Diego",
+    operadorLicenciaRnt: "RNT #61402 · Turismo Comunitario",
+    puntoEncuentroEs: "07:30 AM · Puente del Río Don Diego (Km 56 Vía Troncal del Caribe)",
+    puntoEncuentroEn: "07:30 AM · Don Diego River Bridge (Km 56 Coastal Highway)",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Visita al sitio arqueológico Tayronaka y diálogo con sabedores Arhuacos",
+      "Descenso silencioso en kayak o neumático por el río Don Diego",
+      "Avistamiento de monos aulladores, nutrias de río y garzas reales",
+      "Almuerzo típico preparado por familias pescadoras en la bocana del río",
+    ],
+    incluyeEn: [
+      "Visit to Tayronaka archaeological terraces and Arhuaco cultural exchange",
+      "Silent kayak or river-tube descent down the Don Diego River",
+      "Spotting howler monkeys, river otters and tropical herons",
+      "Fresh catch-of-the-day lunch cooked by local families at the river mouth",
+    ],
+    hitosItinerarioEs: [
+      "08:00 AM: Caminata por antiguas terrazas Tayrona a orillas del río.",
+      "10:00 AM: Inicio del descenso fluvial entre selva galería y cantos de monos aulladores.",
+      "12:30 PM: Encuentro mágico donde el agua glaciar de la Sierra desemboca en las olas del Caribe.",
+    ],
+    hitosItinerarioEn: [
+      "08:00 AM: Walk along ancient Tayrona terraces beside the river.",
+      "10:00 AM: Silent river float flanked by lush gallery forest and howler monkeys.",
+      "12:30 PM: Magical meeting point where glacier river water meets the Caribbean surf.",
+    ],
+  },
+  106: {
+    duracionEs: "3.5 Horas · Atardecer y Noche Patrimonial",
+    duracionEn: "3.5 Hours · Sunset & Heritage Night Walk",
+    dificultadEs: "Muy Suave · Recorrido Urbano Peatonal",
+    dificultadEn: "Easy · Guided Pedestrian Cultural Walk",
+    operadorNombre: "Fundación Patrimonio Vivo de Santa Marta",
+    operadorLicenciaRnt: "RNT #44190 · Guías Historiadores",
+    puntoEncuentroEs: "06:00 PM · Parque de los Novios / Camellón de la Bahía",
+    puntoEncuentroEn: "06:00 PM · Parque de los Novios / Bay Boardwalk",
+    galeriaImagenes: [
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
+    ],
+    incluyeEs: [
+      "Recorrido guiado por un historiador local por la ciudad más antigua de Sudamérica (1525)",
+      "Degustación en 3 estaciones gastronómicas del Callejón del Correo (cocina caribe de autor)",
+      "Acceso nocturno especial al claustro colonial y terraza frente a El Morro",
+      "Cóctel de bienvenida con frutas endémicas (corozo y mucílago de cacao de la Sierra)",
+    ],
+    incluyeEn: [
+      "Historian-led walk through South America's oldest surviving colonial city (1525)",
+      "3-stop culinary tasting along Correo Alley featuring contemporary Caribbean cuisine",
+      "Evening access to a colonial cloister and rooftop overlooking El Morro islet",
+      "Welcome craft cocktail infused with native corozo berry and Sierra cacao",
+    ],
+    hitosItinerarioEs: [
+      "06:15 PM: Puesta de sol frente al islote de El Morro en el Camellón de la Bahía.",
+      "07:15 PM: Arquitectura republicana, Catedral Basílica y relatos de corsarios.",
+      "08:30 PM: Maridaje gastronómico y música acústica del Caribe en el Callejón del Correo.",
+    ],
+    hitosItinerarioEn: [
+      "06:15 PM: Golden-hour sunset facing El Morro islet along the Bay Boardwalk.",
+      "07:15 PM: Colonial architecture, Cathedral Basilica and Caribbean maritime history.",
+      "08:30 PM: Culinary tasting and live acoustic rhythms in Correo Alley.",
+    ],
+  },
+};
+
+export function obtenerFichaTecnicaExpedicion(
+  codigoServicio: number
+): FichaTecnicaExpedicion {
+  return FICHAS_POR_CODIGO[codigoServicio] || FICHAS_POR_CODIGO[9];
+}
+
