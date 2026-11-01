@@ -45,19 +45,13 @@ Write-Host "`n[3/4] Iniciando los 8 microservicios Spring Boot en segundo plano.
 foreach ($svc in $Servicios) {
     $Nombre = $svc.Nombre
     $Puerto = $svc.Puerto
-    $JarPath = Get-ChildItem -Path "$RootDir\backend\$Nombre\target\*.jar" | Where-Object { $_.Name -notlike "*.original" } | Select-Object -First 1
-
-    if ($null -ne $JarPath) {
-        Write-Host "  -> Iniciando $Nombre en puerto :$Puerto ..." -ForegroundColor Green
-        Start-Process -FilePath "java" `
-            -ArgumentList "-jar", "`"$($JarPath.FullName)`"" `
-            -WorkingDirectory "$RootDir\backend\$Nombre" `
-            -RedirectStandardOutput "$LogDir\$Nombre.out.log" `
-            -RedirectStandardError "$LogDir\$Nombre.err.log" `
-            -WindowStyle Hidden
-    } else {
-        Write-Host "  [!] No se encontro JAR para $Nombre" -ForegroundColor Yellow
-    }
+    Write-Host "  -> Iniciando $Nombre en puerto :$Puerto ..." -ForegroundColor Green
+    Start-Process -FilePath "mvn.cmd" `
+        -ArgumentList "spring-boot:run", "-q" `
+        -WorkingDirectory "$RootDir\backend\$Nombre" `
+        -RedirectStandardOutput "$LogDir\$Nombre.out.log" `
+        -RedirectStandardError "$LogDir\$Nombre.err.log" `
+        -WindowStyle Hidden
 }
 
 # 4. Iniciar el Frontend Next.js (ClienteWebMovil en http://localhost:3000)
