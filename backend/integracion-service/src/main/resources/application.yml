@@ -1,0 +1,46 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: integracion-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 2
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      climaFuente:
+        baseConfig: default
+      aforoFuente:
+        baseConfig: default
+      eventosFuente:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 2000ms
+        cancelRunningFuture: true
+    instances:
+      climaFuente:
+        baseConfig: default
+      aforoFuente:
+        baseConfig: default
+      eventosFuente:
+        baseConfig: default
+
+app:
+  cache:
+    ttl-seconds: 300
