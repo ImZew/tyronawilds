@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Modo Alto Contraste Accesible (RNF-11 / WCAG 2.1 AA) */
+.high-contrast-mode {
+  filter: contrast(1.22) saturate(1.15);
+}
+
+/* Textura sutil de grano cinematográfico estilo expedición */
+.bg-expedition-grain {
+  background-image: radial-gradient(rgba(230, 48, 0, 0.14) 1px, transparent 0);
+  background-size: 28px 28px;
+}
