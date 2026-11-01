@@ -1,6 +1,7 @@
 package co.edu.unimagdalena.tyronawilds.identidad.application.service;
 
 import co.edu.unimagdalena.tyronawilds.contratos.eventos.EventoAccesoDenegado;
+import co.edu.unimagdalena.tyronawilds.contratos.security.InputSanitizer;
 import co.edu.unimagdalena.tyronawilds.contratos.seguridad.RolUsuario;
 import co.edu.unimagdalena.tyronawilds.identidad.domain.exception.CredencialesInvalidasException;
 import co.edu.unimagdalena.tyronawilds.identidad.domain.exception.ProveedorAuthNoHabilitadoException;
@@ -67,7 +68,7 @@ public class IdentidadApplicationService implements
     public ResultadoAutenticacion registrar(ComandoRegistro comando) {
         verificarProveedorActivo(ProveedorAuth.LOCAL, comando.email(), comando.ipOrigen(), comando.traceId());
 
-        String emailNormalizado = comando.email().trim().toLowerCase();
+        String emailNormalizado = InputSanitizer.sanitizeEmail(comando.email());
         if (usuarioRepositoryPort.existePorEmail(emailNormalizado)) {
             throw new UsuarioYaExisteException(emailNormalizado);
         }
@@ -79,7 +80,7 @@ public class IdentidadApplicationService implements
 
         Usuario nuevoUsuario = new Usuario(
                 UUID.randomUUID(),
-                comando.nombre().trim(),
+                InputSanitizer.sanitize(comando.nombre()),
                 emailNormalizado,
                 passwordEncoder.encode(comando.password()),
                 rolAsignado,

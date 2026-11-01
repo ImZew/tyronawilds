@@ -12,20 +12,26 @@ spring:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
-            allowedOrigins:
-              - "http://localhost:3000"
+            allowedOrigins: ${ALLOWED_ORIGINS:http://localhost:3000,https://tyronawilds.vercel.app}
             allowedMethods:
               - GET
               - POST
               - PUT
-              - PATCH
               - DELETE
               - OPTIONS
             allowedHeaders:
-              - "*"
+              - "Authorization"
+              - "Content-Type"
+              - "Accept"
+              - "Origin"
+              - "X-User-Id"
+              - "X-Rol"
+              - "X-Prestador-Id"
+              - "X-Correlation-Id"
             exposedHeaders:
               - "X-Correlation-Id"
             allowCredentials: true
+            maxAge: 3600
       routes:
         - id: identidad-service
           uri: ${IDENTIDAD_SERVICE_URI:http://localhost:8081}

@@ -1,6 +1,7 @@
 package co.edu.unimagdalena.tyronawilds.oferta.application.service;
 
 import co.edu.unimagdalena.tyronawilds.contratos.eventos.EventoAccesoDenegado;
+import co.edu.unimagdalena.tyronawilds.contratos.security.InputSanitizer;
 import co.edu.unimagdalena.tyronawilds.oferta.domain.exception.AccesoRecursoProhibidoException;
 import co.edu.unimagdalena.tyronawilds.oferta.domain.exception.RecursoNoEncontradoException;
 import co.edu.unimagdalena.tyronawilds.oferta.domain.model.ActividadTuristica;
@@ -111,21 +112,21 @@ public class OfertaApplicationService implements
                 comando.codigoServicio(),
                 prestador.id(),
                 prestador.codigoPublico(),
-                comando.nombreEs(),
-                comando.nombreEn(),
-                comando.slug(),
-                comando.categoria(),
-                comando.ubicacion(),
-                comando.coordenadasHud(),
+                InputSanitizer.sanitize(comando.nombreEs()),
+                InputSanitizer.sanitize(comando.nombreEn()),
+                InputSanitizer.sanitize(comando.slug()),
+                InputSanitizer.sanitize(comando.categoria()),
+                InputSanitizer.sanitize(comando.ubicacion()),
+                InputSanitizer.sanitize(comando.coordenadasHud()),
                 comando.altitudMsnm(),
                 comando.precioCop(),
                 comando.capacidadMaxima(),
                 20,
                 comando.esSostenible(),
-                comando.imagenUrl(),
-                comando.descripcionEs(),
-                comando.descripcionEn(),
-                comando.tagsAfinidad(),
+                InputSanitizer.sanitize(comando.imagenUrl()),
+                InputSanitizer.sanitize(comando.descripcionEs()),
+                InputSanitizer.sanitize(comando.descripcionEn()),
+                InputSanitizer.sanitize(comando.tagsAfinidad()),
                 Instant.now()
         );
 
@@ -173,8 +174,8 @@ public class OfertaApplicationService implements
                 existente.codigoServicio(),
                 existente.prestadorId(),
                 existente.codigoPrestador(),
-                comando.nombreEs() != null && !comando.nombreEs().isBlank() ? comando.nombreEs() : existente.nombreEs(),
-                comando.nombreEn() != null && !comando.nombreEn().isBlank() ? comando.nombreEn() : existente.nombreEn(),
+                comando.nombreEs() != null && !comando.nombreEs().isBlank() ? InputSanitizer.sanitize(comando.nombreEs()) : existente.nombreEs(),
+                comando.nombreEn() != null && !comando.nombreEn().isBlank() ? InputSanitizer.sanitize(comando.nombreEn()) : existente.nombreEn(),
                 existente.slug(),
                 existente.categoria(),
                 existente.ubicacion(),
@@ -185,9 +186,9 @@ public class OfertaApplicationService implements
                 comando.nivelOcupacionActual() != null ? comando.nivelOcupacionActual() : existente.nivelOcupacionActual(),
                 comando.esSostenible() != null ? comando.esSostenible() : existente.esSostenible(),
                 existente.imagenUrl(),
-                comando.descripcionEs() != null && !comando.descripcionEs().isBlank() ? comando.descripcionEs() : existente.descripcionEs(),
-                comando.descripcionEn() != null && !comando.descripcionEn().isBlank() ? comando.descripcionEn() : existente.descripcionEn(),
-                comando.tagsAfinidad() != null && !comando.tagsAfinidad().isBlank() ? comando.tagsAfinidad() : existente.tagsAfinidad(),
+                comando.descripcionEs() != null && !comando.descripcionEs().isBlank() ? InputSanitizer.sanitize(comando.descripcionEs()) : existente.descripcionEs(),
+                comando.descripcionEn() != null && !comando.descripcionEn().isBlank() ? InputSanitizer.sanitize(comando.descripcionEn()) : existente.descripcionEn(),
+                comando.tagsAfinidad() != null && !comando.tagsAfinidad().isBlank() ? InputSanitizer.sanitize(comando.tagsAfinidad()) : existente.tagsAfinidad(),
                 Instant.now()
         );
 

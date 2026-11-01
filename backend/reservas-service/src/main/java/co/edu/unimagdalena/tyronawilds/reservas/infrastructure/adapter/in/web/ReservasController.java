@@ -1,5 +1,6 @@
 package co.edu.unimagdalena.tyronawilds.reservas.infrastructure.adapter.in.web;
 
+import co.edu.unimagdalena.tyronawilds.contratos.security.InputSanitizer;
 import co.edu.unimagdalena.tyronawilds.contratos.seguridad.SecurityHeaders;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.model.ReporteSimulacionConcurrencia;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.model.Reserva;
@@ -49,7 +50,7 @@ public class ReservasController {
     ) {
         UUID usuarioId = resolverUsuarioId(userIdHeader, request.usuarioId());
         String traceId = (correlationId != null && !correlationId.isBlank())
-                ? correlationId
+                ? InputSanitizer.sanitize(correlationId)
                 : UUID.randomUUID().toString();
 
         Reserva creada = crearReservaUseCase.crearReserva(
@@ -57,7 +58,7 @@ public class ReservasController {
                         usuarioId,
                         request.disponibilidadId(),
                         request.cantidadCupos(),
-                        request.idempotencyKey(),
+                        InputSanitizer.sanitize(request.idempotencyKey()),
                         traceId
                 )
         );
