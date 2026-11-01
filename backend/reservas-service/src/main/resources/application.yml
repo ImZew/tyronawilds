@@ -1,0 +1,36 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: reservas-service
+  datasource:
+    url: ${DB_RESERVAS_URL:jdbc:postgresql://localhost:5432/db_reservas}
+    username: ${DB_RESERVAS_USER:postgres}
+    password: ${DB_RESERVAS_PASSWORD:postgres_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
+app:
+  services:
+    oferta-url: ${OFERTA_SERVICE_URL:http://localhost:8082}
+  messaging:
+    exchange: tyronawilds.events
+    auditoria-queue: auditoria.q
+    reserva-confirmada-routing-key: reservas.confirmada
