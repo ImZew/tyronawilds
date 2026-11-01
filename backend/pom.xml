@@ -21,14 +21,14 @@
 
     <modules>
         <module>contratos-compartidos</module>
-        <!-- <module>api-gateway</module> -->
+        <module>api-gateway</module>
         <module>identidad-service</module>
         <!-- <module>oferta-service</module> -->
         <!-- <module>reservas-service</module> -->
         <!-- <module>recomendacion-service</module> -->
         <!-- <module>integracion-service</module> -->
         <!-- <module>indicadores-service</module> -->
-        <!-- <module>auditoria-service</module> -->
+        <module>auditoria-service</module>
     </modules>
 
     <properties>

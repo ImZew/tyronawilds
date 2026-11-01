@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "X-Correlation-Id"
+            allowCredentials: true
+      routes:
+        - id: identidad-service
+          uri: ${IDENTIDAD_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: oferta-service
+          uri: ${OFERTA_SERVICE_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/ofertas/**,/api/v1/prestadores/**,/api/v1/actividades/**
+
+        - id: reservas-service
+          uri: ${RESERVAS_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/v1/reservas/**,/api/v1/disponibilidad/**
+
+        - id: recomendacion-service
+          uri: ${RECOMENDACION_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/api/v1/recomendaciones/**
+
+        - id: integracion-service
+          uri: ${INTEGRACION_SERVICE_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/v1/integracion/**,/api/v1/contexto/**
+
+        - id: indicadores-service
+          uri: ${INDICADORES_SERVICE_URI:http://localhost:8086}
+          predicates:
+            - Path=/api/v1/indicadores/**
+
+        - id: auditoria-service
+          uri: ${AUDITORIA_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/api/v1/auditoria/**
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:TyronaWildsSantaMartaCaribeSierraNevadaSecretKeyForHS256Auth2026!}

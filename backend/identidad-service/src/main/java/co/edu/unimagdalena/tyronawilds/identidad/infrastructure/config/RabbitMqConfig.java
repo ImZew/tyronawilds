@@ -19,7 +19,7 @@ public class RabbitMqConfig {
     private final String auditoriaRoutingKey;
 
     public RabbitMqConfig(
-            @Value("${app.messaging.exchange:tyronawilds.eventos.exchange}") String exchangeName,
+            @Value("${app.messaging.exchange:tyronawilds.events}") String exchangeName,
             @Value("${app.messaging.auditoria-queue:auditoria.q}") String auditoriaQueueName,
             @Value("${app.messaging.auditoria-routing-key:seguridad.acceso.denegado}") String auditoriaRoutingKey
     ) {

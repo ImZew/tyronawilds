@@ -19,7 +19,7 @@ public class RabbitMqAuditoriaEventPublisherAdapter implements AuditoriaAuthEven
 
     public RabbitMqAuditoriaEventPublisherAdapter(
             RabbitTemplate rabbitTemplate,
-            @Value("${app.messaging.exchange:tyronawilds.eventos.exchange}") String exchangeName,
+            @Value("${app.messaging.exchange:tyronawilds.events}") String exchangeName,
             @Value("${app.messaging.auditoria-routing-key:seguridad.acceso.denegado}") String routingKey
     ) {
         this.rabbitTemplate = rabbitTemplate;
