@@ -3,6 +3,7 @@ package co.edu.unimagdalena.tyronawilds.reservas.infrastructure.adapter.in.web;
 import co.edu.unimagdalena.tyronawilds.contratos.errores.ApiErrorResponse;
 import co.edu.unimagdalena.tyronawilds.contratos.seguridad.SecurityHeaders;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.ConflictoConcurrenciaCupoException;
+import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.IntegridadIdentidadPasajeroException;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.RecursoReservaNoEncontradoException;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.model.Disponibilidad;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,21 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IntegridadIdentidadPasajeroException.class)
+    public ResponseEntity<ApiErrorResponse> handleIntegridadPasajero(
+            IntegridadIdentidadPasajeroException ex,
+            HttpServletRequest request
+    ) {
+        ApiErrorResponse error = ApiErrorResponse.of(
+                ex.getHttpStatus(),
+                ex.getCodigoError(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                resolverTraceId(request)
+        );
+        return ResponseEntity.status(ex.getHttpStatus()).body(error);
+    }
 
     @ExceptionHandler(ConflictoConcurrenciaCupoException.class)
     public ResponseEntity<ApiErrorResponse> handleConflictoConcurrenciaCupo(

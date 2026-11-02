@@ -110,6 +110,12 @@ export interface DisponibilidadHorario {
 export type MetodoPagoWompi = "NEQUI" | "PSE" | "TARJETA";
 export type EscenarioDemoCheckout = "EXITO_201" | "COLISION_409";
 
+export interface PasajeroExpedicion {
+  nombre: string;
+  documento: string;
+  esTitular: boolean;
+}
+
 export interface ReservaConfirmadaDto {
   id: string;
   codigoReserva: string;
@@ -120,10 +126,11 @@ export interface ReservaConfirmadaDto {
   montoTotalCop: number;
   estadoReserva: "CONFIRMADA" | "PENDIENTE_PAGO" | "CANCELADA";
   fechaOperacion: string;
-  // Metadatos extendidos para Pasaporte Oficial QR y Pasarela Wompi Sandbox
+  // Metadatos extendidos para Pasaporte Oficial QR, Nómina PNN y Pasarela Wompi Sandbox
   nombreViajero?: string;
   documentoViajero?: string;
   emailViajero?: string;
+  pasajeros?: PasajeroExpedicion[];
   nombreActividad?: string;
   fechaSalida?: string;
   horaSalida?: string;
@@ -1266,6 +1273,44 @@ function guardarDisponibilidadesLocal(lista: DisponibilidadHorario[]): void {
   }
 }
 
+export const ACOMPANANTES_DEMO_POOL: Array<{
+  nombre: string;
+  documento: string;
+}> = [
+  { nombre: "Camila Restrepo", documento: "CC 1083112045" },
+  { nombre: "Mateo Giraldo", documento: "CC 1083229180" },
+  { nombre: "Sofía Bermúdez", documento: "CC 1083340291" },
+  { nombre: "Andrés Villamizar", documento: "CC 1083451302" },
+  { nombre: "Mariana Ospina", documento: "CC 1083562413" },
+  { nombre: "Daniel Echavarría", documento: "CC 1083673524" },
+  { nombre: "Lucía Mendoza", documento: "CC 1083784635" },
+  { nombre: "Santiago Salcedo", documento: "CC 1083895746" },
+  { nombre: "Isabella Zuleta", documento: "CC 1083906857" },
+  { nombre: "Nicolás Arismendi", documento: "CC 1084017968" },
+  { nombre: "Gabriela Dangond", documento: "CC 1084128079" },
+  { nombre: "Tomás Vives", documento: "CC 1084239180" },
+  { nombre: "Juliana Barros", documento: "CC 1084350291" },
+  { nombre: "Esteban Linero", documento: "CC 1084461302" },
+  { nombre: "Elena Cotes", documento: "CC 1084572413" },
+];
+
+export function normalizarDocumentoCivil(doc?: string): string {
+  if (!doc) return "";
+  const limpio = doc.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const sinPrefijo = limpio.replace(/^(CC|CE|TI|PA|PAS|NIT)/, "");
+  return sinPrefijo ? `CC${sinPrefijo}` : limpio;
+}
+
+export function normalizarNombreCivil(nombre?: string): string {
+  if (!nombre) return "";
+  return nombre
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 const SEED_RESERVAS: ReservaConfirmadaDto[] = [
   {
     id: "70000000-0000-0000-0000-000000000001",
@@ -1280,6 +1325,18 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
     nombreViajero: "Valeria Mejía",
     documentoViajero: "CC 1082940182",
     emailViajero: "valeria@viajera.co",
+    pasajeros: [
+      {
+        nombre: "Valeria Mejía",
+        documento: "CC 1082940182",
+        esTitular: true,
+      },
+      {
+        nombre: "Camila Restrepo",
+        documento: "CC 1083112045",
+        esTitular: false,
+      },
+    ],
     nombreActividad: "PIERDE EL MAPA: CIUDAD PERDIDA (TEYUNA)",
     fechaSalida: "2026-11-15",
     horaSalida: "05:30",
@@ -1295,13 +1352,154 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
   },
 ];
 
+const CODIGOS_RESERVAS_CORRUPTOS_BLOQUEADOS = new Set([
+  "TW-2026-CBQF",
+  "TW-2026-88S9",
+  "TW-2026-442C",
+]);
+
+function construirDirectorioCivilBase(): Map<string, string> {
+  const mapa = new Map<string, string>();
+  for (const cuenta of leerDirectorioUsuarios()) {
+    if (cuenta.documento && cuenta.nombre) {
+      const docNorm = normalizarDocumentoCivil(cuenta.documento);
+      if (docNorm) {
+        mapa.set(docNorm, cuenta.nombre.trim());
+      }
+    }
+  }
+  return mapa;
+}
+
+function sanearListaReservas(
+  reservasRaw: ReservaConfirmadaDto[]
+): { saneadas: ReservaConfirmadaDto[]; huboCambios: boolean } {
+  const directorioCivil = construirDirectorioCivilBase();
+  const ocupacionPorSalida = new Set<string>();
+  const codigosVistos = new Set<string>();
+  const saneadas: ReservaConfirmadaDto[] = [];
+  let huboCambios = false;
+
+  // Ordenar de más antigua a más reciente para conservar la primera reserva legítima ante duplicados
+  const ordenadas = [...reservasRaw].sort(
+    (a, b) =>
+      new Date(a.fechaOperacion || 0).getTime() -
+      new Date(b.fechaOperacion || 0).getTime()
+  );
+
+  for (const r of ordenadas) {
+    if (!r || !r.codigoReserva) {
+      huboCambios = true;
+      continue;
+    }
+    const codigoUpper = r.codigoReserva.toUpperCase();
+    if (
+      CODIGOS_RESERVAS_CORRUPTOS_BLOQUEADOS.has(codigoUpper) ||
+      codigosVistos.has(codigoUpper)
+    ) {
+      huboCambios = true;
+      continue;
+    }
+
+    const pasajerosReserva: PasajeroExpedicion[] =
+      Array.isArray(r.pasajeros) && r.pasajeros.length > 0
+        ? r.pasajeros
+        : [
+            {
+              nombre: r.nombreViajero || "Expedicionario Titular",
+              documento: r.documentoViajero || "CC 1083019450",
+              esTitular: true,
+            },
+          ];
+
+    const claveSalidaBase =
+      r.disponibilidadId ||
+      `${r.actividadId || ""}|${r.fechaSalida || ""}|${r.horaSalida || ""}`;
+
+    let reservaInvalida = false;
+    const docsEnEstaReserva = new Set<string>();
+
+    for (const p of pasajerosReserva) {
+      const docNorm = normalizarDocumentoCivil(p.documento);
+      const nombreNorm = normalizarNombreCivil(p.nombre);
+      if (!docNorm || !nombreNorm) {
+        reservaInvalida = true;
+        break;
+      }
+
+      // 1. No duplicados dentro del mismo grupo
+      if (docsEnEstaReserva.has(docNorm)) {
+        reservaInvalida = true;
+        break;
+      }
+      docsEnEstaReserva.add(docNorm);
+
+      // 2. Consistencia de Identidad Civil (1 Documento = 1 Persona)
+      const titularConocido = directorioCivil.get(docNorm);
+      if (
+        titularConocido &&
+        normalizarNombreCivil(titularConocido) !== nombreNorm
+      ) {
+        reservaInvalida = true;
+        break;
+      }
+
+      // 3. No doble reserva confirmada en la misma salida
+      if (
+        r.estadoReserva === "CONFIRMADA" &&
+        ocupacionPorSalida.has(`${claveSalidaBase}::${docNorm}`)
+      ) {
+        reservaInvalida = true;
+        break;
+      }
+    }
+
+    if (reservaInvalida) {
+      huboCambios = true;
+      continue;
+    }
+
+    for (const p of pasajerosReserva) {
+      const docNorm = normalizarDocumentoCivil(p.documento);
+      if (!directorioCivil.has(docNorm)) {
+        directorioCivil.set(docNorm, p.nombre.trim());
+      }
+      if (r.estadoReserva === "CONFIRMADA") {
+        ocupacionPorSalida.add(`${claveSalidaBase}::${docNorm}`);
+      }
+    }
+
+    codigosVistos.add(codigoUpper);
+    saneadas.push({
+      ...r,
+      pasajeros: pasajerosReserva,
+    });
+  }
+
+  // Devolver en orden descendente (más reciente primero)
+  saneadas.sort(
+    (a, b) =>
+      new Date(b.fechaOperacion || 0).getTime() -
+      new Date(a.fechaOperacion || 0).getTime()
+  );
+
+  return { saneadas, huboCambios };
+}
+
 function leerReservasLocal(): ReservaConfirmadaDto[] {
   if (typeof window === "undefined") return SEED_RESERVAS;
   try {
+    // Limpiar llaves heredadas antiguas si existen
+    window.localStorage.removeItem("tyronawilds_b2b_reservas_v1");
     const raw = window.localStorage.getItem(LS_RESERVAS_KEY);
     if (!raw) return SEED_RESERVAS;
     const parsed = JSON.parse(raw) as ReservaConfirmadaDto[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_RESERVAS;
+    if (!Array.isArray(parsed) || parsed.length === 0) return SEED_RESERVAS;
+    const { saneadas, huboCambios } = sanearListaReservas(parsed);
+    if (huboCambios) {
+      window.localStorage.setItem(LS_RESERVAS_KEY, JSON.stringify(saneadas));
+    }
+    return saneadas.length > 0 ? saneadas : SEED_RESERVAS;
   } catch {
     return SEED_RESERVAS;
   }
@@ -1310,11 +1508,57 @@ function leerReservasLocal(): ReservaConfirmadaDto[] {
 function guardarReservasLocal(lista: ReservaConfirmadaDto[]): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(LS_RESERVAS_KEY, JSON.stringify(lista));
+    const { saneadas } = sanearListaReservas(lista);
+    window.localStorage.setItem(LS_RESERVAS_KEY, JSON.stringify(saneadas));
     window.dispatchEvent(new Event("tyronawilds-reservas-change"));
   } catch {
     // Ignorar
   }
+}
+
+export function restablecerReservasDePruebaTurista(): ReservaConfirmadaDto[] {
+  if (typeof window === "undefined") return SEED_RESERVAS;
+  const sesion = obtenerSesionActual();
+  const actuales = leerReservasLocal();
+
+  let restantes: ReservaConfirmadaDto[];
+  if (!sesion) {
+    restantes = [...SEED_RESERVAS];
+  } else if (
+    sesion.userId === "101" ||
+    sesion.email.toLowerCase() === "sebastian@viajero.co"
+  ) {
+    // Turista 1 (Sebastián Abaonza): su estado inicial de evaluación es billetera vacía (0 reservas)
+    restantes = actuales.filter(
+      (r) =>
+        r.usuarioId !== "101" &&
+        (r.emailViajero || "").toLowerCase() !== "sebastian@viajero.co"
+    );
+    if (restantes.length === 0) {
+      restantes = [...SEED_RESERVAS];
+    }
+  } else if (
+    sesion.userId === "102" ||
+    sesion.email.toLowerCase() === "valeria@viajera.co"
+  ) {
+    // Turista 2 (Valeria Mejía): su estado inicial de evaluación es únicamente TW-2026-901A
+    const otras = actuales.filter(
+      (r) =>
+        r.usuarioId !== "102" &&
+        (r.emailViajero || "").toLowerCase() !== "valeria@viajera.co"
+    );
+    restantes = [...SEED_RESERVAS, ...otras];
+  } else {
+    restantes = actuales.filter(
+      (r) =>
+        r.usuarioId !== sesion.userId &&
+        (r.emailViajero || "").toLowerCase() !== sesion.email.toLowerCase()
+    );
+  }
+
+  guardarDisponibilidadesLocal(SEED_DISPONIBILIDADES);
+  guardarReservasLocal(restantes);
+  return restantes;
 }
 
 const SEED_AUDITORIA: RegistroAuditoria[] = [
@@ -1482,10 +1726,138 @@ export interface DatosCheckoutWompi {
   nombreViajero: string;
   documentoViajero: string;
   emailViajero: string;
+  pasajeros?: PasajeroExpedicion[];
   metodoPago: MetodoPagoWompi;
   detalleMetodoPago: string;
   escenarioDemo?: EscenarioDemoCheckout;
   actividad?: ActividadTuristica;
+}
+
+export interface ResultadoValidacionIntegridadPasajeros {
+  valido: boolean;
+  httpStatus?: 409 | 422;
+  codigoError?:
+    | "DOCUMENTO_DUPLICADO_EN_GRUPO"
+    | "IDENTIDAD_INCONSISTENTE"
+    | "PASAJERO_YA_REGISTRADO_EN_SALIDA";
+  mensajeError?: string;
+  indicePasajeroConflicto?: number;
+}
+
+export function validarIntegridadGrupoPasajeros(
+  pasajeros: PasajeroExpedicion[],
+  disponibilidad?: DisponibilidadHorario | null
+): ResultadoValidacionIntegridadPasajeros {
+  // 1. Unicidad de Documento dentro de la misma reserva
+  const vistosEnGrupo = new Set<string>();
+  for (let i = 0; i < pasajeros.length; i++) {
+    const p = pasajeros[i];
+    const docNorm = normalizarDocumentoCivil(p.documento);
+    if (!docNorm) continue;
+    if (vistosEnGrupo.has(docNorm)) {
+      return {
+        valido: false,
+        httpStatus: 422,
+        codigoError: "DOCUMENTO_DUPLICADO_EN_GRUPO",
+        mensajeError:
+          "DOCUMENTO DUPLICADO EN EL GRUPO: Cada expedicionario debe registrar un documento de identidad único.",
+        indicePasajeroConflicto: i,
+      };
+    }
+    vistosEnGrupo.add(docNorm);
+  }
+
+  // Construir directorio de identidad civil (usuarios registrados + reservas existentes)
+  const directorioCivil = construirDirectorioCivilBase();
+  const reservasExistentes = leerReservasLocal();
+  for (const r of reservasExistentes) {
+    const listaPax: PasajeroExpedicion[] =
+      Array.isArray(r.pasajeros) && r.pasajeros.length > 0
+        ? r.pasajeros
+        : r.documentoViajero && r.nombreViajero
+        ? [
+            {
+              nombre: r.nombreViajero,
+              documento: r.documentoViajero,
+              esTitular: true,
+            },
+          ]
+        : [];
+    for (const pr of listaPax) {
+      const dNorm = normalizarDocumentoCivil(pr.documento);
+      if (dNorm && pr.nombre && !directorioCivil.has(dNorm)) {
+        directorioCivil.set(dNorm, pr.nombre.trim());
+      }
+    }
+  }
+
+  // 2. Consistencia de Identidad Civil (1 Documento = 1 Persona)
+  for (let i = 0; i < pasajeros.length; i++) {
+    const p = pasajeros[i];
+    const docNorm = normalizarDocumentoCivil(p.documento);
+    const nombreNorm = normalizarNombreCivil(p.nombre);
+    const nombreOficial = directorioCivil.get(docNorm);
+    if (
+      nombreOficial &&
+      normalizarNombreCivil(nombreOficial) !== nombreNorm
+    ) {
+      return {
+        valido: false,
+        httpStatus: 422,
+        codigoError: "IDENTIDAD_INCONSISTENTE",
+        mensajeError: `El documento ${p.documento.trim()} ya se encuentra registrado en el sistema bajo el titular ${nombreOficial}. No se permite asociar otra identidad a la misma cédula.`,
+        indicePasajeroConflicto: i,
+      };
+    }
+  }
+
+  // 3. Bloqueo de Doble Reserva en la Misma Salida (HTTP 409 PASAJERO_YA_REGISTRADO_EN_SALIDA)
+  if (disponibilidad) {
+    const docsConfirmadosEnSalida = new Set<string>();
+    const horaCorta = disponibilidad.horaInicio.slice(0, 5);
+    for (const r of reservasExistentes) {
+      if (r.estadoReserva !== "CONFIRMADA") continue;
+      const mismaSalida =
+        r.disponibilidadId === disponibilidad.id ||
+        (r.actividadId === disponibilidad.actividadId &&
+          r.fechaSalida === disponibilidad.fecha &&
+          (r.horaSalida || "").slice(0, 5) === horaCorta);
+      if (!mismaSalida) continue;
+
+      const listaPax: PasajeroExpedicion[] =
+        Array.isArray(r.pasajeros) && r.pasajeros.length > 0
+          ? r.pasajeros
+          : r.documentoViajero
+          ? [
+              {
+                nombre: r.nombreViajero || "",
+                documento: r.documentoViajero,
+                esTitular: true,
+              },
+            ]
+          : [];
+      for (const pr of listaPax) {
+        const dNorm = normalizarDocumentoCivil(pr.documento);
+        if (dNorm) docsConfirmadosEnSalida.add(dNorm);
+      }
+    }
+
+    for (let i = 0; i < pasajeros.length; i++) {
+      const p = pasajeros[i];
+      const docNorm = normalizarDocumentoCivil(p.documento);
+      if (docsConfirmadosEnSalida.has(docNorm)) {
+        return {
+          valido: false,
+          httpStatus: 409,
+          codigoError: "PASAJERO_YA_REGISTRADO_EN_SALIDA",
+          mensajeError: `RESERVA DUPLICADA EN SALIDA: El viajero con documento ${p.documento.trim()} ya cuenta con un cupo confirmado en esta misma fecha y horario de expedición.`,
+          indicePasajeroConflicto: i,
+        };
+      }
+    }
+  }
+
+  return { valido: true };
 }
 
 export interface RespuestaCrearReserva {
@@ -1520,6 +1892,53 @@ export async function crearReservaTransaccional(
   const inicio = performance.now();
   const refWompi = generarReferenciaWompi();
   const escenario = datosCheckout?.escenarioDemo || "EXITO_201";
+  const sesionActiva = obtenerSesionActual();
+
+  const pasajerosGrupo: PasajeroExpedicion[] =
+    datosCheckout?.pasajeros && datosCheckout.pasajeros.length > 0
+      ? datosCheckout.pasajeros
+      : [
+          {
+            nombre:
+              datosCheckout?.nombreViajero ||
+              sesionActiva?.nombre ||
+              "Sebastián Abaonza",
+            documento:
+              datosCheckout?.documentoViajero ||
+              sesionActiva?.documento ||
+              "CC 1083019450",
+            esTitular: true,
+          },
+        ];
+
+  // Validación obligatoria de las 3 reglas de integridad de dominio antes de procesar
+  const validacionDominio = validarIntegridadGrupoPasajeros(
+    pasajerosGrupo,
+    disponibilidad
+  );
+  if (!validacionDominio.valido) {
+    const latenciaError = Math.max(9, Math.round(performance.now() - inicio));
+    registrarEventoAuditoriaLocal({
+      id: crypto.randomUUID(),
+      usuarioId: sesionActiva?.userId || actor.usuarioId,
+      rol: sesionActiva?.rol || actor.rol,
+      accion: `BLOQUEO_${validacionDominio.codigoError}`,
+      recurso: `reservas-service:/api/v1/reservas/${disponibilidad.id}`,
+      resultado: "DENEGADA",
+      motivo: `${validacionDominio.mensajeError} Preautorización Wompi ${refWompi} anulada ($0 debitados).`,
+      ipOrigen: "127.0.0.1",
+      traceId: `tw-id-${Date.now().toString(36)}`,
+      fechaOperacion: new Date().toISOString(),
+    });
+    return {
+      exito: false,
+      httpStatus: validacionDominio.httpStatus || 422,
+      latenciaMs: latenciaError,
+      errorCodigo: validacionDominio.codigoError,
+      errorMensaje: validacionDominio.mensajeError,
+      referenciaWompiReversada: refWompi,
+    };
+  }
 
   // ESCENARIO 2: Simulación explícita de colisión de último cupo (409 CONFLICT) con reverso automático Wompi
   if (escenario === "COLISION_409") {
@@ -1575,18 +1994,22 @@ export async function crearReservaTransaccional(
   const montoTotal = disponibilidad.precioUnitarioCop * cantidadCupos;
   const tasaAmbiental = Math.round(montoTotal * 0.12);
 
-  const sesionActiva = obtenerSesionActual();
   const enriquecerReserva = (base: ReservaConfirmadaDto): ReservaConfirmadaDto => ({
     ...base,
     usuarioId: sesionActiva?.userId || actor.usuarioId,
     nombreViajero:
-      datosCheckout?.nombreViajero || sesionActiva?.nombre || "Sebastián Abaonza",
+      pasajerosGrupo[0]?.nombre ||
+      datosCheckout?.nombreViajero ||
+      sesionActiva?.nombre ||
+      "Sebastián Abaonza",
     documentoViajero:
+      pasajerosGrupo[0]?.documento ||
       datosCheckout?.documentoViajero ||
       sesionActiva?.documento ||
       "CC 1083019450",
     emailViajero:
       datosCheckout?.emailViajero || sesionActiva?.email || actor.email,
+    pasajeros: pasajerosGrupo,
     nombreActividad: actividadRef.nombreEs || disponibilidad.nombreActividad,
     fechaSalida: disponibilidad.fecha,
     horaSalida: disponibilidad.horaInicio.slice(0, 5),
@@ -1617,6 +2040,7 @@ export async function crearReservaTransaccional(
           usuarioId: actor.usuarioId,
           disponibilidadId: disponibilidad.id,
           cantidadCupos,
+          pasajeros: pasajerosGrupo,
         }),
         signal: controller.signal,
       });
@@ -1642,16 +2066,16 @@ export async function crearReservaTransaccional(
         };
       }
 
-      if (response.status === 409) {
+      if (response.status === 409 || response.status === 422) {
         const err = await response.json();
         return {
           exito: false,
-          httpStatus: 409,
+          httpStatus: response.status,
           latenciaMs,
-          errorCodigo: err.codigo || "CONFLICTO_CUPO_AGOTADO",
+          errorCodigo: err.codigo || "CONFLICTO_RESERVA",
           errorMensaje:
             err.mensaje ||
-            "No hay suficientes cupos disponibles en esta fecha de salida.",
+            "No fue posible procesar la reserva por reglas de integridad o cupo.",
           horariosAlternativos:
             err.detalles?.horariosAlternativosSugeridos ||
             "Salida del 2026-11-16 a las 06:00 AM (14 cupos disponibles)",
