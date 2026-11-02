@@ -92,6 +92,7 @@ export interface ActividadTuristica {
   descripcionEs: string;
   descripcionEn: string;
   tagsAfinidad: string;
+  fechaActualizacion?: string;
 }
 
 export interface DisponibilidadHorario {
@@ -550,6 +551,155 @@ async function fetchConRespaldo<T>(
   };
 }
 
+const LS_OFERTAS_KEY = "tyronawilds_b2b_ofertas_v1";
+const LS_DISPONIBILIDAD_KEY = "tyronawilds_b2b_disponibilidad_v1";
+const LS_RESERVAS_KEY = "tyronawilds_b2b_reservas_v1";
+const LS_AUDITORIA_KEY = "tyronawilds_b2b_auditoria_v1";
+
+function leerCatalogoLocal(): ActividadTuristica[] {
+  if (typeof window === "undefined") return SEED_ACTIVIDADES;
+  try {
+    const raw = window.localStorage.getItem(LS_OFERTAS_KEY);
+    if (!raw) return SEED_ACTIVIDADES;
+    const parsed = JSON.parse(raw) as ActividadTuristica[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_ACTIVIDADES;
+  } catch {
+    return SEED_ACTIVIDADES;
+  }
+}
+
+function guardarCatalogoLocal(lista: ActividadTuristica[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LS_OFERTAS_KEY, JSON.stringify(lista));
+  } catch {
+    // Ignorar errores de cuota
+  }
+}
+
+function leerDisponibilidadesLocal(): DisponibilidadHorario[] {
+  if (typeof window === "undefined") return SEED_DISPONIBILIDADES;
+  try {
+    const raw = window.localStorage.getItem(LS_DISPONIBILIDAD_KEY);
+    if (!raw) return SEED_DISPONIBILIDADES;
+    const parsed = JSON.parse(raw) as DisponibilidadHorario[];
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed
+      : SEED_DISPONIBILIDADES;
+  } catch {
+    return SEED_DISPONIBILIDADES;
+  }
+}
+
+function guardarDisponibilidadesLocal(lista: DisponibilidadHorario[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LS_DISPONIBILIDAD_KEY, JSON.stringify(lista));
+  } catch {
+    // Ignorar errores de cuota
+  }
+}
+
+const SEED_RESERVAS: ReservaConfirmadaDto[] = [
+  {
+    id: "70000000-0000-0000-0000-000000000001",
+    codigoReserva: "TW-2026-901A",
+    usuarioId: "44444444-4444-4444-4444-444444444444",
+    disponibilidadId: "d0000000-0000-0000-0000-000000000001",
+    actividadId: "a0000000-0000-0000-0000-000000000009",
+    cantidadCupos: 2,
+    montoTotalCop: 3700000,
+    estadoReserva: "CONFIRMADA",
+    fechaOperacion: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: "70000000-0000-0000-0000-000000000002",
+    codigoReserva: "TW-2026-442C",
+    usuarioId: "44444444-4444-4444-4444-444444444444",
+    disponibilidadId: "d0000000-0000-0000-0000-000000000005",
+    actividadId: "a0000000-0000-0000-0000-000000000003",
+    cantidadCupos: 3,
+    montoTotalCop: 630000,
+    estadoReserva: "CONFIRMADA",
+    fechaOperacion: new Date(Date.now() - 1800000).toISOString(),
+  },
+];
+
+function leerReservasLocal(): ReservaConfirmadaDto[] {
+  if (typeof window === "undefined") return SEED_RESERVAS;
+  try {
+    const raw = window.localStorage.getItem(LS_RESERVAS_KEY);
+    if (!raw) return SEED_RESERVAS;
+    const parsed = JSON.parse(raw) as ReservaConfirmadaDto[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_RESERVAS;
+  } catch {
+    return SEED_RESERVAS;
+  }
+}
+
+function guardarReservasLocal(lista: ReservaConfirmadaDto[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LS_RESERVAS_KEY, JSON.stringify(lista));
+  } catch {
+    // Ignorar
+  }
+}
+
+const SEED_AUDITORIA: RegistroAuditoria[] = [
+  {
+    id: "e9900000-0000-0000-0000-000000000001",
+    usuarioId: "33333333-3333-3333-3333-333333333333",
+    rol: "PRESTADOR",
+    accion: "MODIFICAR_OFERTA_AJENA",
+    recurso: "oferta-service:/api/v1/prestadores/77/servicios/9",
+    resultado: "DENEGADA",
+    motivo:
+      "Violación de propiedad RNT (Secuencia 4.1): prestadorId (41) != titular del servicio #9 (77)",
+    ipOrigen: "127.0.0.1",
+    traceId: "trace-secuencia-4-1-seed",
+    fechaOperacion: new Date(Date.now() - 240000).toISOString(),
+  },
+  {
+    id: "e9900000-0000-0000-0000-000000000002",
+    usuarioId: "44444444-4444-4444-4444-444444444444",
+    rol: "TURISTA",
+    accion: "RESERVA_CONFIRMADA",
+    recurso: "reservas-service:/api/v1/reservas/TW-2026-901A",
+    resultado: "EXITOSA",
+    motivo:
+      "Pasaporte emitido Ciudad Perdida (Teyuna), cupos=2, restantes=3",
+    ipOrigen: "INTERNO_RABBITMQ",
+    traceId: "trace-reserva-acid-01",
+    fechaOperacion: new Date(Date.now() - 120000).toISOString(),
+  },
+];
+
+function leerAuditoriaLocal(): RegistroAuditoria[] {
+  if (typeof window === "undefined") return SEED_AUDITORIA;
+  try {
+    const raw = window.localStorage.getItem(LS_AUDITORIA_KEY);
+    if (!raw) return SEED_AUDITORIA;
+    const parsed = JSON.parse(raw) as RegistroAuditoria[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_AUDITORIA;
+  } catch {
+    return SEED_AUDITORIA;
+  }
+}
+
+function registrarEventoAuditoriaLocal(evento: RegistroAuditoria): void {
+  if (typeof window === "undefined") return;
+  try {
+    const actual = leerAuditoriaLocal();
+    window.localStorage.setItem(
+      LS_AUDITORIA_KEY,
+      JSON.stringify([evento, ...actual].slice(0, 50))
+    );
+  } catch {
+    // Ignorar
+  }
+}
+
 export async function obtenerCatalogoOfertas(): Promise<
   ApiCallResult<ActividadTuristica[]>
 > {
@@ -559,7 +709,7 @@ export async function obtenerCatalogoOfertas(): Promise<
       "http://localhost:8082/api/v1/ofertas",
     ],
     { method: "GET" },
-    () => SEED_ACTIVIDADES
+    () => leerCatalogoLocal()
   );
 }
 
@@ -648,10 +798,12 @@ export async function obtenerDisponibilidades(
       `http://localhost:8083/api/v1/disponibilidad${query}`,
     ],
     { method: "GET" },
-    () =>
-      actividadId
-        ? SEED_DISPONIBILIDADES.filter((d) => d.actividadId === actividadId)
-        : SEED_DISPONIBILIDADES
+    () => {
+      const todas = leerDisponibilidadesLocal();
+      return actividadId
+        ? todas.filter((d) => d.actividadId === actividadId)
+        : todas;
+    }
   );
 }
 
@@ -744,21 +896,47 @@ export async function crearReservaTransaccional(
   }
 
   const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const nuevaReserva: ReservaConfirmadaDto = {
+    id: crypto.randomUUID(),
+    codigoReserva: `TW-2026-${randomCode}`,
+    usuarioId: actor.usuarioId,
+    disponibilidadId: disponibilidad.id,
+    actividadId: disponibilidad.actividadId,
+    cantidadCupos,
+    montoTotalCop: disponibilidad.precioUnitarioCop * cantidadCupos,
+    estadoReserva: "CONFIRMADA",
+    fechaOperacion: new Date().toISOString(),
+  };
+
+  // Sincronizar con localStorage para que el Portal B2B (/operadores) refleje la reserva y el descuento de cupos
+  const dispActuales = leerDisponibilidadesLocal().map((d) =>
+    d.id === disponibilidad.id
+      ? {
+          ...d,
+          cuposDisponibles: Math.max(0, d.cuposDisponibles - cantidadCupos),
+        }
+      : d
+  );
+  guardarDisponibilidadesLocal(dispActuales);
+  guardarReservasLocal([nuevaReserva, ...leerReservasLocal()]);
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: actor.usuarioId,
+    rol: actor.rol,
+    accion: "RESERVA_CONFIRMADA",
+    recurso: `reservas-service:/api/v1/reservas/${nuevaReserva.codigoReserva}`,
+    resultado: "EXITOSA",
+    motivo: `Pasaporte emitido (${nuevaReserva.codigoReserva}), cupos=${cantidadCupos}, actividad=${disponibilidad.nombreActividad}`,
+    ipOrigen: "127.0.0.1",
+    traceId: `tw-res-${Date.now().toString(36)}`,
+    fechaOperacion: nuevaReserva.fechaOperacion,
+  });
+
   return {
     exito: true,
     httpStatus: 201,
     latenciaMs,
-    reserva: {
-      id: crypto.randomUUID(),
-      codigoReserva: `TW-2026-${randomCode}`,
-      usuarioId: actor.usuarioId,
-      disponibilidadId: disponibilidad.id,
-      actividadId: disponibilidad.actividadId,
-      cantidadCupos,
-      montoTotalCop: disponibilidad.precioUnitarioCop * cantidadCupos,
-      estadoReserva: "CONFIRMADA",
-      fechaOperacion: new Date().toISOString(),
-    },
+    reserva: nuevaReserva,
   };
 }
 
@@ -1032,34 +1210,7 @@ export async function obtenerRegistrosAuditoria(): Promise<
       `${GATEWAY_URL}/api/v1/auditoria`,
     ],
     { method: "GET" },
-    () => [
-      {
-        id: "e9900000-0000-0000-0000-000000000001",
-        usuarioId: "33333333-3333-3333-3333-333333333333",
-        rol: "PRESTADOR",
-        accion: "MODIFICAR_OFERTA_AJENA",
-        recurso: "oferta-service:/api/v1/prestadores/77/servicios/9",
-        resultado: "DENEGADA",
-        motivo:
-          "Violación de propiedad (Secuencia 4.1): prestadorId (41) != dueño del servicio 9 (77)",
-        ipOrigen: "127.0.0.1",
-        traceId: "trace-secuencia-4-1-seed",
-        fechaOperacion: new Date().toISOString(),
-      },
-      {
-        id: "e9900000-0000-0000-0000-000000000002",
-        usuarioId: "44444444-4444-4444-4444-444444444444",
-        rol: "TURISTA",
-        accion: "RESERVA_CONFIRMADA",
-        recurso: "reservas-service:/api/v1/reservas/TW-9012A",
-        resultado: "EXITOSA",
-        motivo:
-          "Reserva confirmada Ciudad Perdida (Teyuna), cupos=2, restantes=3",
-        ipOrigen: "INTERNO_RABBITMQ",
-        traceId: "trace-reserva-acid-01",
-        fechaOperacion: new Date(Date.now() - 120000).toISOString(),
-      },
-    ]
+    () => leerAuditoriaLocal()
   );
 }
 
@@ -1074,6 +1225,459 @@ export async function obtenerIndicadoresCapacidad(): Promise<
     { method: "GET" },
     () => SEED_INDICADORES
   );
+}
+
+// =============================================================================
+// Portal B2B de Operadores Turísticos & Gobernanza Ambiental (/operadores)
+// =============================================================================
+
+export interface PayloadCrearActividadB2B {
+  codigoServicio: number;
+  nombreEs: string;
+  nombreEn: string;
+  slug: string;
+  categoria: string;
+  ubicacion: string;
+  coordenadasHud: string;
+  altitudMsnm: number;
+  precioCop: number;
+  capacidadMaxima: number;
+  esSostenible: boolean;
+  imagenUrl: string;
+  descripcionEs: string;
+  descripcionEn: string;
+  tagsAfinidad: string;
+}
+
+export interface PayloadActualizarActividadB2B {
+  nombreEs?: string;
+  nombreEn?: string;
+  categoria?: string;
+  precioCop?: number;
+  capacidadMaxima?: number;
+  nivelOcupacionActual?: number;
+  esSostenible?: boolean;
+  descripcionEs?: string;
+  descripcionEn?: string;
+  tagsAfinidad?: string;
+}
+
+export interface ResultadoOperacionB2B<T> {
+  exito: boolean;
+  httpStatus: number;
+  latenciaMs: number;
+  modoConexion: "BACKEND_GATEWAY_LIVE" | "FALLBACK_RESILIENTE";
+  data?: T;
+  errorCodigo?: string;
+  errorMensaje?: string;
+  traceId: string;
+}
+
+export async function crearActividad(
+  payload: PayloadCrearActividadB2B,
+  actor: ActorSesion
+): Promise<ResultadoOperacionB2B<ActividadTuristica>> {
+  const inicio = performance.now();
+  const traceId = `tw-b2b-create-${Date.now().toString(36)}`;
+  const headers = {
+    ...construirHeadersSeguridad(actor),
+    "X-Correlation-Id": traceId,
+  };
+
+  if (actor.rol !== "PRESTADOR" && actor.rol !== "ADMIN") {
+    const latenciaMs = Math.max(4, Math.round(performance.now() - inicio));
+    registrarEventoAuditoriaLocal({
+      id: crypto.randomUUID(),
+      usuarioId: actor.usuarioId,
+      rol: actor.rol,
+      accion: "CREAR_ACTIVIDAD_SIN_PERMISO",
+      recurso: "oferta-service:/api/v1/actividades",
+      resultado: "DENEGADA",
+      motivo: `El rol ${actor.rol} no cuenta con licencia RNT activa para publicar expediciones comerciales.`,
+      ipOrigen: "127.0.0.1",
+      traceId,
+      fechaOperacion: new Date().toISOString(),
+    });
+    return {
+      exito: false,
+      httpStatus: 403,
+      latenciaMs,
+      modoConexion: "FALLBACK_RESILIENTE",
+      errorCodigo: "ACCESO_DENEGADO",
+      errorMensaje:
+        "HTTP 403 FORBIDDEN — ACCESO DENEGADO: Se requiere cuenta de Operador RNT Titular para registrar nuevas expediciones.",
+      traceId,
+    };
+  }
+
+  const urls = [
+    `${GATEWAY_URL}/api/v1/actividades`,
+    "http://localhost:8082/api/v1/actividades",
+  ];
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2200);
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      const latenciaMs = Math.max(1, Math.round(performance.now() - inicio));
+      if (response.ok) {
+        const creada = (await response.json()) as ActividadTuristica;
+        const conFecha = {
+          ...creada,
+          fechaActualizacion: new Date().toISOString(),
+        };
+        const catalogoActual = leerCatalogoLocal();
+        guardarCatalogoLocal([conFecha, ...catalogoActual]);
+        return {
+          exito: true,
+          httpStatus: response.status,
+          latenciaMs,
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+          data: conFecha,
+          traceId,
+        };
+      }
+    } catch {
+      // Continúa a respaldo híbrido sincronizado en localStorage
+    }
+  }
+
+  const latenciaMs = Math.max(7, Math.round(performance.now() - inicio));
+  const nueva: ActividadTuristica = {
+    id: crypto.randomUUID(),
+    codigoServicio: payload.codigoServicio,
+    prestadorId:
+      actor.prestadorId || "00000000-0000-0000-0000-000000000077",
+    codigoPrestador: actor.codigoPrestador || 77,
+    nombreEs: payload.nombreEs,
+    nombreEn: payload.nombreEn,
+    slug: payload.slug,
+    categoria: payload.categoria,
+    ubicacion: payload.ubicacion,
+    coordenadasHud: payload.coordenadasHud,
+    altitudMsnm: payload.altitudMsnm,
+    precioCop: payload.precioCop,
+    capacidadMaxima: payload.capacidadMaxima,
+    nivelOcupacionActual: 18,
+    esSostenible: payload.esSostenible,
+    imagenUrl: payload.imagenUrl,
+    descripcionEs: payload.descripcionEs,
+    descripcionEn: payload.descripcionEn,
+    tagsAfinidad: payload.tagsAfinidad,
+    fechaActualizacion: new Date().toISOString(),
+  };
+
+  const catalogoActual = leerCatalogoLocal();
+  guardarCatalogoLocal([nueva, ...catalogoActual]);
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: actor.usuarioId,
+    rol: actor.rol,
+    accion: "PUBLICAR_EXPEDICION_RNT",
+    recurso: `oferta-service:/api/v1/actividades/${nueva.codigoServicio}`,
+    resultado: "EXITOSA",
+    motivo: `Nueva expedición publicada: ${nueva.nombreEs} (Operador #${nueva.codigoPrestador})`,
+    ipOrigen: "127.0.0.1",
+    traceId,
+    fechaOperacion: nueva.fechaActualizacion!,
+  });
+
+  return {
+    exito: true,
+    httpStatus: 201,
+    latenciaMs,
+    modoConexion: "FALLBACK_RESILIENTE",
+    data: nueva,
+    traceId,
+  };
+}
+
+export async function actualizarServicioPrestador(
+  prestadorId: number | string,
+  servicioId: number | string,
+  payload: PayloadActualizarActividadB2B,
+  actor: ActorSesion
+): Promise<ResultadoOperacionB2B<ActividadTuristica>> {
+  const inicio = performance.now();
+  const traceId = `tw-b2b-edit-${Date.now().toString(36)}`;
+  const headers = {
+    ...construirHeadersSeguridad(actor),
+    "X-Correlation-Id": traceId,
+  };
+
+  const urls = [
+    `${GATEWAY_URL}/api/v1/prestadores/${prestadorId}/servicios/${servicioId}`,
+    `http://localhost:8082/api/v1/prestadores/${prestadorId}/servicios/${servicioId}`,
+  ];
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2200);
+      const response = await fetch(url, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      const latenciaMs = Math.max(1, Math.round(performance.now() - inicio));
+      if (response.status === 403) {
+        const err = await response.json();
+        return {
+          exito: false,
+          httpStatus: 403,
+          latenciaMs,
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+          errorCodigo: err.codigo || "ACCESO_DENEGADO",
+          errorMensaje:
+            "HTTP 403 FORBIDDEN — ACCESO DENEGADO: No eres el titular registrado de este servicio RNT.",
+          traceId: err.traceId || traceId,
+        };
+      }
+
+      if (response.ok) {
+        const actualizada = (await response.json()) as ActividadTuristica;
+        const conTimestamp: ActividadTuristica = {
+          ...actualizada,
+          fechaActualizacion: new Date().toISOString(),
+        };
+        const lista = leerCatalogoLocal().map((a) =>
+          a.codigoServicio === Number(servicioId) || a.id === String(servicioId)
+            ? conTimestamp
+            : a
+        );
+        guardarCatalogoLocal(lista);
+        return {
+          exito: true,
+          httpStatus: 200,
+          latenciaMs,
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+          data: conTimestamp,
+          traceId,
+        };
+      }
+    } catch {
+      // Continúa a verificación determinista local con persistencia en localStorage
+    }
+  }
+
+  const latenciaMs = Math.max(6, Math.round(performance.now() - inicio));
+  const catalogo = leerCatalogoLocal();
+  const objetivo = catalogo.find(
+    (a) =>
+      a.codigoServicio === Number(servicioId) || a.id === String(servicioId)
+  );
+
+  const esPropietario =
+    actor.rol === "ADMIN" ||
+    (actor.rol === "PRESTADOR" &&
+      objetivo &&
+      actor.codigoPrestador === objetivo.codigoPrestador);
+
+  if (!esPropietario || !objetivo) {
+    registrarEventoAuditoriaLocal({
+      id: crypto.randomUUID(),
+      usuarioId: actor.usuarioId,
+      rol: actor.rol,
+      accion: "MODIFICAR_OFERTA_AJENA",
+      recurso: `oferta-service:/api/v1/prestadores/${prestadorId}/servicios/${servicioId}`,
+      resultado: "DENEGADA",
+      motivo: `HTTP 403 FORBIDDEN: Operador activo (${actor.codigoPrestador ?? actor.rol}) intentó modificar el servicio RNT #${servicioId} perteneciente al Operador #${objetivo?.codigoPrestador ?? prestadorId}.`,
+      ipOrigen: "127.0.0.1",
+      traceId,
+      fechaOperacion: new Date().toISOString(),
+    });
+
+    return {
+      exito: false,
+      httpStatus: 403,
+      latenciaMs,
+      modoConexion: "FALLBACK_RESILIENTE",
+      errorCodigo: "ACCESO_DENEGADO",
+      errorMensaje:
+        "HTTP 403 FORBIDDEN — ACCESO DENEGADO: No eres el titular registrado de este servicio RNT.",
+      traceId,
+    };
+  }
+
+  const actualizada: ActividadTuristica = {
+    ...objetivo,
+    nombreEs: payload.nombreEs ?? objetivo.nombreEs,
+    nombreEn: payload.nombreEn ?? objetivo.nombreEn,
+    categoria: payload.categoria ?? objetivo.categoria,
+    precioCop: payload.precioCop ?? objetivo.precioCop,
+    capacidadMaxima: payload.capacidadMaxima ?? objetivo.capacidadMaxima,
+    nivelOcupacionActual:
+      payload.nivelOcupacionActual ?? objetivo.nivelOcupacionActual,
+    esSostenible: payload.esSostenible ?? objetivo.esSostenible,
+    descripcionEs: payload.descripcionEs ?? objetivo.descripcionEs,
+    descripcionEn: payload.descripcionEn ?? objetivo.descripcionEn,
+    tagsAfinidad: payload.tagsAfinidad ?? objetivo.tagsAfinidad,
+    fechaActualizacion: new Date().toISOString(),
+  };
+
+  const nuevaLista = catalogo.map((a) =>
+    a.id === objetivo.id ? actualizada : a
+  );
+  guardarCatalogoLocal(nuevaLista);
+
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: actor.usuarioId,
+    rol: actor.rol,
+    accion: "ACTUALIZAR_SERVICIO_PROPIO",
+    recurso: `oferta-service:/api/v1/prestadores/${prestadorId}/servicios/${servicioId}`,
+    resultado: "EXITOSA",
+    motivo: `Titular #${actor.codigoPrestador} actualizó servicio #${servicioId} (${actualizada.nombreEs}) -> ${actualizada.precioCop} COP`,
+    ipOrigen: "127.0.0.1",
+    traceId,
+    fechaOperacion: actualizada.fechaActualizacion!,
+  });
+
+  return {
+    exito: true,
+    httpStatus: 200,
+    latenciaMs,
+    modoConexion: "FALLBACK_RESILIENTE",
+    data: actualizada,
+    traceId,
+  };
+}
+
+export interface PayloadCrearDisponibilidadB2B {
+  actividadId: string;
+  nombreActividad: string;
+  fecha: string;
+  horaInicio: string;
+  capacidadTotal: number;
+  precioUnitarioCop: number;
+}
+
+export async function crearDisponibilidad(
+  payload: PayloadCrearDisponibilidadB2B,
+  actor: ActorSesion
+): Promise<ResultadoOperacionB2B<DisponibilidadHorario>> {
+  const inicio = performance.now();
+  const traceId = `tw-b2b-slot-${Date.now().toString(36)}`;
+  const headers = {
+    ...construirHeadersSeguridad(actor),
+    "X-Correlation-Id": traceId,
+  };
+
+  const urls = [
+    `${GATEWAY_URL}/api/v1/disponibilidad`,
+    "http://localhost:8083/api/v1/disponibilidad",
+  ];
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2200);
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      const latenciaMs = Math.max(1, Math.round(performance.now() - inicio));
+      if (response.ok) {
+        const creado = (await response.json()) as DisponibilidadHorario;
+        const actuales = leerDisponibilidadesLocal();
+        guardarDisponibilidadesLocal([creado, ...actuales]);
+        return {
+          exito: true,
+          httpStatus: response.status,
+          latenciaMs,
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+          data: creado,
+          traceId,
+        };
+      }
+    } catch {
+      // Fallback híbrido en localStorage
+    }
+  }
+
+  const latenciaMs = Math.max(6, Math.round(performance.now() - inicio));
+  const nuevoHorario: DisponibilidadHorario = {
+    id: crypto.randomUUID(),
+    actividadId: payload.actividadId,
+    nombreActividad: payload.nombreActividad,
+    fecha: payload.fecha,
+    horaInicio:
+      payload.horaInicio.length === 5
+        ? `${payload.horaInicio}:00`
+        : payload.horaInicio,
+    capacidadTotal: payload.capacidadTotal,
+    cuposDisponibles: payload.capacidadTotal,
+    precioUnitarioCop: payload.precioUnitarioCop,
+    version: 0,
+  };
+
+  const actuales = leerDisponibilidadesLocal();
+  guardarDisponibilidadesLocal([nuevoHorario, ...actuales]);
+
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: actor.usuarioId,
+    rol: actor.rol,
+    accion: "ABRIR_SALIDA_DISPONIBILIDAD",
+    recurso: `reservas-service:/api/v1/disponibilidad/${nuevoHorario.id}`,
+    resultado: "EXITOSA",
+    motivo: `Nueva salida habilitada: ${payload.nombreActividad} (${payload.fecha} ${payload.horaInicio}, ${payload.capacidadTotal} cupos)`,
+    ipOrigen: "127.0.0.1",
+    traceId,
+    fechaOperacion: new Date().toISOString(),
+  });
+
+  return {
+    exito: true,
+    httpStatus: 201,
+    latenciaMs,
+    modoConexion: "FALLBACK_RESILIENTE",
+    data: nuevoHorario,
+    traceId,
+  };
+}
+
+export async function consultarReservasOperador(
+  actor: ActorSesion = ACTORES_SESION.PRESTADOR_77
+): Promise<ApiCallResult<ReservaConfirmadaDto[]>> {
+  return fetchConRespaldo(
+    [
+      `${GATEWAY_URL}/api/v1/reservas`,
+      "http://localhost:8083/api/v1/reservas",
+    ],
+    {
+      method: "GET",
+      headers: construirHeadersSeguridad(actor),
+    },
+    () => leerReservasLocal()
+  );
+}
+
+export async function consultarIndicadoresCapacidad(): Promise<
+  ApiCallResult<IndicadorCapacidadDestino[]>
+> {
+  return obtenerIndicadoresCapacidad();
+}
+
+export async function consultarBitacoraAuditoria(): Promise<
+  ApiCallResult<RegistroAuditoria[]>
+> {
+  return obtenerRegistrosAuditoria();
 }
 
 // =============================================================================

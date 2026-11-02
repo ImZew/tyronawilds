@@ -13,6 +13,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/operadores`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/privacidad`,
       lastModified,
       changeFrequency: "monthly",

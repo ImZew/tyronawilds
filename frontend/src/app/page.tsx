@@ -445,9 +445,21 @@ export default function TyronaWildsCommercialStorefront() {
                 ? "PULSO DEL TERRITORIO"
                 : "TERRITORIAL PULSE"}
             </a>
+            <Link
+              href="/operadores"
+              className="border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 text-[11px] font-bold text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+            >
+              {idioma === "es" ? "PORTAL OPERADORES" : "OPERATOR PORTAL"}
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/operadores"
+              className="lg:hidden border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+            >
+              {idioma === "es" ? "OPERADORES" : "OPERATORS"}
+            </Link>
             <button
               type="button"
               onClick={() => setIdioma(idioma === "es" ? "en" : "es")}
@@ -1709,6 +1721,12 @@ export default function TyronaWildsCommercialStorefront() {
             MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
           </div>
           <div className="flex flex-wrap items-center gap-5">
+            <Link
+              href="/operadores"
+              className="font-bold text-sand hover:text-terracotta transition-colors"
+            >
+              Portal de Operadores RNT
+            </Link>
             <Link
               href="/privacidad"
               className="hover:text-terracotta transition-colors"
