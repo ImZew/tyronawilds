@@ -1,46 +1,82 @@
-# TYRONAWILDS™ (`PlataformaTurismoSM`)
+# TYRONAWILDS™ (`PlataformaTurismoSM`) — v1.6.0
 
 > **"PIERDE EL MAPA. DESCUBRE EL ORIGEN: SIERRA NEVADA, PARQUE TAYRONA & CARIBE."**  
-> **Plataforma Digital para la Gestión Integrada, Resiliente y Sostenible del Turismo en el Distrito de Santa Marta, Colombia.**
+> **Plataforma Digital de Grado Comercial para la Gestión Integrada, Resiliente y Sostenible del Turismo en el Distrito de Santa Marta, Colombia.**
 
+[![Producción Vercel](https://img.shields.io/badge/LIVE_DEMO-tyronawilds.vercel.app-E63000?style=for-the-badge&logo=vercel&logoColor=white)](https://tyronawilds.vercel.app)
+![Release](https://img.shields.io/badge/Release-v1.6.0_Gitflow-10B981?style=for-the-badge&logo=git&logoColor=white)
 ![Java 21](https://img.shields.io/badge/Java-21_LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-2023.0.3-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![PostgreSQL pgvector](https://img.shields.io/badge/PostgreSQL_16-pgvector-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![PostgreSQL pgvector](https://img.shields.io/badge/PostgreSQL_16-pgvector_%2B_RLS-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Redis 7](https://img.shields.io/badge/Redis-7_Alpine-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.13_Topic-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)
 ![Next.js 14](https://img.shields.io/badge/Next.js-14_App_Router-000000?style=for-the-badge&logo=next.js&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Brutalist_HUD-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+- **URL de Producción (Vercel Cloud + Respaldo Híbrido Resiliente)**: [https://tyronawilds.vercel.app](https://tyronawilds.vercel.app)
+- **Guion Oficial de Sustentación (19 de Noviembre)**: [`docs/GUION_SUSTENTACION_19_NOV.md`](docs/GUION_SUSTENTACION_19_NOV.md)
+- **Matriz Completa de Trazabilidad y 18 Estándares de Producción**: [`docs/MATRIZ_TRAZABILIDAD_PRODUCCION.md`](docs/MATRIZ_TRAZABILIDAD_PRODUCCION.md)
 
 ---
 
-## 1. Visión del Sistema y Propósito Arquitectónico
+## 1. Visión del Producto y Arquitectura Híbrida
 
-**TyronaWilds (`PlataformaTurismoSM`)** es una plataforma distribuida de grado empresarial diseñada en el marco de la cátedra de **Arquitectura de Software** del Programa de **Ingeniería de Sistemas de la Universidad del Magdalena** (Docente: **Ing. Carlos Oliveros**).
+**TyronaWilds (`PlataformaTurismoSM`)** es un ecosistema SaaS B2C/B2B de expediciones y gobernanza ambiental diseñado en el marco de la cátedra de **Arquitectura de Software** del Programa de **Ingeniería de Sistemas de la Universidad del Magdalena** (Docente: **Ing. Carlos Oliveros**).
 
-El sistema resuelve tres problemáticas estructurales del ecosistema turístico de Santa Marta (Sierra Nevada, Ciudad Perdida - Teyuna, Parque Nacional Natural Tayrona, Minca, Bonda y Taganga):
-1. **Sobrecarga Ecológica Estacional (`RF-10`)**: Monitoreo en tiempo real de la capacidad de carga de cada ecosistema y desconcentración inteligente de flujos turísticos hacia rutas sostenibles (p. ej., Minca y Río Don Diego cuando Cabo San Juan supera el 80% de ocupación).
-2. **Sobreventa en Reservas de Cupo Limitado (`RNF-13`, `ER-02`)**: Control transaccional **ACID** con bloqueo pesimista (`SELECT ... FOR UPDATE`) y optimista (`@Version`) sobre PostgreSQL, garantizando **cero sobreasignación** ante ráfagas concurrentes de reservas.
-3. **Asimetría Tecnológica y Desconexión de Servicios Externos (`ER-01`, `RF-08`, `RF-12`)**: Motor de recomendación de **IA Explicable** con búsqueda vectorial (`pgvector`), máquina de estados determinista y tolerancia a fallos mediante **Circuit Breaker (`Resilience4j`)** con degradación elegante hacia **Redis**.
+La plataforma combina un storefront comercial con dirección de arte brutalista (**"PIERDE EL MAPA"**) en **Next.js 14 App Router** y un núcleo distribuido de **8 microservicios en Java 21 + Spring Boot 3.3.5** bajo **Arquitectura Hexagonal (Ports & Adapters)**, **Principios SOLID**, **PostgreSQL 16 (`pgvector` + Row-Level Security)**, **Redis 7** y **RabbitMQ 3.13**. Cuenta además con un cliente híbrido resiliente (`frontend/src/lib/api.ts`) que opera conectado en tiempo real al `api-gateway` (`http://localhost:8080`) o en modo autónomo sincronizado en la nube (`https://tyronawilds.vercel.app`).
+
+### Problemáticas Estructurales Resueltas
+1. **Sobrecarga Ecológica Estacional (`RF-10`, `CU-07`)**: Monitoreo en tiempo real de la capacidad de carga de cada ecosistema (Parque Tayrona, Teyuna, Minca, Don Diego) y desconcentración inteligente de flujos turísticos hacia rutas sostenibles cuando un sector supera el 80% de ocupación.
+2. **Sobreventa en Reservas de Cupo Limitado (`RNF-13`, `ER-02`)**: Checkout en 3 pasos integrado con **Pasarela Wompi Sandbox** (Nequi Push, PSE y Tarjeta), bloqueo pesimista (`SELECT ... FOR UPDATE`) y optimista (`@Version`) sobre PostgreSQL, reverso automático de cobro ante colisión de último cupo (`HTTP 409 Conflict`) y emisión de **Pasaporte Oficial con Código QR SVG**.
+3. **Privacidad Estricta por Viajero y Seguridad Multi-Tenant (`AC-05`, `ER-04`, `RNF-06`, `RNF-07`)**: Aislamiento **Row-Level Security (RLS)** por turista en `/mis-reservas`, compuerta de autenticación JWT real en `/login`, control de propiedad del recurso entre operadores en `/operadores` (**Secuencia 4.1**) y bitácora forense inmutable (*Append-Only*) en `auditoria-service`.
+4. **Resiliencia ante Fallos Externos e IA Explicable (`ER-01`, `RF-08`, `RF-12`, `Punto 4.2`)**: Concierge **Baquiano AI** con búsqueda semántica `pgvector`, máquina determinista de 7 estados y **Circuit Breaker (`Resilience4j`)** con degradación elegante hacia **Redis** en menos de 2 segundos.
 
 ---
 
-## 2. Diagrama de Arquitectura de Microservicios (C4 Contenedores)
+## 2. Mapa de Rutas del Ecosistema Web (`frontend/`)
+
+| Ruta | Naturaleza / Rol | Propósito Funcional y Arquitectónico | Archivo Fuente |
+| :--- | :--- | :--- | :--- |
+| **`/`** | Pública (Storefront B2C) | Catálogo editorial de 6 expediciones de Santa Marta, Drawer con itinerario y Checkout Wompi Sandbox de 3 pasos, Concierge **Baquiano AI** y **Pulso del Territorio** en vivo. Navbar adaptativa según sesión (`null`, `TURISTA` o `OPERADOR`/`ADMIN_AMBIENTAL`). | [`frontend/src/app/page.tsx`](frontend/src/app/page.tsx) |
+| **`/login`** | Pública (Auth Gate JWT) | Inicio de sesión real contra `identidad-service` (`POST /api/v1/auth/login`), registro de cuentas nuevas con validación RNT y panel de acceso rápido en 1 clic para las **5 Cuentas de Evaluación Académica**. | [`frontend/src/app/login/page.tsx`](frontend/src/app/login/page.tsx) |
+| **`/mis-reservas`** | Protegida (`TURISTA`) | Billetera personal de pasaportes QR con **aislamiento estricto por viajero (RLS)**: cada turista visualiza únicamente las reservas asociadas a su `userId`/`email`, con descarga/impresión y cancelación con liberación de cupos. | [`frontend/src/app/mis-reservas/page.tsx`](frontend/src/app/mis-reservas/page.tsx) |
+| **`/operadores`** | Protegida (`OPERADOR` / `ADMIN_AMBIENTAL`) | Consola B2B de Operadores RNT y Gobernanza PNN: alta de expediciones, edición de precios con prueba en vivo de la **Secuencia 4.1 (`200 OK` vs `403 Forbidden`)**, apertura de horarios, manifiesto consolidado de viajeros y bitácora de auditoría. | [`frontend/src/app/operadores/page.tsx`](frontend/src/app/operadores/page.tsx) |
+| **`/lab`** | Técnica (Ingeniería & QA) | **Architecture Live Lab**: banco de pruebas interactivo para disparar la ráfaga de **30 hilos concurrentes vs 5 cupos (`RNF-13`)**, la **Secuencia 4.1 (`ER-04`)**, el **Circuit Breaker (`ER-01`)** y la **Máquina de 7 Estados de IA (`Punto 4.2`)**. | [`frontend/src/app/lab/page.tsx`](frontend/src/app/lab/page.tsx) |
+| **`/privacidad`** | Legal (`RNF-06`) | Política de Tratamiento de Datos Personales conforme a la **Ley Estatutaria 1581 de 2012** y Decreto 1377 de 2013 (Habeas Data). | [`frontend/src/app/privacidad/page.tsx`](frontend/src/app/privacidad/page.tsx) |
+| **`/terminos`** | Legal (RNT & PNN) | Términos y Condiciones Comerciales, Registro Nacional de Turismo (Ley 2068 de 2020), exención de riesgo de montaña y política de reverso Wompi. | [`frontend/src/app/terminos/page.tsx`](frontend/src/app/terminos/page.tsx) |
+
+---
+
+## 3. Las 5 Cuentas de Evaluación Académica (`/login` con Autocompletado 1-Clic)
+
+Para facilitar la evaluación del **19 de noviembre** sin perder tiempo digitando credenciales, la ruta `/login` incluye un acordeón dividido en **Perfiles de Viajeros (B2C)** y **Perfiles Corporativos RNT / Ambiental (B2B)**:
+
+| Perfil de Evaluación | Nombre / Entidad | Correo Electrónico | Contraseña | Rol JWT | Estado Inicial y Propósito en la Sustentación |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **1. Turista 1 (Cuenta Limpia)** | **Sebastián Abaonza** (`CC 1083019450`) | `sebastian@viajero.co` | `Viajero2026*` | `TURISTA` (`userId: 101`) | **Inicia con 0 reservas (`MIS RESERVAS (0)`)**. Diseñado para mostrar la billetera vacía inicialmente, comprar en vivo con Wompi Sandbox (Nequi/PSE/Tarjeta) y emitir su primer Pasaporte QR. |
+| **2. Turista 2 (Con Reserva Activa — RLS)** | **Valeria Mejía** (`CC 1082940182`) | `valeria@viajera.co` | `Valeria2026*` | `TURISTA` (`userId: 102`) | Posee únicamente la reserva **`TW-2026-901A`** (*Ciudad Perdida - Teyuna*). Permite demostrar el **aislamiento RLS entre turistas**: Valeria no ve las compras de Sebastián y Sebastián no ve las de Valeria. |
+| **3. Operador Titular #77 (Dueño)** | **Asociación de Guías Teyuna & Tayrona** (`RNT-47001-077`) | `operador77@tyronawilds.co` | `Tyrona2026*` | `OPERADOR` (`prestadorId: #77`) | Propietario legítimo de la expedición `#9` (*Ciudad Perdida*). En `/operadores` puede actualizar tarifas (`HTTP 200 OK`), publicar nuevas rutas y ver el manifiesto global de reservas. |
+| **4. Operador Externo #41 (Intruso)** | **Operadora Caribe Extremo S.A.S.** (`RNT-47001-041`) | `intruso41@tyronawilds.co` | `Tyrona2026*` | `OPERADOR` (`prestadorId: #41`) | Propietario de `#12` (*Taganga*). Al intentar modificar la expedición `#9` del Operador `#77` en `/operadores`, el sistema bloquea con **`HTTP 403 ACCESO_DENEGADO`** y audita el incidente en RabbitMQ (**Secuencia 4.1**). |
+| **5. Autoridad Ambiental PNN** | **Guardaparques PNN Tayrona & Sierra Nevada** (`PNN-DTCA-SM`) | `ambiental@parquesnacionales.gov.co` | `Tyrona2026*` | `ADMIN_AMBIENTAL` | Supervisión de capacidad de carga ecológica (`RF-10`), consulta de manifiestos de ingreso y bitácora forense inmutable en `/operadores`. |
+
+---
+
+## 4. Diagrama de Arquitectura de Microservicios (C4 Contenedores)
 
 ```mermaid
 flowchart TB
-    subgraph Cliente["Capa de Presentación (ClienteWebMovil - Puerto 3000)"]
-        UI["Next.js 14 App Router + TypeScript + Tailwind CSS\nEstética Editorial 'PIERDE EL MAPA' + Consola Architecture Live Lab"]
+    subgraph Cliente["Capa de Presentación Híbrida (ClienteWebMovil - Puerto 3000 / Vercel)"]
+        UI["Next.js 14 App Router + TypeScript + Tailwind CSS\nStorefront B2C (/) + Login JWT (/login) + Billetera RLS (/mis-reservas)\nPortal B2B (/operadores) + Architecture Live Lab (/lab)"]
     end
 
     subgraph Edge["Capa de Borde y Enrutamiento (Puerto 8080)"]
-        GW["api-gateway (Spring Cloud Gateway)\nValidación JWT (HMAC-SHA256) + Inyección X-User-Id, X-Rol, X-Prestador-Id, X-Correlation-Id"]
+        GW["api-gateway (Spring Cloud Gateway)\nCORS Estricto + Validación JWT (HMAC-SHA256)\nInyección X-User-Id, X-Rol, X-Prestador-Id, X-Correlation-Id"]
     end
 
     subgraph Core["Capa de Microservicios de Dominio (Arquitectura Hexagonal + SOLID)"]
-        ID["identidad-service (:8081)\nAutenticación JWT + BCrypt\nVariabilidad: AUTH_PROVEEDORES"]
+        ID["identidad-service (:8081)\nAutenticación JWT + BCrypt + RLS\nVariabilidad: AUTH_PROVEEDORES"]
         OF["oferta-service (:8082)\nCatálogo + Control Propiedad RF-03\nCaché Redis + Secuencia 4.1"]
-        RE["reservas-service (:8083)\nReservas ACID + PESSIMISTIC_WRITE\nSimulador 30 Hilos Concurrentes"]
+        RE["reservas-service (:8083)\nReservas ACID + PESSIMISTIC_WRITE + RLS\nWompi Sandbox + Simulador 30 Hilos"]
         IA["recomendacion-service (:8084)\nOrquestador 7 Estados (4.2) + pgvector\nVariabilidad: RECOMENDACION_NIVEL"]
         IN["integracion-service (:8085)\nJerarquía AdaptadorFuente\nResilience4j Circuit Breaker (<=2s)"]
         IND["indicadores-service (:8086)\nMonitoreo Sostenibilidad RF-10\nTablero Distrital ST-05 (CU-07)"]
@@ -48,12 +84,12 @@ flowchart TB
     end
 
     subgraph Infra["Capa de Persistencia Políglota y Mensajería Asíncrona (Docker)"]
-        PG[("PostgreSQL 16 + pgvector (:5432)\n6 Bases Lógicas (Database-per-Service)\nFlyway Migrations")]
+        PG[("PostgreSQL 16 + pgvector (:5432)\n6 Bases Lógicas (Database-per-Service)\nFlyway Migrations + Políticas RLS")]
         RD[("Redis 7 Alpine (:6379)\nCache-Aside (TTL 300s)\nFallback Clima/Aforo ER-01")]
         MQ[["RabbitMQ 3.13 Topic (:5672 / :15672)\ntyronawilds.events.exchange\nauditoria.q | indicadores.q"]]
     end
 
-    UI -->|"HTTP/REST + JSON\n(RNF-01 <= 3000ms)"| GW
+    UI -->|"HTTP/REST + JWT\n(RNF-01 <= 3000ms)"| GW
     GW --> ID
     GW --> OF
     GW --> RE
@@ -71,9 +107,9 @@ flowchart TB
     MQ -.->|"Consume auditoria.q"| AUD
     MQ -.->|"Consume indicadores.q"| IND
 
-    ID -->|"db_identidad"| PG
+    ID -->|"db_identidad (RLS)"| PG
     OF -->|"db_oferta (pgvector)"| PG
-    RE -->|"db_reservas (ACID)"| PG
+    RE -->|"db_reservas (ACID + RLS)"| PG
     IA -->|"db_recomendacion (pgvector)"| PG
     IND -->|"db_indicadores"| PG
     AUD -->|"db_auditoria (INSERT-only)"| PG
@@ -84,106 +120,73 @@ flowchart TB
 
 ---
 
-## 3. Catálogo de Módulos, Puertos, Bases de Datos y Responsables
+## 5. Catálogo de Módulos, Puertos, Bases de Datos y Responsables
 
 | # | Módulo Maven / Carpeta | Puerto | Base de Datos / Infra | Patrones y Estándares Clave | Responsable Principal |
 | :-: | :--- | :-: | :--- | :--- | :--- |
 | 0 | `backend/contratos-compartidos` | `JAR` | Librería Común | `ApiErrorResponse` (`ER-04`/`ER-05`), `SecurityHeaders`, Eventos RabbitMQ | **Equipo Completo** |
-| 1 | `backend/api-gateway` | `8080` | Stateless Edge | Spring Cloud Gateway, Filtro JWT Reactivo, Propagación de Identidad y `X-Correlation-Id` | **Sebastián Abaonza** |
-| 2 | `backend/identidad-service` | `8081` | `db_identidad` | Hexagonal, `ProveedorAutenticacionPort` (Strategy), Variabilidad `AUTH_PROVEEDORES` | **Sebastián Abaonza** |
+| 1 | `backend/api-gateway` | `8080` | Stateless Edge | Spring Cloud Gateway, CORS estricto, Filtro JWT Reactivo, `X-Correlation-Id` | **Sebastián Abaonza** |
+| 2 | `backend/identidad-service` | `8081` | `db_identidad` | Hexagonal, `ProveedorAutenticacionPort` (Strategy), Variabilidad `AUTH_PROVEEDORES`, RLS | **Sebastián Abaonza** |
 | 3 | `backend/auditoria-service` | `8087` | `db_auditoria` | Consumidor RabbitMQ (`auditoria.q`), Tabla Append-Only (`INSERT`), `RNF-07` | **Sebastián Abaonza** |
 | 4 | `backend/oferta-service` | `8082` | `db_oferta` + Redis | Control de Propiedad (`prestadorId`), Secuencia 4.1 (`403` + Evento RabbitMQ), `pgvector` | **Melanye Mejía** |
 | 5 | `backend/integracion-service` | `8085` | Redis (`ER-01`) | Jerarquía `AdaptadorFuente` (`Clima`, `Aforo`, `Eventos`), `Resilience4j @CircuitBreaker` | **Melanye Mejía** |
-| 6 | `backend/reservas-service` | `8083` | `db_reservas` | Transacciones ACID, Bloqueo Pesimista `SELECT ... FOR UPDATE`, Simulador 30 Hilos (`RNF-13`) | **Fabián Valderrama** |
+| 6 | `backend/reservas-service` | `8083` | `db_reservas` | Transacciones ACID, Bloqueo Pesimista `SELECT ... FOR UPDATE`, RLS, Simulador 30 Hilos | **Fabián Valderrama** |
 | 7 | `backend/recomendacion-service` | `8084` | `db_recomendacion` | Máquina de 7 Estados (`Punto 4.2`), Similitud Coseno `pgvector`, Variabilidad `5.2`, `RF-12` | **Rigoberto Varilla** |
 | 8 | `backend/indicadores-service` | `8086` | `db_indicadores` | Monitoreo de Capacidad Ecológica (`RF-10`, `CU-07`), Consumidor RabbitMQ (`indicadores.q`) | **Rigoberto Varilla** |
-| 9 | `frontend/` (`ClienteWebMovil`) | `3000` | Next.js 14 | Dirección de Arte **"PIERDE EL MAPA"**, Telemetría HUD, Consola **Architecture Live Lab** | **Equipo Completo** |
+| 9 | `frontend/` (`ClienteWebMovil`) | `3000` | Next.js 14 / Vercel | Storefront B2C, Pasarela Wompi Sandbox, Pasaporte QR, Portal B2B `/operadores` y `/lab` | **Equipo Completo** |
 
 ---
 
-## 4. Decisiones de Ingeniería e Implementación Técnica
+## 6. Estrategia de Ramificación Gitflow y Versionamiento Semántico (SemVer)
 
-### 4.1. Arquitectura Hexagonal (Ports & Adapters) y Principios SOLID
-Todos los microservicios del monorepo respetan una separación estricta en tres capas concéntricas sin fugas de infraestructura hacia el dominio:
-- **`domain.model` / `domain.port.in` / `domain.port.out` / `domain.exception`**: Modelos de negocio puros, interfaces de casos de uso y puertos de salida. Ninguna clase de dominio acopla anotaciones de transporte web.
-- **`application.service`**: Orquestadores de casos de uso con inyección por constructor (cero uso de `@Autowired` en campos, cumpliendo **DIP**).
-  - *Ejemplo real*: [`OfertaApplicationService`](file:///c:/Users/abaon/tyronawilds/backend/oferta-service/src/main/java/co/edu/unimagdalena/tyronawilds/oferta/application/service/OfertaApplicationService.java) depende exclusivamente de [`OfertaRepositoryPort`](file:///c:/Users/abaon/tyronawilds/backend/oferta-service/src/main/java/co/edu/unimagdalena/tyronawilds/oferta/domain/port/out/OfertaRepositoryPort.java) y [`EventoSeguridadPublisherPort`](file:///c:/Users/abaon/tyronawilds/backend/oferta-service/src/main/java/co/edu/unimagdalena/tyronawilds/oferta/domain/port/out/EventoSeguridadPublisherPort.java).
-- **`infrastructure.adapter.in.web` / `messaging` / `out.persistence`**: Controladores REST que reciben y retornan únicamente `record` DTOs inmutables, manejadores globales `@RestControllerAdvice` que devuelven [`ApiErrorResponse`](file:///c:/Users/abaon/tyronawilds/backend/contratos-compartidos/src/main/java/co/edu/unimagdalena/tyronawilds/contratos/dto/ApiErrorResponse.java) sin exponer trazas internas (`ER-05`), y migraciones versionadas con **Flyway** (`ddl-auto: validate`).
-
----
-
-### 4.2. Transacciones ACID y Control de Concurrencia (`RNF-13`, `ER-02`)
-En [`reservas-service`](file:///c:/Users/abaon/tyronawilds/backend/reservas-service/src/main/java/co/edu/unimagdalena/tyronawilds/reservas/application/service/ReservaApplicationService.java), la creación de una reserva protege el inventario de cupos mediante tres barreras complementarias:
-1. **Bloqueo Pesimista en Base de Datos (`PESSIMISTIC_WRITE`)**: [`SpringDataDisponibilidadRepository`](file:///c:/Users/abaon/tyronawilds/backend/reservas-service/src/main/java/co/edu/unimagdalena/tyronawilds/reservas/infrastructure/adapter/out/persistence/SpringDataDisponibilidadRepository.java) ejecuta `@Lock(LockModeType.PESSIMISTIC_WRITE)` (`SELECT ... FOR UPDATE`), serializando el acceso concurrente sobre la fila del horario solicitado dentro de `@Transactional(isolation = Isolation.READ_COMMITTED)`.
-2. **Restricción de Integridad Relacional**: En [`V1__init_reservas_schema.sql`](file:///c:/Users/abaon/tyronawilds/backend/reservas-service/src/main/resources/db/migration/V1__init_reservas_schema.sql), la tabla `disponibilidad` define `CHECK (cupos_disponibles >= 0 AND cupos_disponibles <= capacidad_total)`.
-3. **Respuesta Determinista `409 Conflict` (`ER-02`)**: Cuando los cupos se agotan, [`CupoAgotadoException`](file:///c:/Users/abaon/tyronawilds/backend/reservas-service/src/main/java/co/edu/unimagdalena/tyronawilds/reservas/domain/exception/CupoAgotadoException.java) consulta horarios alternativos con cupo disponible para la misma actividad y los incluye en el payload del error `409 Conflict`.
-4. **Verificación Automatizada y en Vivo**: El test de integración [`ReservaConcurrenciaIntegrationTest`](file:///c:/Users/abaon/tyronawilds/backend/reservas-service/src/test/java/co/edu/unimagdalena/tyronawilds/reservas/ReservaConcurrenciaIntegrationTest.java) y el endpoint `POST /api/v1/reservas/simulacion-concurrencia` disparan **30 hilos simultáneos (`CountDownLatch`)** contra un horario con **5 cupos**, confirmando exactamente **5 reservas (`201 Created`)**, **25 rechazos (`409 Conflict`)** y **0 cupos negativos**.
-
----
-
-### 4.3. Seguridad en Profundidad y Secuencia 4.1 (`AC-05`, `ER-04`, `RNF-07`)
-Implementa paso a paso el **Diagrama de Secuencia 4.1 del Laboratorio 3** (Intento de modificación no autorizada de un servicio turístico ajeno):
+El repositorio aplica formalmente el flujo de trabajo **Gitflow** con fusiones explícitas (`--no-ff`) para preservar la trazabilidad del grafo de red en GitHub y el despliegue continuo hacia Vercel:
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor P41 as Prestador #41 (Intruso)
-    participant GW as api-gateway (:8080)
-    participant OF as oferta-service (:8082)
-    participant MQ as RabbitMQ (tyronawilds.events.exchange)
-    participant AUD as auditoria-service (:8087)
-    participant DB as db_auditoria (PostgreSQL)
+flowchart LR
+    MAIN["main (Producción Estable)\nTags: v1.1.0 .. v1.6.0"]
+    DEV["develop (Integración Continua)"]
+    F1["feature/b2b-portal-operadores"]
+    F2["feature/jwt-auth-gate"]
+    F3["feature/wompi-sandbox-gateway"]
+    FX["fix/tourist-rls-isolation"]
+    FD["feature/docs-architecture-gitflow"]
+    REL["release/v1.6.0"]
 
-    P41->>GW: PUT /api/v1/prestadores/77/servicios/9 (JWT de Prestador #41)
-    GW->>GW: Valida firma JWT e inyecta X-User-Id, X-Rol=PRESTADOR, X-Prestador-Id=41
-    GW->>OF: Reenvía PUT /api/v1/prestadores/77/servicios/9 + Headers
-    OF->>OF: OfertaApplicationService verifica propiedad (prestadorAutenticado=41 != dueñoRecurso=77)
-    OF--)MQ: Publica EventoAccesoDenegado (routingKey: auditoria.acceso.denegado)
-    OF-->>P41: HTTP 403 Forbidden (codigo: "ACCESO_DENEGADO", traceId)
-    MQ--)AUD: Entrega mensaje en cola durable auditoria.q
-    AUD->>DB: INSERT INTO registro_auditoria (resultado='DENEGADA', motivo='Violación Secuencia 4.1')
+    MAIN --> DEV
+    F1 --> DEV
+    F2 --> DEV
+    F3 --> DEV
+    FX --> DEV
+    DEV --> FD
+    FD -->|"merge --no-ff"| DEV
+    DEV --> REL
+    REL -->|"merge --no-ff + tag v1.6.0"| MAIN
+    REL -->|"back-merge --no-ff"| DEV
 ```
 
----
-
-### 4.4. Resiliencia con Circuit Breaker (`ER-01`) y Máquina de Estados de IA (`Punto 4.2`)
-- En [`integracion-service`](file:///c:/Users/abaon/tyronawilds/backend/integracion-service/src/main/java/co/edu/unimagdalena/tyronawilds/integracion/application/service/IntegracionContextualService.java), la jerarquía polimórfica [`AdaptadorFuente`](file:///c:/Users/abaon/tyronawilds/backend/integracion-service/src/main/java/co/edu/unimagdalena/tyronawilds/integracion/domain/port/out/AdaptadorFuente.java) (`AdaptadorClima`, `AdaptadorAforo`, `AdaptadorEventos`) está protegida por `@CircuitBreaker(name = "proveedorExternoClima", fallbackMethod = "obtenerContextoDesdeFallback")`. Si el proveedor externo supera el timeout de **2 segundos** o entra en fallo simulado, responde inmediatamente desde el snapshot en **Redis** (`fuenteDatos: "REDIS_CACHE_FALLBACK"`).
-- En [`recomendacion-service`](file:///c:/Users/abaon/tyronawilds/backend/recomendacion-service/src/main/java/co/edu/unimagdalena/tyronawilds/recomendacion/application/service/OrquestadorRecomendacionService.java), el `OrquestadorRecomendacion` ejecuta y registra la traza completa de la **Máquina de Estados Comprensiva (Punto 4.2 del Laboratorio 3)**:
-
-```mermaid
-stateDiagram-v2
-    [*] --> Solicitada: POST /api/v1/recomendaciones
-    Solicitada --> CargandoPerfil: validarSolicitud()
-    CargandoPerfil --> EnriqueciendoContexto: perfilCargado
-    EnriqueciendoContexto --> Ranqueando: contextoRecibido [<=2s & PERSONALIZADO]
-    EnriqueciendoContexto --> ModoBasico: contextoRecibido [<=2s & BASICO]
-    EnriqueciendoContexto --> ContextoDegradado: timeout / CircuitBreaker OPEN (ER-01)
-    ContextoDegradado --> Ranqueando: usarCacheContingencia [PERSONALIZADO]
-    ContextoDegradado --> ModoBasico: usarCacheContingencia [BASICO]
-    Ranqueando --> GenerandoExplicacion: candidatosRanqueados (pgvector + RF-10)
-    ModoBasico --> GenerandoExplicacion: candidatosPopulares (Reglas 5.2)
-    GenerandoExplicacion --> FINAL_EXITO: ExplicadorRecomendacion (RF-12)
-    FINAL_EXITO --> [*]
-```
+### Roles de las Ramas y Etiquetas SemVer Publicadas
+- **`main`**: Rama de producción inmutable conectada al pipeline de despliegue de Vercel (`https://tyronawilds.vercel.app`). Solo recibe fusiones desde ramas `release/*` o `fix/*` verificadas con `npm run build` y `mvn test`.
+- **`develop`**: Rama troncal de integración donde convergen las ramas `feature/*` antes de certificar un corte de lanzamiento.
+- **`feature/*`**: Ramas de desarrollo por capacidad arquitectónica:
+  - `feature/b2b-portal-operadores`: Consola B2B `/operadores` y gobernanza PNN.
+  - `feature/jwt-auth-gate`: Autenticación real JWT (`/login`) y protección de rutas.
+  - `feature/wompi-sandbox-gateway`: Pasarela Wompi Sandbox (Nequi/PSE/Tarjeta), Pasaporte QR y `/mis-reservas`.
+  - `feature/docs-architecture-gitflow`: Matriz de trazabilidad de producción, guion del 19 de noviembre y documentación Gitflow.
+- **`fix/*`**: Correcciones focalizadas de alta prioridad:
+  - `fix/tourist-rls-isolation`: Aislamiento estricto por turista (RLS), billetera inicial vacía para Turista 1 y navbar condicional por rol.
+- **`release/v1.6.0`**: Rama de estabilización y cierre documental para la entrega final.
+- **Historial de Tags SemVer Anotados**:
+  - `v1.1.0`: Desacoplamiento comercial del storefront `/` y creación de `/lab`.
+  - `v1.2.0`: Flujo de Checkout comercial, Drawer de itinerario y Concierge Baquiano AI.
+  - `v1.3.0`: Blindaje de producción de 18 puntos (CSP, Ley 1581, CORS estricto, RLS en PostgreSQL).
+  - `v1.4.0`: Portal B2B `/operadores` y autenticación real JWT en `/login`.
+  - `v1.5.0`: Pasarela Wompi Sandbox 1-clic, Pasaporte QR imprimible y billetera `/mis-reservas`.
+  - `v1.5.1`: Aislamiento RLS estricto por turista y navbar condicional por rol.
+  - `v1.6.0`: Lanzamiento final consolidado con Gitflow, Matriz de Trazabilidad y Guion de Sustentación.
 
 ---
 
-### 4.5. Puntos de Variabilidad Arquitectónica (`Punto 5.2` del Laboratorio 3)
-1. **`NIVEL_RECOMENDACION_IA` (`recomendacion-service`)**:
-   - Controlado por `app.recomendacion.nivel: ${RECOMENDACION_NIVEL:PERSONALIZADO}` en [`application.yml`](file:///c:/Users/abaon/tyronawilds/backend/recomendacion-service/src/main/resources/application.yml) y conmutable en caliente mediante `POST /api/v1/recomendaciones/configuracion`.
-   - Alterna entre [`MotorRecomendacionPersonalizadoAdapter`](file:///c:/Users/abaon/tyronawilds/backend/recomendacion-service/src/main/java/co/edu/unimagdalena/tyronawilds/recomendacion/infrastructure/adapter/out/ia/MotorRecomendacionPersonalizadoAdapter.java) (similitud coseno `pgvector` + penalización ecológica `RF-10`) y [`MotorRecomendacionBasicoAdapter`](file:///c:/Users/abaon/tyronawilds/backend/recomendacion-service/src/main/java/co/edu/unimagdalena/tyronawilds/recomendacion/infrastructure/adapter/out/ia/MotorRecomendacionBasicoAdapter.java) (heurística ligera sin costo de inferencia vectorial).
-2. **`PROVEEDOR_AUTENTICACION` (`identidad-service`)**:
-   - Controlado por `app.auth.proveedores: ${AUTH_PROVEEDORES:local,google}` en [`application.yml`](file:///c:/Users/abaon/tyronawilds/backend/identidad-service/src/main/resources/application.yml).
-   - Resuelve dinámicamente las implementaciones de [`ProveedorAutenticacionPort`](file:///c:/Users/abaon/tyronawilds/backend/identidad-service/src/main/java/co/edu/unimagdalena/tyronawilds/identidad/domain/port/out/ProveedorAutenticacionPort.java): [`LocalProveedorAutenticacionAdapter`](file:///c:/Users/abaon/tyronawilds/backend/identidad-service/src/main/java/co/edu/unimagdalena/tyronawilds/identidad/infrastructure/adapter/out/security/LocalProveedorAutenticacionAdapter.java) (BCrypt) y [`GoogleOAuth2ProveedorAdapter`](file:///c:/Users/abaon/tyronawilds/backend/identidad-service/src/main/java/co/edu/unimagdalena/tyronawilds/identidad/infrastructure/adapter/out/security/GoogleOAuth2ProveedorAdapter.java) (OAuth2).
-
----
-
-## 5. Guía Rápida de Despliegue y Ejecución
-
-### Requisitos Previos
-- **Docker Desktop** activo (PostgreSQL 16 + `pgvector`, Redis 7, RabbitMQ 3.13).
-- **JDK 21** y **Maven 3.9+**.
-- **Node.js 20+** y **npm**.
+## 7. Guía Rápida de Ejecución Local
 
 ### Opción A: Arranque Automatizado en 1 Comando (Windows PowerShell)
 ```powershell
@@ -195,7 +198,7 @@ Para detener todos los procesos y contenedores limpiamente:
 ```
 
 ### Opción B: Ejecución Paso a Paso Manual
-1. **Levantar la infraestructura Docker**:
+1. **Levantar la infraestructura Docker (PostgreSQL 16 + `pgvector`, Redis 7, RabbitMQ 3.13)**:
    ```powershell
    docker compose up -d
    ```
@@ -210,28 +213,16 @@ Para detener todos los procesos y contenedores limpiamente:
    npm.cmd install
    npm.cmd run dev
    ```
-   Abrir en el navegador: **http://localhost:3000**
+   Abrir en el navegador: **http://localhost:3000** (o visitar directamente **https://tyronawilds.vercel.app**).
 
 ---
 
-## 6. Credenciales Semilla de Prueba (Password: `Tyrona2026*`)
-
-| Actor del Sistema | Correo Electrónico | Contraseña | Rol JWT | `prestadorId` / Código Público | Propósito de Prueba |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Turista** (`ST-01`) | `turista@tyronawilds.co` | `Tyrona2026*` | `TURISTA` | `N/A` | Exploración de catálogo, reservas ACID (`CU-03`) y recomendaciones IA (`CU-06`) |
-| **Prestador Dueño** (`ST-02`) | `tayrona@tyronawilds.co` | `Tyrona2026*` | `PRESTADOR` | `00000000-0000-0000-0000-000000000077` (`#77`) | Propietario legítimo del Servicio `#9` (Ciudad Perdida - Teyuna) -> `200 OK` |
-| **Prestador Intruso** (`ST-03`) | `intruso@tyronawilds.co` | `Tyrona2026*` | `PRESTADOR` | `00000000-0000-0000-0000-000000000041` (`#41`) | Actor atacante en la **Secuencia 4.1** contra el Servicio `#9` del Prestador `#77` -> `403 Forbidden` |
-| **Administrador** (`ST-04`) | `admin@tyronawilds.co` | `Tyrona2026*` | `ADMIN` | `N/A` | Supervisión global y consulta de bitácora en `auditoria-service` |
-| **Gestor Distrital** (`ST-05`) | `gestor@tyronawilds.co` | `Tyrona2026*` | `GESTOR_TURISTICO` | `N/A` | Monitoreo de indicadores de capacidad ecológica (`CU-07` / `RF-10`) |
-
----
-
-## 7. Créditos Académicos
+## 8. Créditos Académicos
 
 - **Universidad del Magdalena** — Facultad de Ingeniería — Programa de Ingeniería de Sistemas (Santa Marta D.T.C.H., Colombia).
 - **Asignatura**: Arquitectura de Software — **Docente**: Ing. Carlos Oliveros.
 - **Equipo de Arquitectura y Desarrollo**:
-  - **Sebastián Abaonza** (`api-gateway`, `identidad-service`, `auditoria-service`, Infraestructura Docker & DevOps).
-  - **Melanye Mejía** (`oferta-service`, `integracion-service`, Resiliencia `CircuitBreaker` & Caché Redis).
-  - **Fabián Valderrama** (`reservas-service`, Concurrencia ACID, Bloqueo Pesimista & Pruebas Multihilo).
-  - **Rigoberto Varilla** (`recomendacion-service`, `indicadores-service`, Máquina de Estados IA, `pgvector` & Sostenibilidad).
+  - **Sebastián Abaonza** (`api-gateway`, `identidad-service`, `auditoria-service`, Autenticación JWT, RLS, Infraestructura Docker & Gitflow).
+  - **Melanye Mejía** (`oferta-service`, `integracion-service`, Portal B2B `/operadores`, Secuencia 4.1, Resiliencia `CircuitBreaker` & Caché Redis).
+  - **Fabián Valderrama** (`reservas-service`, Pasarela Wompi Sandbox, Pasaporte QR, Concurrencia ACID, Bloqueo Pesimista & Pruebas Multihilo).
+  - **Rigoberto Varilla** (`recomendacion-service`, `indicadores-service`, Concierge Baquiano AI, Máquina de Estados IA, `pgvector` & Sostenibilidad).
