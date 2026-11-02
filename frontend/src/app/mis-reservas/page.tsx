@@ -2,11 +2,13 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Calendar,
   CheckCircle2,
   Clock,
+  Compass,
   CreditCard,
   Filter,
   Lock,
@@ -37,9 +39,11 @@ function formatearCop(valor: number): string {
 }
 
 export default function MisReservasWalletPage() {
+  const router = useRouter();
   const [sesionActiva, setSesionActiva] = useState<SesionAutenticada | null>(
     null
   );
+  const [verificandoSesion, setVerificandoSesion] = useState<boolean>(true);
   const [reservas, setReservas] = useState<ReservaConfirmadaDto[]>([]);
   const [cargando, setCargando] = useState<boolean>(true);
   const [modoConexion, setModoConexion] = useState<
@@ -63,9 +67,36 @@ export default function MisReservasWalletPage() {
   }, []);
 
   useEffect(() => {
-    setSesionActiva(obtenerSesionActual());
+    const sesion = obtenerSesionActual();
+    if (!sesion) {
+      router.replace("/login?redirect=/mis-reservas");
+      return;
+    }
+    setSesionActiva(sesion);
+    setVerificandoSesion(false);
     cargarBilletera();
-  }, [cargarBilletera]);
+  }, [router, cargarBilletera]);
+
+  const manejarCerrarSesionViajero = () => {
+    cerrarSesion();
+    router.replace("/login?redirect=/mis-reservas");
+  };
+
+  if (verificandoSesion || !sesionActiva) {
+    return (
+      <div className="min-h-screen bg-obsidian text-sand flex items-center justify-center p-6 font-mono text-xs uppercase tracking-[0.18em]">
+        <div className="flex items-center gap-3 border border-sand/20 bg-jungle/20 px-6 py-4">
+          <Lock className="h-4 w-4 animate-pulse text-terracotta" />
+          <span>
+            REDIRIGIENDO A AUTENTICACIÓN DE VIAJERO (/LOGIN?REDIRECT=/MIS-RESERVAS)...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const esRolCorporativo =
+    sesionActiva.rol === "OPERADOR" || sesionActiva.rol === "ADMIN_AMBIENTAL";
 
   const reservasFiltradas = reservas.filter((r) => {
     if (filtroEstado !== "TODAS" && r.estadoReserva !== filtroEstado) {
@@ -83,7 +114,7 @@ export default function MisReservasWalletPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
-      {/* BARRA SUPERIOR */}
+      {/* BARRA SUPERIOR CON IDENTIDAD DEL VIAJERO AUTENTICADO */}
       <header className="no-print sticky top-0 z-40 border-b border-sand/15 bg-obsidian/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
           <div className="flex flex-wrap items-center gap-3">
@@ -97,12 +128,12 @@ export default function MisReservasWalletPage() {
 
             <span className="font-display text-xl sm:text-2xl tracking-[0.12em] text-sand">
               TYRONAWILDS<span className="text-terracotta">™</span> // BILLETERA
-              DE PASAPORTES &amp; PAGOS WOMPI
+              DEL VIAJERO &amp; PASAPORTES QR
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs">
-            <div className="hidden md:flex items-center gap-2 border border-sand/20 bg-obsidian px-3 py-1.5 text-[11px] uppercase">
+            <div className="hidden lg:flex items-center gap-2 border border-sand/20 bg-obsidian px-3 py-1.5 text-[11px] uppercase">
               <span
                 className={`h-2 w-2 rounded-full ${
                   modoConexion === "BACKEND_GATEWAY_LIVE"
@@ -113,54 +144,60 @@ export default function MisReservasWalletPage() {
               <span>
                 {modoConexion === "BACKEND_GATEWAY_LIVE"
                   ? "RESERVAS-SERVICE :8083 ONLINE"
-                  : "HYBRID WALLET SYNC"}
+                  : "RLS PERSONAL WALLET"}
               </span>
               <span className="text-sand/30">|</span>
               <span className="text-terracotta">{latenciaMs} ms</span>
             </div>
 
-            <Link
-              href="/operadores"
-              className="border border-terracotta/50 bg-terracotta/10 px-3 py-1.5 text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
-            >
-              VER EN CONSOLA /OPERADORES
-            </Link>
+            {/* Insignia Oficial del Viajero Autenticado */}
+            <div className="flex flex-wrap items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-3 py-1.5 text-[11px]">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="font-bold uppercase text-sand">
+                {sesionActiva.nombre}
+              </span>
+              <span className="text-sand/40">·</span>
+              <span className="text-emerald-300">{sesionActiva.email}</span>
+              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-300">
+                {sesionActiva.rol}
+              </span>
+            </div>
 
-            {sesionActiva ? (
-              <button
-                type="button"
-                onClick={() => {
-                  cerrarSesion();
-                  setSesionActiva(null);
-                }}
-                className="inline-flex items-center gap-1 border border-sand/25 px-2.5 py-1.5 text-[11px] uppercase text-sand/75 hover:border-terracotta hover:text-terracotta transition-colors"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                <span>SALIR ({sesionActiva.nombre.split(" ")[0]})</span>
-              </button>
-            ) : (
+            {esRolCorporativo && (
               <Link
-                href="/login?redirect=/mis-reservas"
-                className="inline-flex items-center gap-1.5 bg-terracotta px-3 py-1.5 text-[11px] font-bold uppercase text-sand hover:bg-ember transition-colors"
+                href="/operadores"
+                className="border border-terracotta/50 bg-terracotta/10 px-3 py-1.5 text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
               >
-                <Lock className="h-3.5 w-3.5" />
-                <span>INICIAR SESIÓN</span>
+                PORTAL OPERADORES
               </Link>
             )}
+
+            <button
+              type="button"
+              onClick={manejarCerrarSesionViajero}
+              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-terracotta transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>CERRAR SESIÓN</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 sm:py-10">
-        {/* ENCABEZADO EDITORIAL DE LA BILLETERA */}
+        {/* ENCABEZADO EDITORIAL DE LA BILLETERA PRIVADA */}
         <section className="no-print border border-sand/20 bg-jungle/15 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
               <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand">
                 <QrCode className="h-3.5 w-3.5" />
                 <span>
-                  PASAPORTES OFICIALES DE EXPEDICIÓN ({reservas.length} EMITIDOS)
+                  BILLETERA PERSONAL ({reservas.length}{" "}
+                  {reservas.length === 1
+                    ? "PASAPORTE EMITIDO"
+                    : "PASAPORTES EMITIDOS"}
+                  )
                 </span>
               </div>
 
@@ -169,19 +206,13 @@ export default function MisReservasWalletPage() {
               </h1>
 
               <p className="mt-2 max-w-3xl font-mono text-xs text-sand/75 leading-relaxed">
+                Estás consultando la billetera privada asociada exclusivamente a{" "}
+                <strong className="text-sand">{sesionActiva.nombre}</strong> (
+                <code className="text-emerald-300">{sesionActiva.email}</code>).
                 Cada pasaporte digital (<code>TW-2026-XXXX</code>) incluye su
                 código QR vectorial de verificación para puestos de control PNN
                 Tayrona / ICANH Teyuna y el comprobante transaccional de{" "}
-                <strong>Wompi Sandbox</strong> (<code>WMP-2026-XXXXXX</code>).
-                Todas las reservas aquí listadas están sincronizadas en tiempo
-                real con{" "}
-                <Link
-                  href="/operadores"
-                  className="text-terracotta underline hover:text-sand"
-                >
-                  /operadores
-                </Link>{" "}
-                y la bitácora de auditoría.
+                <strong>Wompi Sandbox</strong>.
               </p>
             </div>
 
@@ -192,46 +223,49 @@ export default function MisReservasWalletPage() {
                 className="inline-flex items-center gap-1.5 border border-sand/25 bg-obsidian px-4 py-3 uppercase text-sand hover:border-terracotta transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5 text-terracotta" />
-                <span>SINCRONIZAR BILLETERA</span>
+                <span>ACTUALIZAR</span>
               </button>
               <Link
                 href="/"
                 className="inline-flex items-center gap-2 bg-sand px-5 py-3 font-bold uppercase text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
               >
-                <span>RESERVAR NUEVA EXPEDICIÓN</span>
+                <span>EXPLORAR EXPEDICIONES Y RESERVAR</span>
               </Link>
             </div>
           </div>
 
-          {/* BUSCADOR POR CÓDIGO Y FILTRO DE ESTADO */}
-          <div className="mt-6 grid grid-cols-1 gap-4 border-t border-sand/15 pt-6 sm:grid-cols-12 font-mono text-xs">
-            <div className="sm:col-span-8 relative">
-              <Search className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-sand/45" />
-              <input
-                type="text"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar por código TW-2026-XXXX, referencia Wompi WMP-2026-XXXXXX, expedición o viajero..."
-                className="w-full border border-sand/25 bg-obsidian pl-10 pr-4 py-3 text-sand placeholder:text-sand/35 focus:border-terracotta focus:outline-none"
-              />
-            </div>
+          {reservas.length > 0 && (
+            <div className="mt-6 grid grid-cols-1 gap-4 border-t border-sand/15 pt-6 sm:grid-cols-12 font-mono text-xs">
+              <div className="sm:col-span-8 relative">
+                <Search className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-sand/45" />
+                <input
+                  type="text"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Buscar en mis pasaportes por código TW-2026-XXXX, referencia Wompi WMP-2026-XXXXXX o expedición..."
+                  className="w-full border border-sand/25 bg-obsidian pl-10 pr-4 py-3 text-sand placeholder:text-sand/35 focus:border-terracotta focus:outline-none"
+                />
+              </div>
 
-            <div className="sm:col-span-4 flex items-center gap-2">
-              <Filter className="h-4 w-4 shrink-0 text-terracotta" />
-              <select
-                value={filtroEstado}
-                onChange={(e) => setFiltroEstado(e.target.value)}
-                className="w-full border border-sand/25 bg-obsidian px-3.5 py-3 text-sand focus:border-terracotta focus:outline-none"
-              >
-                <option value="TODAS">TODOS LOS ESTADOS ({reservas.length})</option>
-                <option value="CONFIRMADA">
-                  CONFIRMADA // PAGO VERIFICADO
-                </option>
-                <option value="PENDIENTE_PAGO">PENDIENTE DE PAGO</option>
-                <option value="CANCELADA">CANCELADA / REVERSADA</option>
-              </select>
+              <div className="sm:col-span-4 flex items-center gap-2">
+                <Filter className="h-4 w-4 shrink-0 text-terracotta" />
+                <select
+                  value={filtroEstado}
+                  onChange={(e) => setFiltroEstado(e.target.value)}
+                  className="w-full border border-sand/25 bg-obsidian px-3.5 py-3 text-sand focus:border-terracotta focus:outline-none"
+                >
+                  <option value="TODAS">
+                    TODOS MIS PASAPORTES ({reservas.length})
+                  </option>
+                  <option value="CONFIRMADA">
+                    CONFIRMADA // PAGO VERIFICADO
+                  </option>
+                  <option value="PENDIENTE_PAGO">PENDIENTE DE PAGO</option>
+                  <option value="CANCELADA">CANCELADA / REVERSADA</option>
+                </select>
+              </div>
             </div>
-          </div>
+          )}
         </section>
 
         {/* MODAL DE PASAPORTE QR IMPRIMIBLE CUANDO SE SELECCIONA UNO */}
@@ -267,15 +301,49 @@ export default function MisReservasWalletPage() {
           </div>
         )}
 
-        {/* LISTADO DE TARJETAS DE PASAPORTES EMITIDOS */}
+        {/* LISTADO DE TARJETAS O ESTADO VACÍO HUD */}
         <section className="no-print mt-8">
           {cargando ? (
             <div className="border border-sand/20 bg-obsidian p-12 text-center font-mono text-xs uppercase tracking-widest text-sand/70">
-              CARGANDO PASAPORTES DIGITALES Y COMPROBANTES WOMPI...
+              VERIFICANDO PASAPORTES EMITIDOS PARA {sesionActiva.email}...
+            </div>
+          ) : reservas.length === 0 ? (
+            <div className="border-2 border-sand/20 bg-obsidian p-10 sm:p-14 text-center">
+              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center border border-terracotta/50 bg-terracotta/10 text-terracotta">
+                <Compass className="h-7 w-7" />
+              </div>
+
+              <div className="mt-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-terracotta">
+                SIN PASAPORTES EMITIDOS // AÚN NO HAS RESERVADO NINGUNA
+                EXPEDICIÓN EN TU CUENTA
+              </div>
+
+              <h2 className="mt-2 font-display text-3xl sm:text-4xl uppercase text-sand">
+                TU BILLETERA DE EXPEDICIONES ESTÁ LISTA, {sesionActiva.nombre}
+              </h2>
+
+              <p className="mx-auto mt-3 max-w-xl font-mono text-xs text-sand/70 leading-relaxed">
+                No tienes reservas activas vinculadas a{" "}
+                <code className="text-emerald-300">{sesionActiva.email}</code>{" "}
+                (ID <code>#{sesionActiva.userId}</code>). Selecciona cualquier
+                travesía en la Sierra Nevada o el Parque Tayrona, completa el
+                pago en <strong>Wompi Sandbox</strong> y tu pasaporte oficial QR
+                aparecerá aquí al instante.
+              </p>
+
+              <div className="mt-6">
+                <Link
+                  href="/#expediciones"
+                  className="inline-flex items-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors"
+                >
+                  <Compass className="h-4 w-4" />
+                  <span>EXPLORAR EXPEDICIONES Y RESERVAR</span>
+                </Link>
+              </div>
             </div>
           ) : reservasFiltradas.length === 0 ? (
             <div className="border border-sand/20 bg-obsidian p-12 text-center font-mono text-xs text-sand/70">
-              No se encontraron pasaportes que coincidan con el filtro actual.
+              No se encontraron pasaportes que coincidan con tu búsqueda.
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -287,8 +355,11 @@ export default function MisReservasWalletPage() {
                   "PIERDE EL MAPA: CIUDAD PERDIDA (TEYUNA)";
                 const fechaSalida = res.fechaSalida || "2026-11-15";
                 const horaSalida = res.horaSalida || "05:30";
-                const titular = res.nombreViajero || "Valeria Mejía";
-                const documento = res.documentoViajero || "CC 1082940182";
+                const titular = res.nombreViajero || sesionActiva.nombre;
+                const documento =
+                  res.documentoViajero ||
+                  sesionActiva.documento ||
+                  "CC 1083019450";
                 const punto =
                   res.puntoEncuentro ||
                   "05:30 AM · Casa Expedicionaria Centro Histórico -> El Mamey";
@@ -416,13 +487,9 @@ export default function MisReservasWalletPage() {
       <footer className="no-print mx-auto max-w-[1440px] border-t border-sand/15 px-4 py-8 sm:px-6 font-mono text-xs text-sand/55">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <span>
-            TYRONAWILDS™ // BILLETERA DE EXPEDICIONES &amp; PASARELA WOMPI
-            SANDBOX
+            TYRONAWILDS™ // BILLETERA PERSONAL DEL VIAJERO · SANTA MARTA, CO
           </span>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/operadores" className="hover:text-terracotta">
-              Consola /operadores
-            </Link>
             <Link href="/privacidad" className="hover:text-terracotta">
               Privacidad (Ley 1581)
             </Link>

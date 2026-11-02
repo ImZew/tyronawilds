@@ -524,6 +524,7 @@ export interface SesionAutenticada {
   userId: string;
   nombre: string;
   email: string;
+  documento?: string;
   rol: RolAutenticado;
   prestadorId?: string;
   codigoPrestador?: number;
@@ -542,6 +543,7 @@ export interface PayloadRegistroUsuario {
   nombre: string;
   email: string;
   password: string;
+  documento?: string;
   rol: RolAutenticado;
   rnt?: string;
 }
@@ -557,13 +559,14 @@ export interface ResultadoAutenticacion {
 }
 
 const LS_AUTH_SESSION_KEY = "tyronawilds_auth_session";
-const LS_AUTH_USERS_KEY = "tyronawilds_auth_users_v1";
+const LS_AUTH_USERS_KEY = "tyronawilds_auth_users_v2";
 
 interface CuentaDirectorioInterno {
   userId: string;
   nombre: string;
   email: string;
   passwordPlain: string;
+  documento?: string;
   rol: RolAutenticado;
   prestadorId?: string;
   codigoPrestador?: number;
@@ -571,6 +574,24 @@ interface CuentaDirectorioInterno {
 }
 
 const DIRECTORIO_CUENTAS_SEMILLA: CuentaDirectorioInterno[] = [
+  // Perfiles de Viajeros (B2C)
+  {
+    userId: "101",
+    nombre: "Sebastián Abaonza",
+    email: "sebastian@viajero.co",
+    passwordPlain: "Viajero2026*",
+    documento: "CC 1083019450",
+    rol: "TURISTA",
+  },
+  {
+    userId: "102",
+    nombre: "Valeria Mejía",
+    email: "valeria@viajera.co",
+    passwordPlain: "Valeria2026*",
+    documento: "CC 1082940182",
+    rol: "TURISTA",
+  },
+  // Perfiles Corporativos RNT / Ambiental (B2B)
   {
     userId: "22222222-2222-2222-2222-222222222222",
     nombre: "Expediciones Tayrona & Sierra",
@@ -628,10 +649,11 @@ const DIRECTORIO_CUENTAS_SEMILLA: CuentaDirectorioInterno[] = [
     rnt: "PNN-GOV-SM",
   },
   {
-    userId: "44444444-4444-4444-4444-444444444444",
-    nombre: "Valeria Viajera Consciente",
+    userId: "102",
+    nombre: "Valeria Mejía",
     email: "turista@tyronawilds.co",
     passwordPlain: "Tyrona2026*",
+    documento: "CC 1082940182",
     rol: "TURISTA",
   },
 ];
@@ -854,12 +876,13 @@ export async function iniciarSesion(
               rnt,
             }),
           userId:
+            cuentaConocida?.userId ||
             data.usuarioId ||
             data.id ||
-            cuentaConocida?.userId ||
             "22222222-2222-2222-2222-222222222222",
           nombre: data.nombre || cuentaConocida?.nombre || emailLimpio,
           email: emailLimpio,
+          documento: cuentaConocida?.documento || data.documento,
           rol,
           prestadorId,
           codigoPrestador,
@@ -957,6 +980,7 @@ export async function iniciarSesion(
     userId: cuentaConocida.userId,
     nombre: cuentaConocida.nombre,
     email: cuentaConocida.email,
+    documento: cuentaConocida.documento,
     rol: cuentaConocida.rol,
     prestadorId: cuentaConocida.prestadorId,
     codigoPrestador: cuentaConocida.codigoPrestador,
@@ -1195,7 +1219,7 @@ async function fetchConRespaldo<T>(
 
 const LS_OFERTAS_KEY = "tyronawilds_b2b_ofertas_v1";
 const LS_DISPONIBILIDAD_KEY = "tyronawilds_b2b_disponibilidad_v1";
-const LS_RESERVAS_KEY = "tyronawilds_b2b_reservas_v1";
+const LS_RESERVAS_KEY = "tyronawilds_b2b_reservas_v2";
 const LS_AUDITORIA_KEY = "tyronawilds_b2b_auditoria_v1";
 
 function leerCatalogoLocal(): ActividadTuristica[] {
@@ -1246,7 +1270,7 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
   {
     id: "70000000-0000-0000-0000-000000000001",
     codigoReserva: "TW-2026-901A",
-    usuarioId: "44444444-4444-4444-4444-444444444444",
+    usuarioId: "102",
     disponibilidadId: "d0000000-0000-0000-0000-000000000001",
     actividadId: "a0000000-0000-0000-0000-000000000009",
     cantidadCupos: 2,
@@ -1255,7 +1279,7 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
     fechaOperacion: new Date(Date.now() - 3600000).toISOString(),
     nombreViajero: "Valeria Mejía",
     documentoViajero: "CC 1082940182",
-    emailViajero: "valeria.mejia@expedicion.co",
+    emailViajero: "valeria@viajera.co",
     nombreActividad: "PIERDE EL MAPA: CIUDAD PERDIDA (TEYUNA)",
     fechaSalida: "2026-11-15",
     horaSalida: "05:30",
@@ -1268,31 +1292,6 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
     referenciaPagoWompi: "WMP-2026-841920",
     detalleMetodoPago: "Nequi Push Aprobado · 300 555 0199",
     tasaAmbientalCop: 444000,
-  },
-  {
-    id: "70000000-0000-0000-0000-000000000002",
-    codigoReserva: "TW-2026-442C",
-    usuarioId: "44444444-4444-4444-4444-444444444444",
-    disponibilidadId: "d0000000-0000-0000-0000-000000000005",
-    actividadId: "a0000000-0000-0000-0000-000000000003",
-    cantidadCupos: 3,
-    montoTotalCop: 630000,
-    estadoReserva: "CONFIRMADA",
-    fechaOperacion: new Date(Date.now() - 1800000).toISOString(),
-    nombreViajero: "Sebastián Abaonza",
-    documentoViajero: "CC 1083019450",
-    emailViajero: "sebastian@tyronawilds.co",
-    nombreActividad: "EXPEDICIÓN BIOCLIMÁTICA & CASCADAS DE MARINKA",
-    fechaSalida: "2026-11-16",
-    horaSalida: "07:45",
-    coordenadasHud: "11°08'35\"N 74°06'58\"W",
-    altitudMsnm: 1150,
-    puntoEncuentro: "07:45 AM · Plaza de la Iglesia de Minca (650 msnm)",
-    operadorLicenciaRnt: "RNT #55210 · Sello Verde Sostenible",
-    metodoPago: "PSE",
-    referenciaPagoWompi: "WMP-2026-390512",
-    detalleMetodoPago: "PSE Débito · Nu Colombia (Persona Natural)",
-    tasaAmbientalCop: 75600,
   },
 ];
 
@@ -1312,6 +1311,7 @@ function guardarReservasLocal(lista: ReservaConfirmadaDto[]): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(LS_RESERVAS_KEY, JSON.stringify(lista));
+    window.dispatchEvent(new Event("tyronawilds-reservas-change"));
   } catch {
     // Ignorar
   }
@@ -1575,11 +1575,18 @@ export async function crearReservaTransaccional(
   const montoTotal = disponibilidad.precioUnitarioCop * cantidadCupos;
   const tasaAmbiental = Math.round(montoTotal * 0.12);
 
+  const sesionActiva = obtenerSesionActual();
   const enriquecerReserva = (base: ReservaConfirmadaDto): ReservaConfirmadaDto => ({
     ...base,
-    nombreViajero: datosCheckout?.nombreViajero || "Valeria Mejía",
-    documentoViajero: datosCheckout?.documentoViajero || "CC 1082940182",
-    emailViajero: datosCheckout?.emailViajero || actor.email,
+    usuarioId: sesionActiva?.userId || actor.usuarioId,
+    nombreViajero:
+      datosCheckout?.nombreViajero || sesionActiva?.nombre || "Sebastián Abaonza",
+    documentoViajero:
+      datosCheckout?.documentoViajero ||
+      sesionActiva?.documento ||
+      "CC 1083019450",
+    emailViajero:
+      datosCheckout?.emailViajero || sesionActiva?.email || actor.email,
     nombreActividad: actividadRef.nombreEs || disponibilidad.nombreActividad,
     fechaSalida: disponibilidad.fecha,
     horaSalida: disponibilidad.horaInicio.slice(0, 5),
@@ -1743,10 +1750,10 @@ export async function crearReservaTransaccional(
   };
 }
 
-export async function consultarMisReservas(): Promise<
-  ApiCallResult<ReservaConfirmadaDto[]>
-> {
-  const actor = convertirSesionAActor(obtenerSesionActual());
+async function obtenerTodasLasReservasFusionadas(
+  actorParam?: ActorSesion
+): Promise<ApiCallResult<ReservaConfirmadaDto[]>> {
+  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
   const resultado = await fetchConRespaldo(
     [
       `${GATEWAY_URL}/api/v1/reservas`,
@@ -1759,7 +1766,6 @@ export async function consultarMisReservas(): Promise<
     () => leerReservasLocal()
   );
 
-  // Asegurar que las reservas creadas en localStorage estén fusionadas con sus metadatos Wompi y QR
   const locales = leerReservasLocal();
   const mapaPorCodigo = new Map<string, ReservaConfirmadaDto>();
   for (const r of locales) {
@@ -1774,6 +1780,40 @@ export async function consultarMisReservas(): Promise<
   return {
     ...resultado,
     data: Array.from(mapaPorCodigo.values()),
+  };
+}
+
+/**
+ * Row-Level Security (RLS) para Billetera del Viajero (/mis-reservas):
+ * Devuelve EXCLUSIVAMENTE las reservas cuyo usuarioId === session.userId
+ * o cuyo emailViajero coincida con session.email.
+ */
+export async function consultarMisReservas(): Promise<
+  ApiCallResult<ReservaConfirmadaDto[]>
+> {
+  const sesion = obtenerSesionActual();
+  if (!sesion) {
+    return {
+      data: [],
+      latenciaMs: 1,
+      modoConexion: "FALLBACK_RESILIENTE",
+      httpStatus: 401,
+    };
+  }
+
+  const todas = await obtenerTodasLasReservasFusionadas(
+    convertirSesionAActor(sesion)
+  );
+  const emailSesion = sesion.email.trim().toLowerCase();
+  const filtradasPorPropietario = todas.data.filter(
+    (r) =>
+      r.usuarioId === sesion.userId ||
+      (r.emailViajero || "").trim().toLowerCase() === emailSesion
+  );
+
+  return {
+    ...todas,
+    data: filtradasPorPropietario,
   };
 }
 
@@ -2493,9 +2533,9 @@ export async function crearDisponibilidad(
 }
 
 export async function consultarReservasOperador(
-  _actorParam?: ActorSesion
+  actorParam?: ActorSesion
 ): Promise<ApiCallResult<ReservaConfirmadaDto[]>> {
-  return consultarMisReservas();
+  return obtenerTodasLasReservasFusionadas(actorParam);
 }
 
 export async function consultarIndicadoresCapacidad(): Promise<

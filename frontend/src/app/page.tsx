@@ -50,6 +50,7 @@ import {
   SEED_ACTIVIDADES,
   SesionAutenticada,
   cerrarSesion,
+  consultarMisReservas,
   convertirSesionAActor,
   crearReservaTransaccional,
   ejecutarRecomendacionIa,
@@ -152,6 +153,7 @@ export default function TyronaWildsCommercialStorefront() {
   const [sesionUsuario, setSesionUsuario] = useState<SesionAutenticada | null>(
     null
   );
+  const [misReservasCount, setMisReservasCount] = useState<number>(0);
 
   useEffect(() => {
     const actualizarSesion = () => setSesionUsuario(obtenerSesionActual());
@@ -160,6 +162,29 @@ export default function TyronaWildsCommercialStorefront() {
     return () =>
       window.removeEventListener("tyronawilds-auth-change", actualizarSesion);
   }, []);
+
+  const sincronizarContadorMisReservas = useCallback(async () => {
+    const sesion = obtenerSesionActual();
+    if (!sesion || sesion.rol !== "TURISTA") {
+      setMisReservasCount(0);
+      return;
+    }
+    const res = await consultarMisReservas();
+    setMisReservasCount(res.data.length);
+  }, []);
+
+  useEffect(() => {
+    sincronizarContadorMisReservas();
+    window.addEventListener(
+      "tyronawilds-reservas-change",
+      sincronizarContadorMisReservas
+    );
+    return () =>
+      window.removeEventListener(
+        "tyronawilds-reservas-change",
+        sincronizarContadorMisReservas
+      );
+  }, [sesionUsuario, sincronizarContadorMisReservas]);
 
   const [actividades, setActividades] =
     useState<ActividadTuristica[]>(SEED_ACTIVIDADES);
@@ -222,6 +247,9 @@ export default function TyronaWildsCommercialStorefront() {
     if (sesionUsuario) {
       setNombreViajero(sesionUsuario.nombre);
       setEmailViajero(sesionUsuario.email);
+      if (sesionUsuario.documento) {
+        setDocumentoViajero(sesionUsuario.documento);
+      }
     }
   }, [sesionUsuario]);
 
@@ -289,6 +317,9 @@ export default function TyronaWildsCommercialStorefront() {
     if (sesionUsuario) {
       setNombreViajero(sesionUsuario.nombre);
       setEmailViajero(sesionUsuario.email);
+      if (sesionUsuario.documento) {
+        setDocumentoViajero(sesionUsuario.documento);
+      }
     }
 
     registrarEventoAnalitica("EXPEDITION_DRAWER_OPEN", {
@@ -310,9 +341,9 @@ export default function TyronaWildsCommercialStorefront() {
 
   // Autocompletar 1-Clic Datos del Viajero (Paso 1)
   const autocompletarDatosViajeroDemo = () => {
-    setNombreViajero(sesionUsuario?.nombre || "Valeria Mejía");
-    setEmailViajero(sesionUsuario?.email || "valeria.mejia@expedicion.co");
-    setDocumentoViajero("CC 1082940182");
+    setNombreViajero(sesionUsuario?.nombre || "Sebastián Abaonza");
+    setEmailViajero(sesionUsuario?.email || "sebastian@viajero.co");
+    setDocumentoViajero(sesionUsuario?.documento || "CC 1083019450");
     setCantidadCupos(2);
     setAceptaHabeasData(true);
     setErroresCheckout({});
@@ -606,33 +637,73 @@ export default function TyronaWildsCommercialStorefront() {
                 ? "PULSO DEL TERRITORIO"
                 : "TERRITORIAL PULSE"}
             </a>
-            <Link
-              href="/mis-reservas"
-              className="hover:text-terracotta transition-colors font-bold text-sand"
-            >
-              {idioma === "es" ? "MIS RESERVAS" : "MY PASSPORTS"}
-            </Link>
-            <Link
-              href="/operadores"
-              className="border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 text-[11px] font-bold text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
-            >
-              {idioma === "es" ? "PORTAL OPERADORES" : "OPERATOR PORTAL"}
-            </Link>
+            {sesionUsuario && sesionUsuario.rol === "TURISTA" && (
+              <Link
+                href="/mis-reservas"
+                className="inline-flex items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-2.5 py-1 text-[11px] font-bold text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
+              >
+                <QrCode className="h-3.5 w-3.5 text-emerald-400" />
+                <span>
+                  {idioma === "es" ? "MIS RESERVAS" : "MY PASSPORTS"} (
+                  {misReservasCount})
+                </span>
+              </Link>
+            )}
+            {sesionUsuario &&
+              (sesionUsuario.rol === "OPERADOR" ||
+                sesionUsuario.rol === "ADMIN_AMBIENTAL") && (
+                <Link
+                  href="/operadores"
+                  className="border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 text-[11px] font-bold text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                >
+                  {idioma === "es" ? "PORTAL OPERADORES" : "OPERATOR PORTAL"}
+                </Link>
+              )}
           </nav>
 
           <div className="flex items-center gap-2">
             {sesionUsuario ? (
               <div className="flex items-center gap-1.5">
-                <Link
-                  href="/operadores"
-                  className="inline-flex items-center gap-1.5 border border-emerald-500/45 bg-emerald-950/35 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
-                  title="Ir al panel operativo"
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                  <span className="max-w-[140px] truncate">
-                    {sesionUsuario.nombre}
-                  </span>
-                </Link>
+                {sesionUsuario.rol === "TURISTA" ? (
+                  <>
+                    <Link
+                      href="/mis-reservas"
+                      className="lg:hidden inline-flex items-center gap-1 border border-emerald-500/45 bg-emerald-950/35 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
+                    >
+                      <QrCode className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>MIS RESERVAS ({misReservasCount})</span>
+                    </Link>
+                    <Link
+                      href="/mis-reservas"
+                      className="inline-flex items-center gap-1.5 border border-sand/30 bg-sand/10 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:border-terracotta hover:text-terracotta transition-colors"
+                      title="Ver mi billetera personal de pasaportes QR"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                      <span className="max-w-[150px] truncate">
+                        {sesionUsuario.nombre}
+                      </span>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/operadores"
+                      className="lg:hidden inline-flex items-center gap-1 border border-terracotta/50 bg-terracotta/15 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                    >
+                      <span>PORTAL OPERADORES</span>
+                    </Link>
+                    <Link
+                      href="/operadores"
+                      className="inline-flex items-center gap-1.5 border border-emerald-500/45 bg-emerald-950/35 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
+                      title="Ir a la consola operativa B2B"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                      <span className="max-w-[160px] truncate">
+                        {sesionUsuario.nombre} · {sesionUsuario.rnt}
+                      </span>
+                    </Link>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -1202,8 +1273,35 @@ export default function TyronaWildsCommercialStorefront() {
                 </span>
               </div>
 
-              {/* Barra Indicadora de los 3 Pasos del Checkout */}
-              <div className="mt-4 grid grid-cols-3 border border-sand/20 bg-obsidian font-mono text-[11px] uppercase">
+              {!sesionUsuario ? (
+                <div className="mt-6 border-2 border-terracotta/70 bg-obsidian p-6 sm:p-8">
+                  <div className="inline-flex items-center gap-2 border border-terracotta/40 bg-terracotta/15 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-terracotta">
+                    <Lock className="h-3.5 w-3.5" />
+                    <span>AUTENTICACIÓN REQUERIDA // PÓLIZA PNN &amp; AISLAMIENTO RLS</span>
+                  </div>
+                  <h4 className="mt-4 font-display text-2xl sm:text-3xl uppercase tracking-tight text-sand">
+                    INICIA SESIÓN COMO VIAJERO PARA RESERVAR Y EMITIR TU PASAPORTE QR
+                  </h4>
+                  <p className="mt-2 max-w-2xl font-mono text-xs text-sand/75 leading-relaxed">
+                    Por trazabilidad de seguro de alta montaña PNN / ICANH y privacidad de billetera personal (Row-Level Security), cada reserva transaccional y su código QR oficial se emiten exclusivamente bajo la cuenta autenticada del expedicionario titular.
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/login"
+                      className="inline-flex items-center gap-2 bg-terracotta px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors"
+                    >
+                      <Lock className="h-4 w-4" />
+                      <span>IR A /LOGIN E INICIAR SESIÓN COMO VIAJERO</span>
+                    </Link>
+                    <span className="font-mono text-[11px] text-sand/60">
+                      Incluye acceso 1-clic con <strong>Turista 1 (Sebastián Abaonza)</strong> o <strong>Turista 2 (Valeria Mejía)</strong>.
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Barra Indicadora de los 3 Pasos del Checkout */}
+                  <div className="mt-4 grid grid-cols-3 border border-sand/20 bg-obsidian font-mono text-[11px] uppercase">
                 <button
                   type="button"
                   onClick={() => setPasoCheckout(1)}
@@ -1994,6 +2092,8 @@ export default function TyronaWildsCommercialStorefront() {
                     />
                   </div>
                 )}
+                </>
+              )}
             </div>
           </div>
         </div>

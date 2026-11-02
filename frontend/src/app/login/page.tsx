@@ -32,6 +32,7 @@ import {
 
 interface PerfilEvaluacion {
   id: string;
+  categoria: "B2C_TURISTA" | "B2B_CORPORATIVO";
   titulo: string;
   subtitulo: string;
   email: string;
@@ -40,9 +41,35 @@ interface PerfilEvaluacion {
   rolBadge: string;
 }
 
-const PERFILES_EVALUACION: PerfilEvaluacion[] = [
+const PERFILES_VIAJEROS_B2C: PerfilEvaluacion[] = [
+  {
+    id: "TURISTA_1",
+    categoria: "B2C_TURISTA",
+    titulo: "Turista 1 — Sebastián Abaonza (Cuenta Limpia)",
+    subtitulo:
+      "Inicia con 0 reservas por defecto · Ideal para demostrar reserva y pasaporte QR en vivo",
+    email: "sebastian@viajero.co",
+    password: "Viajero2026*",
+    rnt: "CC 1083019450 · ID #101",
+    rolBadge: "TURISTA (0 RESERVAS)",
+  },
+  {
+    id: "TURISTA_2",
+    categoria: "B2C_TURISTA",
+    titulo: "Turista 2 — Valeria Mejía (Con Reserva Activa)",
+    subtitulo:
+      "Titular exclusiva del pasaporte TW-2026-901A (Ciudad Perdida) · Prueba de Aislamiento RLS",
+    email: "valeria@viajera.co",
+    password: "Valeria2026*",
+    rnt: "CC 1082940182 · ID #102",
+    rolBadge: "TURISTA (1 RESERVA)",
+  },
+];
+
+const PERFILES_CORPORATIVOS_B2B: PerfilEvaluacion[] = [
   {
     id: "OP_77",
+    categoria: "B2B_CORPORATIVO",
     titulo: "Operador Titular (#77)",
     subtitulo: "Expediciones Tayrona & Sierra · Propietario legítimo del catálogo base",
     email: "operaciones@tayronasierra.co",
@@ -52,6 +79,7 @@ const PERFILES_EVALUACION: PerfilEvaluacion[] = [
   },
   {
     id: "OP_41",
+    categoria: "B2B_CORPORATIVO",
     titulo: "Operador Externo (#41)",
     subtitulo: "Operador Caribe · Tercero sin titularidad sobre los servicios #77",
     email: "gerencia@operadorcaribe.co",
@@ -61,6 +89,7 @@ const PERFILES_EVALUACION: PerfilEvaluacion[] = [
   },
   {
     id: "PNN_ADMIN",
+    categoria: "B2B_CORPORATIVO",
     titulo: "Autoridad Ambiental (PNN)",
     subtitulo: "Monitoreo de Capacidad de Carga Ecosistémica y Auditoría Distrital",
     email: "monitoreo@parquesnacionales.gov.co",
@@ -344,10 +373,16 @@ function LoginContenido() {
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Link
-                    href="/operadores"
+                    href={
+                      sesionActiva.rol === "TURISTA"
+                        ? "/mis-reservas"
+                        : "/operadores"
+                    }
                     className="bg-emerald-500 px-3 py-1.5 text-[11px] font-bold uppercase text-obsidian hover:bg-emerald-400 transition-colors"
                   >
-                    IR AL PORTAL DE OPERADORES
+                    {sesionActiva.rol === "TURISTA"
+                      ? "IR A MIS RESERVAS"
+                      : "IR AL PORTAL DE OPERADORES"}
                   </Link>
                   <button
                     type="button"
@@ -371,8 +406,11 @@ function LoginContenido() {
               <div className="mb-6 flex items-center gap-2.5 border border-amber-500/40 bg-amber-950/30 px-4 py-3 font-mono text-xs text-amber-200">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
                 <span>
-                  Ruta protegida ({redirectParam}): Inicia sesión con una cuenta
-                  de Operador RNT o Autoridad Ambiental para continuar.
+                  {redirectParam === "/mis-reservas"
+                    ? "Ruta protegida (/mis-reservas): Inicia sesión con tu cuenta de Viajero (Turista) para consultar tus pasaportes y reservas."
+                    : redirectParam === "/operadores"
+                    ? "Ruta protegida (/operadores): Inicia sesión con una cuenta de Operador RNT o Autoridad Ambiental para continuar."
+                    : `Ruta protegida (${redirectParam}): Inicia sesión para continuar.`}
                 </span>
               </div>
             )}
@@ -717,48 +755,93 @@ function LoginContenido() {
               </button>
 
               {acordeonEvaluacionAbierto && (
-                <div className="mt-3 space-y-2.5 border border-sand/15 bg-obsidian p-4">
-                  <p className="font-mono text-[11px] text-sand/65">
-                    Selecciona cualquiera de los 3 perfiles registrados en{" "}
-                    <code>identidad-service</code> para autocompletar los campos
-                    de correo y contraseña y probar el flujo real de inicio de
-                    sesión y control de propiedad RNT:
-                  </p>
-
-                  <div className="grid grid-cols-1 gap-2.5 pt-1">
-                    {PERFILES_EVALUACION.map((perfil) => (
-                      <button
-                        key={perfil.id}
-                        type="button"
-                        onClick={() => manejarAutocompletarPerfil(perfil)}
-                        className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-sand/20 bg-jungle/15 p-3 text-left font-mono transition-colors hover:border-terracotta hover:bg-terracotta/10"
-                      >
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-bold text-sand group-hover:text-terracotta">
-                              {perfil.titulo}
-                            </span>
-                            <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
-                              {perfil.rnt}
-                            </span>
-                            <span className="bg-terracotta/20 px-1.5 py-0.5 text-[10px] font-bold text-terracotta">
-                              {perfil.rolBadge}
-                            </span>
+                <div className="mt-3 space-y-5 border border-sand/15 bg-obsidian p-4">
+                  {/* GRUPO 1: PERFILES DE VIAJEROS (B2C) */}
+                  <div>
+                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-emerald-400">
+                      <span>PERFILES DE VIAJEROS (B2C — /MIS-RESERVAS &amp; CHECKOUT)</span>
+                      <span>AISLAMIENTO RLS POR TURISTA</span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {PERFILES_VIAJEROS_B2C.map((perfil) => (
+                        <button
+                          key={perfil.id}
+                          type="button"
+                          onClick={() => manejarAutocompletarPerfil(perfil)}
+                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-emerald-500/30 bg-emerald-950/15 p-3 text-left font-mono transition-colors hover:border-emerald-400 hover:bg-emerald-950/30"
+                        >
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-xs font-bold text-sand group-hover:text-emerald-300">
+                                {perfil.titulo}
+                              </span>
+                              <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
+                                {perfil.rnt}
+                              </span>
+                              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-300">
+                                {perfil.rolBadge}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-[11px] text-sand/65">
+                              {perfil.subtitulo}
+                            </p>
+                            <p className="mt-1 text-[11px] text-emerald-300">
+                              {perfil.email}{" "}
+                              <span className="text-sand/40">/</span>{" "}
+                              {perfil.password}
+                            </p>
                           </div>
-                          <p className="mt-1 text-[11px] text-sand/60">
-                            {perfil.subtitulo}
-                          </p>
-                          <p className="mt-1 text-[11px] text-emerald-300">
-                            {perfil.email} <span className="text-sand/40">/</span>{" "}
-                            {perfil.password}
-                          </p>
-                        </div>
 
-                        <span className="shrink-0 self-start sm:self-center border border-sand/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sand group-hover:border-terracotta group-hover:bg-terracotta group-hover:text-sand transition-colors">
-                          CARGAR CREDENCIALES
-                        </span>
-                      </button>
-                    ))}
+                          <span className="shrink-0 self-start sm:self-center border border-emerald-400/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300 group-hover:bg-emerald-500 group-hover:text-obsidian transition-colors">
+                            CARGAR VIAJERO
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* GRUPO 2: PERFILES CORPORATIVOS RNT / AMBIENTAL (B2B) */}
+                  <div>
+                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-terracotta">
+                      <span>PERFILES CORPORATIVOS RNT / AMBIENTAL (B2B — /OPERADORES)</span>
+                      <span>CONTROL DE TITULARIDAD</span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {PERFILES_CORPORATIVOS_B2B.map((perfil) => (
+                        <button
+                          key={perfil.id}
+                          type="button"
+                          onClick={() => manejarAutocompletarPerfil(perfil)}
+                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-sand/20 bg-jungle/15 p-3 text-left font-mono transition-colors hover:border-terracotta hover:bg-terracotta/10"
+                        >
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-xs font-bold text-sand group-hover:text-terracotta">
+                                {perfil.titulo}
+                              </span>
+                              <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
+                                {perfil.rnt}
+                              </span>
+                              <span className="bg-terracotta/20 px-1.5 py-0.5 text-[10px] font-bold text-terracotta">
+                                {perfil.rolBadge}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-[11px] text-sand/60">
+                              {perfil.subtitulo}
+                            </p>
+                            <p className="mt-1 text-[11px] text-emerald-300">
+                              {perfil.email}{" "}
+                              <span className="text-sand/40">/</span>{" "}
+                              {perfil.password}
+                            </p>
+                          </div>
+
+                          <span className="shrink-0 self-start sm:self-center border border-sand/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sand group-hover:border-terracotta group-hover:bg-terracotta group-hover:text-sand transition-colors">
+                            CARGAR OPERADOR
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
