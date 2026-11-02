@@ -1462,11 +1462,21 @@ export default function PortalOperadoresB2BPage() {
                         </td>
                         <td className="py-3 pr-4 text-sand/85">
                           <span className="font-bold text-sand block">
-                            {r.nombreViajero || "Expedicionario Titular"}
+                            {r.nombreViajero || "Expedicionario Titular"}{" "}
+                            {r.documentoViajero ? `(${r.documentoViajero})` : ""}
                           </span>
-                          <span className="text-[10px] text-sand/55">
+                          <span className="text-[10px] text-sand/55 block">
                             {r.nombreActividad || "Expedición Santa Marta"}
                           </span>
+                          {Array.isArray(r.pasajeros) && r.pasajeros.length > 1 && (
+                            <span className="mt-1 block text-[10px] text-emerald-300">
+                              Acompañantes:{" "}
+                              {r.pasajeros
+                                .filter((p) => !p.esTitular)
+                                .map((p) => `${p.nombre} (${p.documento})`)
+                                .join(" · ")}
+                            </span>
+                          )}
                         </td>
                         <td className="py-3 pr-4">
                           <span className="text-sand font-bold">

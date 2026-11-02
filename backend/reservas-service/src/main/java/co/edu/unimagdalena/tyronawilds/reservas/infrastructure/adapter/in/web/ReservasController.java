@@ -53,13 +53,24 @@ public class ReservasController {
                 ? InputSanitizer.sanitize(correlationId)
                 : UUID.randomUUID().toString();
 
+        List<CrearReservaUseCase.PasajeroReservaComando> pasajerosCmd = (request.pasajeros() != null)
+                ? request.pasajeros().stream()
+                        .map(p -> new CrearReservaUseCase.PasajeroReservaComando(
+                                InputSanitizer.sanitize(p.nombre()),
+                                InputSanitizer.sanitize(p.documento()),
+                                p.esTitular()
+                        ))
+                        .toList()
+                : List.of();
+
         Reserva creada = crearReservaUseCase.crearReserva(
                 new CrearReservaUseCase.ComandoCrearReserva(
                         usuarioId,
                         request.disponibilidadId(),
                         request.cantidadCupos(),
                         InputSanitizer.sanitize(request.idempotencyKey()),
-                        traceId
+                        traceId,
+                        pasajerosCmd
                 )
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(ReservaResponseDto.fromDomain(creada));
