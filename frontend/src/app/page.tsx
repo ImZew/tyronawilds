@@ -40,6 +40,9 @@ import {
   Layers,
   Play,
   Pause,
+  Thermometer,
+  Droplets,
+  Gauge,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import {
@@ -164,6 +167,7 @@ interface DestinoHeroItem {
   imagen: string;
   badge: string;
   descripcion: string;
+  expedicionId: string;
 }
 
 const DESTINOS_HERO: DestinoHeroItem[] = [
@@ -179,6 +183,7 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     badge: "CONSERVACIÓN COSTERA",
     descripcion:
       "Arrecifes coralinos vírgenes, ensenadas esmeralda y senderos bajo el dosel tropical donde los ecosistemas marinos se funden con los estribos de la Sierra Nevada.",
+    expedicionId: "act-tayrona-arrecifes",
   },
   {
     id: "02",
@@ -192,6 +197,7 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     badge: "PATRIMONIO ARQUEOLÓGICO",
     descripcion:
       "169 terrazas de piedra talladas en el siglo VIII d.C., conectadas por calzadas precolombinas rodeadas de bosque de niebla y sabiduría de los cuatro pueblos originarios.",
+    expedicionId: "act-ciudad-perdida-4d",
   },
   {
     id: "03",
@@ -205,6 +211,7 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     badge: "RESERVA DE LA BIOSFERA",
     descripcion:
       "El macizo montañoso litoral más alto del planeta. Desde el calor del trópico hasta los hielos perpetuos que alimentan 36 cuencas hidrográficas sagradas.",
+    expedicionId: "act-sierra-pico-colon",
   },
   {
     id: "04",
@@ -218,6 +225,198 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     badge: "REFUGIO MARINO",
     descripcion:
       "Aguas cristalinas protegidas por formaciones rocosas milenarias, santuarios de tortugas marinas y manglares que actúan como guardianes del litoral caribeño.",
+    expedicionId: "act-don-diego-kayak",
+  },
+];
+
+type PisoTermicoFiltro = "TODOS" | "LITORAL" | "SELVA_HUMEDA" | "ALTA_MONTANA";
+
+interface NodoTopografico {
+  id: string;
+  nombre: string;
+  region: string;
+  coordenadas: string;
+  pisoTermico: "LITORAL" | "SELVA_HUMEDA" | "ALTA_MONTANA";
+  pisoLabelEs: string;
+  pisoLabelEn: string;
+  altitudMsnm: number;
+  altitudDisplay: string;
+  svgPos: { x: number; y: number };
+  tempCelsius: number;
+  humedadPorcentaje: number;
+  cuposDisponibles: number;
+  aforoMaximo: number;
+  vientoKmH: number;
+  estadoAmbiental: string;
+  descripcionEs: string;
+  descripcionEn: string;
+  expedicionId: string;
+  destacadoEs: string;
+  destacadoEn: string;
+}
+
+const PISOS_TERMICOS_OPCIONES: Array<{
+  id: PisoTermicoFiltro;
+  labelEs: string;
+  labelEn: string;
+  rangoMsnm: string;
+  colorBorde: string;
+}> = [
+  {
+    id: "TODOS",
+    labelEs: "TODOS (0 — 5.775M)",
+    labelEn: "ALL (0 — 5,775M)",
+    rangoMsnm: "0m — 5.775m",
+    colorBorde: "border-sand/40 text-sand",
+  },
+  {
+    id: "LITORAL",
+    labelEs: "LITORAL (0 — 200M)",
+    labelEn: "LITTORAL (0 — 200M)",
+    rangoMsnm: "0m — 200m",
+    colorBorde: "border-cyan-400 text-cyan-300",
+  },
+  {
+    id: "SELVA_HUMEDA",
+    labelEs: "SELVA HÚMEDA (650M — 1.200M)",
+    labelEn: "RAINFOREST (650M — 1,200M)",
+    rangoMsnm: "650m — 1.200m",
+    colorBorde: "border-emerald-400 text-emerald-300",
+  },
+  {
+    id: "ALTA_MONTANA",
+    labelEs: "ALTA MONTAÑA (3.100M+)",
+    labelEn: "HIGH MOUNTAIN (3,100M+)",
+    rangoMsnm: "3.100m — 5.775m",
+    colorBorde: "border-terracotta text-terracotta",
+  },
+];
+
+const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
+  {
+    id: "tayrona",
+    nombre: "Parque Nacional Natural Tayrona",
+    region: "Bahía Concha · Cabo San Juan · Arrecifes",
+    coordenadas: "11°18'04\"N 74°00'45\"W",
+    pisoTermico: "LITORAL",
+    pisoLabelEs: "Litoral Costero & Arrecifes",
+    pisoLabelEn: "Coastal Reefs & Littoral",
+    altitudMsnm: 45,
+    altitudDisplay: "0 — 200m MSNM",
+    svgPos: { x: 320, y: 140 },
+    tempCelsius: 30,
+    humedadPorcentaje: 82,
+    cuposDisponibles: 18,
+    aforoMaximo: 45,
+    vientoKmH: 19,
+    estadoAmbiental: "Arrecifes Coralinos Protegidos · Viento Alisio Moderado",
+    descripcionEs:
+      "Litoral rocoso granítico donde la selva tropical húmeda se sumerge en el mar Caribe. Refugio de corales cerebro y pastos marinos protegidos por Parques Nacionales.",
+    descripcionEn:
+      "Granitic rocky coastline where tropical rainforest plunges into the Caribbean Sea. Sanctuary for brain corals and seagrass beds protected by National Parks.",
+    expedicionId: "act-tayrona-arrecifes",
+    destacadoEs: "Santuario marino y terrazas litorales vírgenes",
+    destacadoEn: "Marine sanctuary and pristine littoral terraces",
+  },
+  {
+    id: "don-diego",
+    nombre: "Cuenca del Río Don Diego",
+    region: "Estuario Caribe · Manglares · Aulladores",
+    coordenadas: "11°14'45\"N 73°42'10\"W",
+    pisoTermico: "LITORAL",
+    pisoLabelEs: "Estuario Fluvial & Manglar",
+    pisoLabelEn: "Fluvial Estuary & Mangrove",
+    altitudMsnm: 80,
+    altitudDisplay: "0 — 150m MSNM",
+    svgPos: { x: 780, y: 160 },
+    tempCelsius: 28,
+    humedadPorcentaje: 85,
+    cuposDisponibles: 22,
+    aforoMaximo: 35,
+    vientoKmH: 12,
+    estadoAmbiental: "Desembocadura Marina Activa · Tránsito Fluvial Silencioso",
+    descripcionEs:
+      "Descenso en kayak o tubbing por aguas esmeralda nacidas en los picos nevados, avistamiento de monos aulladores y nutrias gigantes hasta el mar.",
+    descripcionEn:
+      "Emerald river descent born in glacier melt, birdwatching for howler monkeys and giant otters all the way to the Caribbean estuary.",
+    expedicionId: "act-don-diego-kayak",
+    destacadoEs: "Corredor biológico del bosque húmedo tropical",
+    destacadoEn: "Tropical rainforest wildlife biological corridor",
+  },
+  {
+    id: "minca",
+    nombre: "Minca & Piedemonte Cafetero",
+    region: "Bosque de Niebla · Cascadas de Marinka · Pozo Azul",
+    coordenadas: "11°08'40\"N 74°07'05\"W",
+    pisoTermico: "SELVA_HUMEDA",
+    pisoLabelEs: "Piedemonte & Bosque Nuboso",
+    pisoLabelEn: "Foothills & Cloud Forest",
+    altitudMsnm: 650,
+    altitudDisplay: "650m MSNM",
+    svgPos: { x: 290, y: 320 },
+    tempCelsius: 23,
+    humedadPorcentaje: 89,
+    cuposDisponibles: 28,
+    aforoMaximo: 50,
+    vientoKmH: 9,
+    estadoAmbiental: "Cuenca Hídrica con Flujo Constante · Cafetales Sostenibles",
+    descripcionEs:
+      "Capital ornitológica de la Sierra con más de 340 especies de aves registradas, haciendas cafeteras orgánicas y bruma fresca vespertina.",
+    descripcionEn:
+      "Ornithological capital of the Sierra with 340+ bird species recorded, organic coffee estates, and cool mountain afternoon mist.",
+    expedicionId: "act-minca-bosque-niebla",
+    destacadoEs: "Microclima de transición y santuario de colibríes",
+    destacadoEn: "Transition microclimate and hummingbird sanctuary",
+  },
+  {
+    id: "teyuna",
+    nombre: "Teyuna // Ciudad Perdida",
+    region: "Alto Buritaca · Terrazas Precolombinas",
+    coordenadas: "11°02'22\"N 73°55'30\"W",
+    pisoTermico: "SELVA_HUMEDA",
+    pisoLabelEs: "Selva Húmeda Ancestral",
+    pisoLabelEn: "Ancient Subtropical Rainforest",
+    altitudMsnm: 1200,
+    altitudDisplay: "1.200m MSNM",
+    svgPos: { x: 620, y: 360 },
+    tempCelsius: 18,
+    humedadPorcentaje: 92,
+    cuposDisponibles: 12,
+    aforoMaximo: 24,
+    vientoKmH: 7,
+    estadoAmbiental: "Sitio Sagrado ICANH · Aforo Estricto de 24 Expedicionarios/Día",
+    descripcionEs:
+      "Conjunto monumental de 169 terrazas de piedra edificado hacia el 800 d.C., accesible tras cruzar 8 ríos entre selva densa y poblados Kogui y Wiwa.",
+    descripcionEn:
+      "Monumental complex of 169 stone terraces built around 800 CE, reachable across 8 river crossings through dense rainforest and indigenous villages.",
+    expedicionId: "act-ciudad-perdida-4d",
+    destacadoEs: "Patrimonio arqueológico de la civilización Tayrona",
+    destacadoEn: "Archaeological heritage of the Tayrona civilization",
+  },
+  {
+    id: "cerro-kennedy",
+    nombre: "Cerro Kennedy & Cumbres Nevadas",
+    region: "San Lorenzo · Mirador Macizo Colón y Bolívar",
+    coordenadas: "11°06'10\"N 74°03'35\"W",
+    pisoTermico: "ALTA_MONTANA",
+    pisoLabelEs: "Alta Montaña & Mirador Glaciar",
+    pisoLabelEn: "High Mountain & Glacier Viewpoint",
+    altitudMsnm: 3100,
+    altitudDisplay: "3.100m — 5.775m MSNM",
+    svgPos: { x: 430, y: 470 },
+    tempCelsius: 8,
+    humedadPorcentaje: 72,
+    cuposDisponibles: 14,
+    aforoMaximo: 20,
+    vientoKmH: 26,
+    estadoAmbiental: "Límite del Páramo · Viento Fuerte de Cumbre · Alerta Heladas",
+    descripcionEs:
+      "El balcón más imponente del norte de Sudamérica: amaneceres despejados frente a los glaciares perpetuos de los picos Cristóbal Colón y Simón Bolívar.",
+    descripcionEn:
+      "The most majestic viewpoint in northern South America: crystal-clear sunrises facing the perpetual glaciers of Colón and Bolívar peaks.",
+    expedicionId: "act-sierra-pico-colon",
+    destacadoEs: "Vista frontal de los glaciares más altos de Colombia",
+    destacadoEn: "Direct panoramic view of Colombia's highest glaciers",
   },
 ];
 
@@ -238,6 +437,9 @@ export default function TyronaWildsCommercialStorefront() {
   const [misReservasCount, setMisReservasCount] = useState<number>(0);
   const [destinoHeroIndex, setDestinoHeroIndex] = useState<number>(0);
   const [heroEnPausa, setHeroEnPausa] = useState<boolean>(false);
+  const [pisoSeleccionado, setPisoSeleccionado] =
+    useState<PisoTermicoFiltro>("TODOS");
+  const [nodoActivoId, setNodoActivoId] = useState<string>("tayrona");
 
   useEffect(() => {
     if (heroEnPausa) return;
@@ -458,6 +660,27 @@ export default function TyronaWildsCommercialStorefront() {
     });
     if (horariosActividad.length > 0) {
       setHorarioSeleccionadoId(horariosActividad[0].id);
+    }
+  };
+
+  const nodoActivo =
+    NODOS_TOPOGRAFICOS.find((n) => n.id === nodoActivoId) ||
+    NODOS_TOPOGRAFICOS[0];
+
+  const manejarReservaHero = () => {
+    const dest = DESTINOS_HERO[destinoHeroIndex];
+    const act =
+      actividades.find((a) => a.id === dest.expedicionId) || actividades[0];
+    if (act) {
+      abrirDrawerExpedicion(act);
+    }
+  };
+
+  const manejarReservaNodo = (nodo: NodoTopografico) => {
+    const act =
+      actividades.find((a) => a.id === nodo.expedicionId) || actividades[0];
+    if (act) {
+      abrirDrawerExpedicion(act);
     }
   };
 
@@ -946,12 +1169,20 @@ export default function TyronaWildsCommercialStorefront() {
 
                 {/* Fila de Acción con Botones Píldora */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <Link
-                    href="/expediciones"
+                  <button
+                    type="button"
+                    onClick={manejarReservaHero}
                     className="inline-flex items-center gap-2.5 rounded-full bg-terracotta px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember shadow-lg shadow-terracotta/25 transition-all group"
                   >
                     <span>{idioma === "es" ? "RESERVAR AHORA" : "BOOK NOW"}</span>
                     <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </button>
+
+                  <Link
+                    href="/expediciones"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 backdrop-blur-md px-5 py-3 font-mono text-xs uppercase tracking-wider text-sand hover:border-terracotta transition-all"
+                  >
+                    <span>{idioma === "es" ? "CATÁLOGO COMPLETO" : "FULL CATALOG"}</span>
                   </Link>
 
                   <Link
@@ -1097,298 +1328,725 @@ export default function TyronaWildsCommercialStorefront() {
       </section>
 
       {/* =====================================================================
-          SECCIÓN DE ACCESO RÁPIDO MULTIPÁGINA (3 TARJETAS RESUMEN INTERACTIVAS)
+          SECCIÓN 2: CARTOGRAFÍA VIVA // DEL ARRECIFE AL GLACIAR
+          Mapa Topográfico Interactivo y Animado con Curvas de Nivel SVG y Telemetría
       ====================================================================== */}
       <section
-        aria-label="Rutas Multipágina de TYRONAWILDS"
-        className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6"
+        id="cartografia"
+        aria-label="Cartografía Topográfica Interactiva de Santa Marta y la Sierra Nevada"
+        className="mx-auto max-w-[1440px] px-3 sm:px-4 md:px-6 py-10 md:py-16"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Cabecera Editorial Brutalista */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-sand/20 pb-8">
+          <div>
+            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
+              <CompassIcon className="h-4 w-4 animate-spin-slow" />
+              <span>// 02 · CARTOGRAFÍA VIVA · COORDENADAS TOPOGRÁFICAS</span>
+            </div>
+            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
+              {idioma === "es"
+                ? "DEL ARRECIFE AL GLACIAR"
+                : "FROM REEF TO GLACIER"}
+            </h2>
+            <p className="mt-2 max-w-2xl font-mono text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+              {idioma === "es"
+                ? "Explora el gradiente altitudinal más abrupto del planeta: 5.775 metros de desnivel vertical en apenas 42 kilómetros desde las bahías coralinas del Caribe hasta las cumbres nevadas de la Sierra."
+                : "Explore the most dramatic altitudinal gradient on Earth: 5,775 meters of vertical relief across just 42 kilometers from Caribbean coral bays to snowcapped peaks."}
+            </p>
+          </div>
+
+          {/* Selector de Piso Térmico */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="hidden sm:inline font-mono text-[11px] uppercase tracking-wider text-sand/50 mr-1">
+              {idioma === "es" ? "PISO TÉRMICO:" : "ZONE:"}
+            </span>
+            {PISOS_TERMICOS_OPCIONES.map((opc) => {
+              const activo = pisoSeleccionado === opc.id;
+              return (
+                <button
+                  key={opc.id}
+                  type="button"
+                  onClick={() => {
+                    setPisoSeleccionado(opc.id);
+                    if (opc.id !== "TODOS") {
+                      const primero = NODOS_TOPOGRAFICOS.find(
+                        (n) => n.pisoTermico === opc.id
+                      );
+                      if (primero) setNodoActivoId(primero.id);
+                    }
+                  }}
+                  className={`rounded-full px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-wider transition-all border ${
+                    activo
+                      ? "bg-terracotta border-terracotta text-sand font-bold shadow-md shadow-terracotta/20"
+                      : "border-sand/20 bg-black/40 text-sand/70 hover:border-sand/40 hover:text-sand"
+                  }`}
+                >
+                  {idioma === "es" ? opc.labelEs : opc.labelEn}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Grilla Principal: Mapa Topográfico SVG (Izquierda) + Panel de Telemetría (Derecha) */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* =================================================================
+              COLUMNA 1 (lg:col-span-7): MAPA TOPOGRÁFICO INTERACTIVO SVG
+          ================================================================== */}
+          <div className="lg:col-span-7 relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sand/20 bg-[#070b09] p-4 sm:p-6 shadow-2xl">
+            {/* Header flotante del mapa con coordenadas HUD */}
+            <div className="relative z-10 flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-sand/70 pb-3 border-b border-sand/15">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>RELIEVE VECTORIAL ACTIVO // PROYECCIÓN WGS84</span>
+              </div>
+              <div className="text-terracotta font-bold">
+                11°14&apos;N · 74°11&apos;W
+              </div>
+            </div>
+
+            {/* Contenedor del Mapa SVG con Curvas de Nivel y Rutas Animadas */}
+            <div className="relative my-auto w-full aspect-[16/10] sm:aspect-[16/10]">
+              <svg
+                viewBox="0 0 1000 620"
+                className="w-full h-full select-none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  {/* Gradiente del Mar Caribe */}
+                  <linearGradient
+                    id="oceanGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#083344" stopOpacity="0.8" />
+                    <stop offset="60%" stopColor="#0e7490" stopOpacity="0.45" />
+                    <stop offset="100%" stopColor="#022c22" stopOpacity="0.2" />
+                  </linearGradient>
+
+                  {/* Gradiente de Relieve Montañoso */}
+                  <radialGradient
+                    id="mountainRelief"
+                    cx="65%"
+                    cy="75%"
+                    r="60%"
+                  >
+                    <stop offset="0%" stopColor="#E63000" stopOpacity="0.25" />
+                    <stop offset="45%" stopColor="#0d261c" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#070b09" stopOpacity="0.95" />
+                  </radialGradient>
+
+                  {/* Filtro de Resplandor para el Nodo Activo */}
+                  <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
+                    <feMerge>
+                      <feMergeNode />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <style>{`
+                  @keyframes topoDash {
+                    to {
+                      stroke-dashoffset: -120;
+                    }
+                  }
+                  .trail-pulse {
+                    animation: topoDash 16s linear infinite;
+                  }
+                  .trail-pulse-fast {
+                    animation: topoDash 12s linear infinite;
+                  }
+                `}</style>
+
+                {/* Fondo Ambiental de Relieve */}
+                <rect
+                  x="0"
+                  y="0"
+                  width="1000"
+                  height="620"
+                  fill="url(#mountainRelief)"
+                />
+
+                {/* Retícula Cartográfica Sutil */}
+                <g stroke="#F4F0EA" strokeWidth="0.5" strokeOpacity="0.08">
+                  <line x1="200" y1="0" x2="200" y2="620" />
+                  <line x1="400" y1="0" x2="400" y2="620" />
+                  <line x1="600" y1="0" x2="600" y2="620" />
+                  <line x1="800" y1="0" x2="800" y2="620" />
+                  <line x1="0" y1="150" x2="1000" y2="150" />
+                  <line x1="0" y1="300" x2="1000" y2="300" />
+                  <line x1="0" y1="450" x2="1000" y2="450" />
+                </g>
+
+                {/* Sector Norte: Mar Caribe y Batimetría */}
+                <path
+                  d="M 0,0 L 1000,0 L 1000,160 Q 820,135 680,150 T 420,130 T 150,175 L 0,175 Z"
+                  fill="url(#oceanGradient)"
+                />
+                <text
+                  x="80"
+                  y="70"
+                  fill="#06b6d4"
+                  fillOpacity="0.45"
+                  fontSize="12"
+                  fontFamily="monospace"
+                  letterSpacing="4"
+                  className="uppercase font-mono"
+                >
+                  MAR CARIBE // CUENCA DE SANTA MARTA
+                </text>
+
+                {/* ===========================================================
+                    CURVAS DE NIVEL TOPOGRÁFICAS (CONTOUR LINES)
+                ============================================================ */}
+                {/* 0m: Línea de Costa */}
+                <path
+                  d="M 0,175 Q 150,175 320,140 Q 500,120 680,150 T 850,155 T 1000,160"
+                  fill="none"
+                  stroke="#06b6d4"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.85"
+                />
+
+                {/* 200m: Borde Litoral / Estribaciones */}
+                <path
+                  d="M 20,225 Q 180,205 340,175 Q 540,160 720,185 T 980,205"
+                  fill="none"
+                  stroke="#34d399"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.45"
+                />
+
+                {/* 650m: Piedemonte / Minca */}
+                <path
+                  d="M 80,285 Q 260,250 440,240 Q 640,225 800,265 T 950,285"
+                  fill="none"
+                  stroke="#F4F0EA"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.35"
+                />
+
+                {/* 1.200m: Bosque Nuboso / Cañón Buritaca / Teyuna */}
+                <path
+                  d="M 140,350 Q 300,310 500,300 Q 700,295 860,360"
+                  fill="none"
+                  stroke="#F4F0EA"
+                  strokeWidth="2"
+                  strokeOpacity="0.55"
+                />
+
+                {/* 2.200m: Selva Alta y Subpáramo */}
+                <path
+                  d="M 220,420 Q 380,370 560,365 Q 730,375 820,435"
+                  fill="none"
+                  stroke="#fb923c"
+                  strokeWidth="1.5"
+                  strokeOpacity="0.65"
+                  strokeDasharray="6 4"
+                />
+
+                {/* 3.100m: Cuchilla San Lorenzo y Cerro Kennedy */}
+                <path
+                  d="M 290,490 Q 430,440 590,435 Q 710,450 780,495"
+                  fill="none"
+                  stroke="#E63000"
+                  strokeWidth="2"
+                  strokeOpacity="0.8"
+                />
+
+                {/* 4.200m: Páramo de la Sierra */}
+                <path
+                  d="M 390,545 Q 510,495 650,500 Q 730,515 760,555"
+                  fill="none"
+                  stroke="#E63000"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.85"
+                />
+
+                {/* 5.200m - 5.775m: Glaciares y Morrenas Colón & Bolívar */}
+                <ellipse
+                  cx="710"
+                  cy="535"
+                  rx="50"
+                  ry="30"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.9"
+                />
+                <ellipse
+                  cx="710"
+                  cy="535"
+                  rx="26"
+                  ry="16"
+                  fill="rgba(255,255,255,0.15)"
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                />
+
+                {/* Rosa de los Vientos / Brújula de Fondo */}
+                <g transform="translate(910, 80) scale(0.65)" stroke="#F4F0EA" strokeOpacity="0.25" fill="none">
+                  <circle r="35" strokeWidth="1" />
+                  <line x1="0" y1="-45" x2="0" y2="45" strokeWidth="1.5" />
+                  <line x1="-45" y1="0" x2="45" y2="0" strokeWidth="1.5" />
+                  <polygon points="0,-45 4,-20 0,-25 -4,-20" fill="#E63000" stroke="none" />
+                  <text x="-4" y="-50" fill="#E63000" fontSize="13" fontFamily="monospace" fontWeight="bold">N</text>
+                </g>
+
+                {/* ===========================================================
+                    RUTAS ANIMADAS (STROKE-DASHARRAY & DASHOFFSET)
+                ============================================================ */}
+                {/* Ruta 1: Litoral Azul (Santa Marta -> Tayrona -> Río Don Diego) */}
+                <path
+                  d="M 160,200 Q 230,170 320,140 Q 550,135 780,160"
+                  fill="none"
+                  stroke="#06b6d4"
+                  strokeWidth="2.5"
+                  strokeDasharray="8 6"
+                  className="trail-pulse"
+                />
+
+                {/* Ruta 2: Sendero Precolombino (Santa Marta -> Minca -> Teyuna) */}
+                <path
+                  d="M 160,200 Q 210,270 290,320 Q 440,335 620,360"
+                  fill="none"
+                  stroke="#34d399"
+                  strokeWidth="2.5"
+                  strokeDasharray="8 6"
+                  className="trail-pulse-fast"
+                />
+
+                {/* Ruta 3: Ruta de los Glaciares (Minca -> Cerro Kennedy -> Macizo Colón) */}
+                <path
+                  d="M 290,320 Q 360,420 430,470 Q 560,510 710,535"
+                  fill="none"
+                  stroke="#E63000"
+                  strokeWidth="3"
+                  strokeDasharray="9 6"
+                  className="trail-pulse"
+                />
+
+                {/* Referencia Cumbre Glaciar: PICO CRISTÓBAL COLÓN 5.775m */}
+                <g transform="translate(710, 535)">
+                  <polygon
+                    points="0,-12 10,6 -10,6"
+                    fill="#ffffff"
+                    stroke="#E63000"
+                    strokeWidth="1.5"
+                  />
+                  <text
+                    x="16"
+                    y="4"
+                    fill="#ffffff"
+                    fontSize="10"
+                    fontFamily="monospace"
+                    fontWeight="bold"
+                    letterSpacing="1"
+                  >
+                    PICO CRISTÓBAL COLÓN · 5.775m
+                  </text>
+                </g>
+
+                {/* ===========================================================
+                    5 NODOS PULSANTES INTERACTIVOS
+                ============================================================ */}
+                {NODOS_TOPOGRAFICOS.map((nodo) => {
+                  const esActivo = nodoActivoId === nodo.id;
+                  const visiblePorFiltro =
+                    pisoSeleccionado === "TODOS" ||
+                    nodo.pisoTermico === pisoSeleccionado;
+
+                  const colorPiso =
+                    nodo.pisoTermico === "LITORAL"
+                      ? "#06b6d4"
+                      : nodo.pisoTermico === "SELVA_HUMEDA"
+                      ? "#10b981"
+                      : "#E63000";
+
+                  return (
+                    <g
+                      key={nodo.id}
+                      transform={`translate(${nodo.svgPos.x}, ${nodo.svgPos.y})`}
+                      onClick={() => setNodoActivoId(nodo.id)}
+                      className="cursor-pointer transition-all duration-300"
+                      style={{
+                        opacity: visiblePorFiltro ? 1 : 0.28,
+                      }}
+                    >
+                      {/* Onda expansiva animada en nodo activo */}
+                      {esActivo && (
+                        <circle
+                          r="22"
+                          fill={colorPiso}
+                          fillOpacity="0.25"
+                          className="animate-ping"
+                        />
+                      )}
+
+                      {/* Anillo exterior */}
+                      <circle
+                        r={esActivo ? 14 : 9}
+                        fill="#070b09"
+                        stroke={colorPiso}
+                        strokeWidth={esActivo ? 3 : 2}
+                        filter={esActivo ? "url(#nodeGlow)" : undefined}
+                      />
+
+                      {/* Núcleo central sólido */}
+                      <circle
+                        r={esActivo ? 6 : 4}
+                        fill={esActivo ? "#ffffff" : colorPiso}
+                      />
+
+                      {/* Etiqueta flotante con nombre y altitud */}
+                      <g
+                        transform={`translate(${
+                          nodo.svgPos.x > 600 ? -120 : 18
+                        }, -10)`}
+                      >
+                        <rect
+                          x="0"
+                          y="0"
+                          width="112"
+                          height="24"
+                          rx="4"
+                          fill="#0A0A0A"
+                          fillOpacity={esActivo ? "0.95" : "0.75"}
+                          stroke={esActivo ? colorPiso : "rgba(244,240,234,0.2)"}
+                          strokeWidth="1"
+                        />
+                        <text
+                          x="6"
+                          y="15"
+                          fill={esActivo ? "#ffffff" : "#F4F0EA"}
+                          fontSize="9"
+                          fontFamily="monospace"
+                          fontWeight={esActivo ? "bold" : "normal"}
+                        >
+                          {nodo.nombre.split(" ")[0]} · {nodo.altitudMsnm}m
+                        </text>
+                      </g>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+
+            {/* Barra Inferior del Mapa: Leyenda interactiva */}
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-sand/15 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-sand/65">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                  <span>0 — 200m LITORAL</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  <span>650 — 1.200m SELVA</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-terracotta" />
+                  <span>3.100m+ ALTA CUMBRE</span>
+                </span>
+              </div>
+              <div className="text-sand/40">
+                CLIC EN CUALQUIER NODO PARA TELEMETRÍA
+              </div>
+            </div>
+          </div>
+
+          {/* =================================================================
+              COLUMNA 2 (lg:col-span-5): PANEL DE TELEMETRÍA Y PERFIL DE ELEVACIÓN
+          ================================================================== */}
+          <div className="lg:col-span-5 flex flex-col justify-between overflow-hidden rounded-3xl border border-sand/20 bg-obsidian p-6 sm:p-7 shadow-2xl">
+            {/* Header del Nodo Activo */}
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider font-semibold border ${
+                    nodoActivo.pisoTermico === "LITORAL"
+                      ? "border-cyan-400/40 bg-cyan-950/40 text-cyan-300"
+                      : nodoActivo.pisoTermico === "SELVA_HUMEDA"
+                      ? "border-emerald-400/40 bg-emerald-950/40 text-emerald-300"
+                      : "border-terracotta/40 bg-terracotta/15 text-terracotta"
+                  }`}
+                >
+                  <MapPin className="h-3 w-3" />
+                  <span>
+                    {idioma === "es"
+                      ? nodoActivo.pisoLabelEs
+                      : nodoActivo.pisoLabelEn}
+                  </span>
+                </span>
+
+                <span className="font-mono text-xs font-bold text-sand">
+                  {nodoActivo.altitudDisplay}
+                </span>
+              </div>
+
+              <h3 className="mt-3 font-display text-2xl sm:text-3xl uppercase tracking-tight text-sand">
+                {nodoActivo.nombre}
+              </h3>
+              <div className="mt-1 font-mono text-xs text-terracotta">
+                {nodoActivo.region} · {nodoActivo.coordenadas}
+              </div>
+
+              <p className="mt-3 text-xs sm:text-sm text-sand/80 leading-relaxed font-sans">
+                {idioma === "es"
+                  ? nodoActivo.descripcionEs
+                  : nodoActivo.descripcionEn}
+              </p>
+
+              {/* Perfil de Elevación Dinámico SVG (Corte Transversal) */}
+              <div className="mt-5 rounded-2xl border border-sand/15 bg-black/50 p-3.5">
+                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-sand/60 mb-2">
+                  <span>PERFIL DE ELEVACIÓN TRANSVERSAL</span>
+                  <span className="text-terracotta font-bold">
+                    COTA: {nodoActivo.altitudMsnm}m MSNM
+                  </span>
+                </div>
+
+                <div className="relative h-16 w-full">
+                  <svg
+                    viewBox="0 0 320 60"
+                    className="w-full h-full"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <linearGradient
+                        id="elevationGradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.4" />
+                        <stop offset="35%" stopColor="#10b981" stopOpacity="0.5" />
+                        <stop offset="70%" stopColor="#fb923c" stopOpacity="0.6" />
+                        <stop offset="100%" stopColor="#E63000" stopOpacity="0.8" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* Líneas de altitud de referencia */}
+                    <line x1="0" y1="55" x2="320" y2="55" stroke="rgba(244,240,234,0.15)" strokeWidth="1" />
+                    <line x1="0" y1="35" x2="320" y2="35" stroke="rgba(244,240,234,0.1)" strokeWidth="0.5" strokeDasharray="2 2" />
+                    <line x1="0" y1="12" x2="320" y2="12" stroke="rgba(244,240,234,0.1)" strokeWidth="0.5" strokeDasharray="2 2" />
+
+                    {/* Silueta de la Sierra Nevada desde el mar hasta la cumbre */}
+                    <path
+                      d="M 0,55 Q 60,53 100,48 Q 160,40 210,25 Q 260,14 310,6 L 310,55 Z"
+                      fill="url(#elevationGradient)"
+                    />
+                    <path
+                      d="M 0,55 Q 60,53 100,48 Q 160,40 210,25 Q 260,14 310,6"
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Marcador animado del nodo activo en la curva */}
+                    {(() => {
+                      const ratio = Math.min(1, Math.max(0, nodoActivo.altitudMsnm / 5775));
+                      const posX = 10 + ratio * 290;
+                      const posY = 54 - ratio * 47;
+                      return (
+                        <g transform={`translate(${posX}, ${posY})`}>
+                          <line x1="0" y1="0" x2="0" y2={55 - posY} stroke="#E63000" strokeWidth="1" strokeDasharray="2 2" />
+                          <circle r="4" fill="#ffffff" stroke="#E63000" strokeWidth="2" className="animate-pulse" />
+                        </g>
+                      );
+                    })()}
+                  </svg>
+                </div>
+
+                <div className="flex justify-between font-mono text-[9px] uppercase tracking-wider text-sand/50 mt-1">
+                  <span>0m Litoral</span>
+                  <span>1.200m Teyuna</span>
+                  <span>3.100m Kennedy</span>
+                  <span>5.775m Colón</span>
+                </div>
+              </div>
+
+              {/* Bloque de Telemetría Ambiental en Tiempo Real */}
+              <div className="mt-5 grid grid-cols-3 gap-2.5">
+                <div className="rounded-xl border border-sand/15 bg-black/40 p-3">
+                  <div className="flex items-center gap-1.5 text-sand/60 text-[10px] font-mono uppercase">
+                    <Thermometer className="h-3.5 w-3.5 text-terracotta" />
+                    <span>{idioma === "es" ? "Temperatura" : "Temp"}</span>
+                  </div>
+                  <div className="mt-1 font-display text-xl font-bold text-sand">
+                    {nodoActivo.tempCelsius}°C
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-sand/15 bg-black/40 p-3">
+                  <div className="flex items-center gap-1.5 text-sand/60 text-[10px] font-mono uppercase">
+                    <Droplets className="h-3.5 w-3.5 text-cyan-400" />
+                    <span>{idioma === "es" ? "Humedad" : "Humidity"}</span>
+                  </div>
+                  <div className="mt-1 font-display text-xl font-bold text-sand">
+                    {nodoActivo.humedadPorcentaje}%
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-sand/15 bg-black/40 p-3">
+                  <div className="flex items-center gap-1.5 text-sand/60 text-[10px] font-mono uppercase">
+                    <Wind className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{idioma === "es" ? "Viento" : "Wind"}</span>
+                  </div>
+                  <div className="mt-1 font-display text-xl font-bold text-sand">
+                    {nodoActivo.vientoKmH} km/h
+                  </div>
+                </div>
+              </div>
+
+              {/* Cupos Ecológicos Disponibles & Estado PNN */}
+              <div className="mt-4 rounded-xl border border-sand/15 bg-black/35 p-3.5">
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase">
+                  <span className="text-sand/75">
+                    {idioma === "es" ? "Aforo Ecológico Diario:" : "Daily Ecological Quota:"}
+                  </span>
+                  <span className="font-bold text-emerald-400">
+                    {nodoActivo.cuposDisponibles} / {nodoActivo.aforoMaximo} {idioma === "es" ? "cupos" : "slots"}
+                  </span>
+                </div>
+                <div className="mt-2 h-1.5 w-full bg-sand/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 transition-all duration-500 rounded-full"
+                    style={{
+                      width: `${(nodoActivo.cuposDisponibles / nodoActivo.aforoMaximo) * 100}%`,
+                    }}
+                  />
+                </div>
+                <div className="mt-2 font-mono text-[10px] text-sand/65">
+                  {nodoActivo.estadoAmbiental}
+                </div>
+              </div>
+            </div>
+
+            {/* Fila de Acciones Directas del Nodo */}
+            <div className="mt-6 pt-5 border-t border-sand/15 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => manejarReservaNodo(nodoActivo)}
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-terracotta px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember shadow-lg shadow-terracotta/20 transition-all group"
+              >
+                <span>
+                  {idioma === "es" ? "RESERVAR TRAVESÍA EN ESTE NODO" : "BOOK THIS TRAIL"}
+                </span>
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </button>
+
+              <Link
+                href="/baquiano"
+                className="inline-flex items-center gap-1.5 rounded-full border border-sand/25 bg-black/40 px-4 py-3 font-mono text-xs uppercase tracking-wider text-sand hover:border-terracotta hover:text-terracotta transition-colors"
+                title="Consultar al motor Baquiano AI"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-terracotta" />
+                <span>AI</span>
+              </Link>
+
+              <Link
+                href="/expediciones"
+                className="inline-flex items-center gap-1.5 rounded-full border border-sand/25 bg-black/40 px-4 py-3 font-mono text-xs uppercase tracking-wider text-sand hover:border-sand transition-colors"
+                title="Ver todas las expediciones en el catálogo"
+              >
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECCIÓN 3: BENTO GRID COMPACTO DE ACCESO MULTIPÁGINA
+          Acceso Directo a las 3 Rutas Principales: /expediciones, /baquiano, /pulso
+      ====================================================================== */}
+      <section
+        aria-label="Arquitectura Multipágina de TYRONAWILDS"
+        className="mx-auto max-w-[1440px] px-3 sm:px-4 md:px-6 py-8 md:py-12"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card 1: /expediciones */}
           <Link
             href="/expediciones"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sand/20 bg-obsidian p-6 sm:p-7 transition-all duration-300 hover:border-terracotta hover:bg-jungle/20 shadow-xl"
           >
             <div>
-              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
-                <span>01 // CATÁLOGO OFICIAL</span>
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
+                <span>01 // CATÁLOGO OFICIAL &amp; CHECKOUT</span>
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </div>
-              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
+              <h3 className="mt-3 font-display text-2xl sm:text-3xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
                 {idioma === "es" ? "Expediciones & Reservas" : "Expeditions & Booking"}
               </h3>
-              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+              <p className="mt-2.5 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
                 {idioma === "es"
-                  ? "Colección curada de 6 travesías de alta montaña y costa caribeña con checkout Wompi Sandbox y asignación de acompañantes nominales."
+                  ? "Colección curada de 6 travesías de alta montaña y costa caribeña con pasarela Wompi Sandbox, aforos en vivo y registro de acompañantes nominales."
                   : "Curated collection of 6 high-mountain and Caribbean coastal expeditions with Wompi Sandbox checkout and nominal companion management."}
               </p>
             </div>
-            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
-              <span>{idioma === "es" ? "VER CATÁLOGO COMPLETO" : "VIEW FULL CATALOG"}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+            <div className="mt-6 pt-4 border-t border-sand/15 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
+              <span>{idioma === "es" ? "EXPLORAR CATÁLOGO COMPLETO" : "VIEW FULL CATALOG"}</span>
+              <ArrowRight className="h-4 w-4" />
             </div>
           </Link>
 
+          {/* Card 2: /baquiano */}
           <Link
             href="/baquiano"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sand/20 bg-obsidian p-6 sm:p-7 transition-all duration-300 hover:border-terracotta hover:bg-jungle/20 shadow-xl"
           >
             <div>
-              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
                 <span>02 // CONCIERGE TERRITORIAL</span>
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </div>
-              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
+              <h3 className="mt-3 font-display text-2xl sm:text-3xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
                 Baquiano AI Concierge
               </h3>
-              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+              <p className="mt-2.5 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
                 {idioma === "es"
-                  ? "Asesor inteligente en tiempo real que equilibra condición física, presupuesto y ritmos bioculturales con trazabilidad explicable."
-                  : "Intelligent real-time concierge matching fitness, budget, and biocultural rhythms with explainable algorithmic traceability."}
+                  ? "Asesor algorítmico territorial que equilibra tu índice de preparación física, presupuesto y ritmos bioculturales con trazabilidad transparente."
+                  : "Intelligent territorial concierge matching fitness conditioning, budget, and biocultural rhythms with explainable algorithmic traceability."}
               </p>
             </div>
-            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
-              <span>{idioma === "es" ? "CONSULTAR AHORA" : "CONSULT NOW"}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+            <div className="mt-6 pt-4 border-t border-sand/15 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
+              <span>{idioma === "es" ? "CONSULTAR AL ASESOR IA" : "CONSULT AI ADVISOR"}</span>
+              <ArrowRight className="h-4 w-4" />
             </div>
           </Link>
 
+          {/* Card 3: /pulso */}
           <Link
             href="/pulso"
-            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sand/20 bg-obsidian p-6 sm:p-7 transition-all duration-300 hover:border-emerald-400 hover:bg-jungle/20 shadow-xl"
           >
             <div>
-              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-emerald-400">
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-emerald-400">
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span>03 // TELEMETRÍA EN VIVO</span>
                 </span>
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </div>
-              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-emerald-300 transition-colors">
+              <h3 className="mt-3 font-display text-2xl sm:text-3xl uppercase tracking-tight text-sand group-hover:text-emerald-300 transition-colors">
                 {idioma === "es" ? "Pulso del Territorio" : "Territorial Pulse"}
               </h3>
-              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+              <p className="mt-2.5 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
                 {idioma === "es"
-                  ? "Monitoreo ambiental continuo: capacidad de carga de playas, alertas DIMAR, clima IDEAM y desvío a senderos de bajo impacto."
+                  ? "Monitoreo ambiental continuo: capacidad de carga de playas, alertas oceanográficas DIMAR, clima IDEAM y desvío a senderos de bajo impacto."
                   : "Continuous environmental monitoring: beach carrying capacity, DIMAR marine alerts, IDEAM weather, and quiet low-impact trail diverters."}
               </p>
             </div>
-            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 group-hover:text-emerald-200">
-              <span>{idioma === "es" ? "EXPLORAR TELEMETRÍA" : "EXPLORE TELEMETRY"}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+            <div className="mt-6 pt-4 border-t border-sand/15 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 group-hover:text-emerald-200">
+              <span>{idioma === "es" ? "VER TELEMETRÍA AMBIENTAL" : "EXPLORE TELEMETRY"}</span>
+              <ArrowRight className="h-4 w-4" />
             </div>
           </Link>
-        </div>
-      </section>
-
-      {/* =====================================================================
-          SECCIÓN 2: CATÁLOGO DE EXPEDICIONES CON ACCESO A FICHA TÉCNICA COMPLETA
-      ====================================================================== */}
-      <section
-        id="expediciones"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
-      >
-        <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
-          <div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-              // 01 · COLECCIÓN DE EXPEDICIONES CERTIFICADAS
-            </div>
-            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
-              {idioma === "es"
-                ? "TRAVESÍAS & ESTADO DEL SENDERO"
-                : "EXPEDITIONS & TRAIL CONDITIONS"}
-            </h2>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {[
-              { id: "TODAS", labelEs: "TODAS (06)", labelEn: "ALL (06)" },
-              {
-                id: "ALTA_MONTANA_ANCESTRAL",
-                labelEs: "ALTA MONTAÑA",
-                labelEn: "HIGH MOUNTAIN",
-              },
-              {
-                id: "COSTA_PARQUE_NACIONAL",
-                labelEs: "PARQUE TAYRONA",
-                labelEn: "TAYRONA PARK",
-              },
-              {
-                id: "BOSQUE_NIEBLA_SOSTENIBLE",
-                labelEs: "MINCA / BONDA",
-                labelEn: "MINCA / BONDA",
-              },
-              {
-                id: "TURISMO_COMUNITARIO",
-                labelEs: "ANFITRIONES LOCALES",
-                labelEn: "LOCAL HOSTS",
-              },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setFiltroCategoria(cat.id)}
-                className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
-                  filtroCategoria === cat.id
-                    ? "border-terracotta bg-terracotta text-sand font-bold"
-                    : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
-                }`}
-              >
-                {idioma === "es" ? cat.labelEs : cat.labelEn}
-              </button>
-            ))}
-
-            <button
-              type="button"
-              onClick={() => setSoloBajaCarga(!soloBajaCarga)}
-              className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
-                soloBajaCarga
-                  ? "border-emerald-400 bg-emerald-950/60 text-emerald-300 font-bold"
-                  : "border-sand/20 bg-obsidian text-sand/75 hover:border-emerald-400/50"
-              }`}
-            >
-              {idioma === "es"
-                ? "RUTAS DE BAJO FLUJO"
-                : "QUIET TRAILS ONLY"}
-            </button>
-          </div>
-        </div>
-
-        {/* Grilla Brutalista de Expediciones */}
-        <div className="mt-10 grid grid-cols-1 gap-0 border-t border-l border-sand/15 md:grid-cols-2 lg:grid-cols-3">
-          {actividadesFiltradas.map((act, index) => {
-            const altaCongestion = act.nivelOcupacionActual >= 80;
-            const ficha = obtenerFichaTecnicaExpedicion(act.codigoServicio);
-            return (
-              <article
-                key={act.id}
-                onClick={() => abrirDrawerExpedicion(act)}
-                className="group relative flex cursor-pointer flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-5 sm:p-6 transition-colors hover:bg-jungle/25"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/65">
-                    <span className="truncate">
-                      0{index + 1} //{" "}
-                      {idioma === "es" ? ficha.duracionEs : ficha.duracionEn}
-                    </span>
-                    <span className="flex shrink-0 items-center gap-1 text-terracotta">
-                      <Mountain className="h-3.5 w-3.5" />
-                      {act.altitudMsnm} MSNM
-                    </span>
-                  </div>
-
-                  <div className="relative mt-4 h-56 w-full overflow-hidden border border-sand/15 bg-jungle/30">
-                    <img
-                      src={act.imagenUrl}
-                      alt={idioma === "es" ? act.nombreEs : act.nombreEn}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-85"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
-
-                    <div className="absolute bottom-2.5 left-2.5 bg-obsidian/85 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-sand border border-sand/20">
-                      {act.coordenadasHud}
-                    </div>
-
-                    {altaCongestion ? (
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-terracotta px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-sand shadow-lg">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        <span>
-                          AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}%
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-emerald-950/90 border border-emerald-400/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
-                        FLUJO ECOLÓGICO SERENO
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta">
-                    <span className="truncate">{act.ubicacion}</span>
-                    <span className="shrink-0 text-sand/55">
-                      {ficha.operadorLicenciaRnt.split("·")[0]}
-                    </span>
-                  </div>
-                  <h3 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide text-sand group-hover:text-terracotta transition-colors">
-                    {idioma === "es" ? act.nombreEs : act.nombreEn}
-                  </h3>
-                  <p className="mt-3 text-sm text-sand/75 leading-relaxed">
-                    {idioma === "es" ? act.descripcionEs : act.descripcionEn}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-sand/15">
-                  <div className="flex items-center justify-between font-mono text-[11px] uppercase">
-                    <span className="text-sand/70">
-                      {idioma === "es"
-                        ? "AFORO ACTUAL DEL SENDERO"
-                        : "CURRENT TRAIL FLOW"}
-                    </span>
-                    <span
-                      className={
-                        altaCongestion
-                          ? "font-bold text-terracotta"
-                          : "text-emerald-400"
-                      }
-                    >
-                      {act.nivelOcupacionActual}% · GRUPOS DE MÁX{" "}
-                      {act.capacidadMaxima}
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-2 w-full bg-sand/10 overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        altaCongestion ? "bg-terracotta" : "bg-emerald-500"
-                      }`}
-                      style={{ width: `${act.nivelOcupacionActual}%` }}
-                    />
-                  </div>
-
-                  {altaCongestion && (
-                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-sand/90">
-                      <span className="font-bold text-terracotta">
-                        AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}% —
-                        SUGERIMOS RUTA DE BAJO IMPACTO:
-                      </span>{" "}
-                      {idioma === "es"
-                        ? "Considera la Expedición Bioclimática en Minca y Cascadas de Marinka (28% de aforo actual)."
-                        : "Consider the Minca Bioclimatic Expedition & Marinka Waterfalls (28% current trail occupancy)."}
-                    </div>
-                  )}
-
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <div>
-                      <span className="block font-mono text-[10px] uppercase tracking-wider text-sand/50">
-                        {idioma === "es"
-                          ? "INVERSIÓN POR VIAJERO"
-                          : "RATE PER TRAVELER"}
-                      </span>
-                      <span className="font-mono text-lg font-bold text-sand">
-                        {formatearCop(act.precioCop)}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        abrirDrawerExpedicion(act);
-                      }}
-                      className="inline-flex items-center gap-1.5 bg-sand px-3.5 py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-sand transition-colors"
-                    >
-                      <span>
-                        {idioma === "es"
-                          ? "VER FICHA & RESERVAR"
-                          : "ITINERARY & BOOK"}
-                      </span>
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
         </div>
       </section>
 
@@ -2609,374 +3267,6 @@ export default function TyronaWildsCommercialStorefront() {
           </div>
         </div>
       )}
-
-      {/* =====================================================================
-          SECCIÓN 3: BAQUIANO AI — CONCIERGE DE EXPEDICIONES
-      ====================================================================== */}
-      <section
-        id="baquiano-ai"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
-      >
-        <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
-          <div>
-            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-              <CompassIcon className="h-4 w-4" />
-              <span>// 02 · BAQUIANO AI — CONCIERGE DE EXPEDICIONES</span>
-            </div>
-            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
-              {idioma === "es"
-                ? "CURADURÍA INTELIGENTE DE TRAVESÍAS"
-                : "BESPOKE EXPEDITION CONCIERGE"}
-            </h2>
-          </div>
-
-          <p className="max-w-md font-mono text-xs text-sand/70 leading-relaxed">
-            {idioma === "es"
-              ? "Nuestro baquiano digital cruza tu estilo de exploración con el clima actual en la Sierra Nevada y el flujo real de cada sendero."
-              : "Our digital concierge matches your exploration style with live Sierra Nevada weather and real-time trail occupancy."}
-          </p>
-        </div>
-
-        {/* Selector de Perfil de Viajero: Estilo, Presupuesto y Ritmo */}
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-5 space-y-6 border border-sand/20 bg-jungle/15 p-4 sm:p-6">
-            <div>
-              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
-                1. ELIGE TU ESTILO DE EXPEDICIÓN
-              </span>
-              <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                {(Object.keys(ESTILOS_BAQUIANO) as EstiloViajeId[]).map(
-                  (id) => {
-                    const item = ESTILOS_BAQUIANO[id];
-                    const activo = estiloViaje === id;
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() =>
-                          manejarConsultarBaquiano(id, presupuesto, ritmo)
-                        }
-                        className={`border p-3.5 text-left transition-colors ${
-                          activo
-                            ? "border-terracotta bg-terracotta/15 text-sand"
-                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
-                        }`}
-                      >
-                        <div className="font-mono text-xs font-bold uppercase">
-                          {idioma === "es" ? item.tituloEs : item.tituloEn}
-                        </div>
-                        <div className="mt-1 font-mono text-[10px] text-sand/60 leading-snug">
-                          {idioma === "es" ? item.subEs : item.subEn}
-                        </div>
-                      </button>
-                    );
-                  }
-                )}
-              </div>
-            </div>
-
-            {/* Presupuesto por Viajero */}
-            <div>
-              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
-                2. RANGO DE INVERSIÓN POR VIAJERO
-              </span>
-              <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
-                {[
-                  {
-                    id: "ESENCIAL" as PresupuestoId,
-                    labelEs: "ESENCIAL (<$260K)",
-                    labelEn: "ESSENTIAL (<$260K)",
-                  },
-                  {
-                    id: "COMPLETO" as PresupuestoId,
-                    labelEs: "JORNADA (<$400K)",
-                    labelEn: "FULL DAY (<$400K)",
-                  },
-                  {
-                    id: "SIGNATURE" as PresupuestoId,
-                    labelEs: "SIGNATURE / TEYUNA",
-                    labelEn: "SIGNATURE / ALL",
-                  },
-                ].map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() =>
-                      manejarConsultarBaquiano(estiloViaje, p.id, ritmo)
-                    }
-                    className={`border py-2.5 px-2 uppercase transition-colors ${
-                      presupuesto === p.id
-                        ? "border-sand bg-sand text-obsidian font-bold"
-                        : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
-                    }`}
-                  >
-                    {idioma === "es" ? p.labelEs : p.labelEn}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Ritmo de Marcha */}
-            <div>
-              <span className="block font-mono text-xs font-bold uppercase tracking-wider text-terracotta">
-                3. RITMO DE MARCHA EN TERRENO
-              </span>
-              <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
-                {[
-                  {
-                    id: "CONTEMPLATIVO" as RitmoId,
-                    labelEs: "CONTEMPLATIVO",
-                    labelEn: "RELAXED",
-                  },
-                  {
-                    id: "ACTIVO" as RitmoId,
-                    labelEs: "PASO ACTIVO",
-                    labelEn: "ACTIVE PACE",
-                  },
-                  {
-                    id: "DESAFIO" as RitmoId,
-                    labelEs: "DESAFÍO CUMBRE",
-                    labelEn: "SUMMIT TREK",
-                  },
-                ].map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() =>
-                      manejarConsultarBaquiano(estiloViaje, presupuesto, r.id)
-                    }
-                    className={`border py-2.5 px-2 uppercase transition-colors ${
-                      ritmo === r.id
-                        ? "border-terracotta bg-terracotta text-sand font-bold"
-                        : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
-                    }`}
-                  >
-                    {idioma === "es" ? r.labelEs : r.labelEn}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              disabled={ejecutandoIa}
-              onClick={() =>
-                manejarConsultarBaquiano(estiloViaje, presupuesto, ritmo)
-              }
-              className="w-full flex items-center justify-center gap-2 bg-sand px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${ejecutandoIa ? "animate-spin" : ""}`}
-              />
-              <span>
-                {ejecutandoIa
-                  ? "CONSULTANDO BAQUIANO AI..."
-                  : "RECALCULAR RUTA IDEAL"}
-              </span>
-            </button>
-          </div>
-
-          {/* Resultados Curados por Baquiano AI */}
-          <div className="lg:col-span-7 flex flex-col justify-between">
-            <div>
-              {/* Nota Editorial de Contexto Climático */}
-              <div className="border border-sand/20 bg-obsidian p-4 font-mono text-xs text-sand/85">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-terracotta font-bold uppercase">
-                  <span>NOTA DEL BAQUIANO AI · CLIMA ACTUAL {tempActual}°C</span>
-                  <span>HUMEDAD {humedadActual}%</span>
-                </div>
-                <p className="mt-1.5 leading-relaxed">
-                  {idioma === "es"
-                    ? ESTILOS_BAQUIANO[estiloViaje].notaEditorialEs
-                    : ESTILOS_BAQUIANO[estiloViaje].notaEditorialEn}
-                </p>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
-                {recomendacionesVisibles.map((rec, idx) => (
-                  <div
-                    key={rec.actividadId}
-                    className="flex flex-col justify-between border border-sand/20 bg-obsidian p-5 hover:border-terracotta/60 transition-colors"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between font-mono text-xs">
-                        <span className="bg-terracotta px-2.5 py-0.5 font-bold text-sand">
-                          #{idx + 1} · {rec.puntajeAfinidad}% AFINIDAD
-                        </span>
-                        <span className="text-sand/60">
-                          {rec.altitudMsnm}m
-                        </span>
-                      </div>
-
-                      <h3 className="mt-3 font-display text-2xl uppercase text-sand">
-                        {idioma === "es" ? rec.nombreEs : rec.nombreEn}
-                      </h3>
-                      <div className="mt-1 font-mono text-[11px] text-terracotta">
-                        {rec.ubicacion}
-                      </div>
-
-                      <div className="mt-4 border-l-2 border-emerald-400 bg-jungle/25 p-3 font-mono text-[11px] leading-relaxed text-sand/90">
-                        {idioma === "es"
-                          ? rec.explicacionEs
-                          : rec.explicacionEn}
-                      </div>
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between border-t border-sand/15 pt-3 font-mono text-xs">
-                      <span className="font-bold text-sand">
-                        {formatearCop(rec.precioCop)}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const act = actividades.find(
-                            (a) => a.id === rec.actividadId
-                          );
-                          if (act) abrirDrawerExpedicion(act);
-                        }}
-                        className="text-terracotta hover:underline uppercase font-bold"
-                      >
-                        {idioma === "es" ? "ABRIR FICHA ->" : "OPEN ->"}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Acordeón Opcional Discreto: "Ver razonamiento del motor" */}
-            <div className="mt-6 border-t border-sand/15 pt-4">
-              <button
-                type="button"
-                onClick={() =>
-                  setMostrarRazonamientoMotor(!mostrarRazonamientoMotor)
-                }
-                className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/50 hover:text-sand transition-colors"
-              >
-                <ChevronDown
-                  className={`h-3.5 w-3.5 transition-transform ${
-                    mostrarRazonamientoMotor ? "rotate-180" : ""
-                  }`}
-                />
-                <span>
-                  {idioma === "es"
-                    ? "Ver razonamiento del motor"
-                    : "View engine reasoning"}
-                </span>
-              </button>
-
-              {mostrarRazonamientoMotor && resultadoIa && (
-                <div className="mt-3 border border-sand/15 bg-obsidian p-4 font-mono text-[11px] text-sand/70">
-                  <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-sand/10">
-                    <span>
-                      PIPELINE DE DECISIÓN VECTORIAL ({resultadoIa.correlacionId})
-                    </span>
-                    <span className="text-emerald-400">
-                      MODO: {resultadoIa.nivelIaAplicado}
-                    </span>
-                  </div>
-                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                    {resultadoIa.trazaEstados.map((estado, i) => (
-                      <React.Fragment key={estado}>
-                        <span className="border border-sand/20 bg-jungle/20 px-2.5 py-1 text-[10px] text-sand">
-                          {estado}
-                        </span>
-                        {i < resultadoIa.trazaEstados.length - 1 && (
-                          <span className="text-terracotta">-&gt;</span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================================
-          SECCIÓN 4: PULSO DEL TERRITORIO Y CONSERVACIÓN DE ECOSISTEMAS
-      ====================================================================== */}
-      <section
-        id="sostenibilidad"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
-      >
-        <div className="flex flex-col justify-between gap-4 border-b border-sand/15 pb-6 lg:flex-row lg:items-end">
-          <div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-              // 03 · COMPROMISO DE CONSERVACIÓN · SIERRA NEVADA &amp; PARQUE TAYRONA
-            </div>
-            <h2 className="mt-2 font-display text-4xl sm:text-5xl uppercase tracking-tight text-sand">
-              PULSO DE LOS ECOSISTEMAS EN VIVO
-            </h2>
-          </div>
-          <div className="font-mono text-xs text-sand/70">
-            MONITOREO SATELITAL Y EN SENDERO PARA UN TURISMO REGENERATIVO
-          </div>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {indicadores.map((ind) => (
-            <div
-              key={ind.id}
-              className="border border-sand/20 bg-obsidian p-5 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between font-mono text-[11px]">
-                  <span className="text-sand/60">{ind.zona}</span>
-                  <span
-                    className={`px-2 py-0.5 font-bold ${
-                      ind.estadoAlerta === "CRITICA"
-                        ? "bg-terracotta text-sand"
-                        : ind.estadoAlerta === "MODERADA"
-                        ? "bg-amber-500/20 text-amber-300"
-                        : "bg-emerald-500/20 text-emerald-300"
-                    }`}
-                  >
-                    {ind.estadoAlerta === "CRITICA"
-                      ? "ALTO FLUJO"
-                      : ind.estadoAlerta === "MODERADA"
-                      ? "FLUJO MEDIO"
-                      : "FLUJO SERENO"}
-                  </span>
-                </div>
-
-                <h3 className="mt-3 font-display text-2xl uppercase text-sand">
-                  {ind.nombreDestino}
-                </h3>
-
-                <div className="mt-4 font-mono text-xs">
-                  <div className="flex justify-between">
-                    <span>AFORO DEL DÍA:</span>
-                    <strong className="text-sand">
-                      {ind.porcentajeOcupacion}%
-                    </strong>
-                  </div>
-                  <div className="mt-1.5 h-2 w-full bg-sand/10">
-                    <div
-                      className={`h-full ${
-                        ind.estadoAlerta === "CRITICA"
-                          ? "bg-terracotta"
-                          : ind.estadoAlerta === "MODERADA"
-                          ? "bg-amber-400"
-                          : "bg-emerald-400"
-                      }`}
-                      style={{ width: `${ind.porcentajeOcupacion}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 border-t border-sand/15 pt-3 font-mono text-[11px] text-sand/75">
-                <span className="block text-[10px] uppercase text-terracotta">
-                  RUTA RECOMENDADA DE BAJO IMPACTO:
-                </span>
-                {ind.alternativaSostenibleSugerida}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* =====================================================================
           FOOTER COMERCIAL CON PÁGINAS LEGALES (LEY 1581) + ENLACE DISCRETO /LAB
