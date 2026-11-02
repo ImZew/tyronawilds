@@ -37,6 +37,7 @@ import {
   Compass as CompassIcon,
 } from "lucide-react";
 import {
+  ACOMPANANTES_DEMO_POOL,
   ACTORES_SESION,
   ActividadTuristica,
   ContextoTerritorial,
@@ -45,6 +46,7 @@ import {
   Idioma,
   IndicadorCapacidadDestino,
   MetodoPagoWompi,
+  PasajeroExpedicion,
   RespuestaCrearReserva,
   ResultadoRecomendacionIa,
   SEED_ACTIVIDADES,
@@ -60,6 +62,7 @@ import {
   obtenerFichaTecnicaExpedicion,
   obtenerIndicadoresCapacidad,
   obtenerSesionActual,
+  validarIntegridadGrupoPasajeros,
 } from "@/lib/api";
 import { registrarEventoAnalitica } from "@/lib/analytics";
 import PasaporteExpedicionQr from "@/components/PasaporteExpedicionQr";
@@ -79,6 +82,12 @@ interface ErroresFormularioCheckout {
   documento?: string;
   email?: string;
   habeasData?: string;
+  acompanantes?: Record<number, { nombre?: string; documento?: string }>;
+  integridadGrupo?: {
+    httpStatus?: number;
+    codigo?: string;
+    mensaje: string;
+  };
 }
 
 const ESTILOS_BAQUIANO: Record<
@@ -206,15 +215,39 @@ export default function TyronaWildsCommercialStorefront() {
   const [horarioSeleccionadoId, setHorarioSeleccionadoId] =
     useState<string>("");
   const [cantidadCupos, setCantidadCupos] = useState<number>(2);
-  const [nombreViajero, setNombreViajero] = useState<string>("Valeria Mejía");
+  const [nombreViajero, setNombreViajero] = useState<string>("Sebastián Abaonza");
   const [emailViajero, setEmailViajero] = useState<string>(
-    "valeria@expedicion.co"
+    "sebastian@viajero.co"
   );
   const [documentoViajero, setDocumentoViajero] =
-    useState<string>("CC 1082940182");
+    useState<string>("CC 1083019450");
+  const [acompanantes, setAcompanantes] = useState<
+    Array<{ nombre: string; documento: string }>
+  >([{ nombre: "Camila Restrepo", documento: "CC 1083112045" }]);
   const [aceptaHabeasData, setAceptaHabeasData] = useState<boolean>(true);
   const [erroresCheckout, setErroresCheckout] =
     useState<ErroresFormularioCheckout>({});
+
+  // Ajustar dinámicamente el listado de acompañantes (#2..#N) cuando cambia cantidadCupos
+  useEffect(() => {
+    const numAcompanantes = Math.max(
+      0,
+      Math.min(15, (Number.isInteger(cantidadCupos) ? cantidadCupos : 1) - 1)
+    );
+    setAcompanantes((prev) => {
+      if (prev.length === numAcompanantes) return prev;
+      if (prev.length > numAcompanantes) return prev.slice(0, numAcompanantes);
+      const nuevos = [...prev];
+      for (let i = prev.length; i < numAcompanantes; i++) {
+        const sugerido = ACOMPANANTES_DEMO_POOL[i % ACOMPANANTES_DEMO_POOL.length];
+        nuevos.push({
+          nombre: sugerido.nombre,
+          documento: sugerido.documento,
+        });
+      }
+      return nuevos;
+    });
+  }, [cantidadCupos]);
 
   // Estado de Pasarela Wompi Sandbox (Paso 2)
   const [metodoPagoWompi, setMetodoPagoWompi] =
@@ -313,6 +346,12 @@ export default function TyronaWildsCommercialStorefront() {
     setEstadoPushNequi("IDLE");
     setEscenarioDemo("EXITO_201");
     setCantidadCupos(2);
+    setAcompanantes([
+      {
+        nombre: ACOMPANANTES_DEMO_POOL[0].nombre,
+        documento: ACOMPANANTES_DEMO_POOL[0].documento,
+      },
+    ]);
 
     if (sesionUsuario) {
       setNombreViajero(sesionUsuario.nombre);
@@ -339,12 +378,47 @@ export default function TyronaWildsCommercialStorefront() {
     }
   };
 
-  // Autocompletar 1-Clic Datos del Viajero (Paso 1)
+  // Construir arreglo nominal completo de pasajeros (Titular #1 + Acompañantes #2..#N)
+  const construirListaPasajerosActual = (): PasajeroExpedicion[] => {
+    const titular: PasajeroExpedicion = {
+      nombre: (sesionUsuario?.nombre || nombreViajero).trim(),
+      documento: (sesionUsuario?.documento || documentoViajero).trim(),
+      esTitular: true,
+    };
+    const numAcompanantes = Math.max(0, cantidadCupos - 1);
+    const listaAcomp: PasajeroExpedicion[] = acompanantes
+      .slice(0, numAcompanantes)
+      .map((a) => ({
+        nombre: a.nombre.trim(),
+        documento: a.documento.trim(),
+        esTitular: false,
+      }));
+    return [titular, ...listaAcomp];
+  };
+
+  // Autocompletar 1-Clic Datos del Viajero Titular y todos los Acompañantes #2..#N (Paso 1)
   const autocompletarDatosViajeroDemo = () => {
+    const cuposActuales =
+      Number.isInteger(cantidadCupos) && cantidadCupos >= 1 && cantidadCupos <= 16
+        ? cantidadCupos
+        : 2;
+    setCantidadCupos(cuposActuales);
     setNombreViajero(sesionUsuario?.nombre || "Sebastián Abaonza");
     setEmailViajero(sesionUsuario?.email || "sebastian@viajero.co");
     setDocumentoViajero(sesionUsuario?.documento || "CC 1083019450");
-    setCantidadCupos(2);
+
+    const numAcompanantes = Math.max(0, cuposActuales - 1);
+    const nuevosAcompanantes = Array.from(
+      { length: numAcompanantes },
+      (_, idx) => {
+        const demo = ACOMPANANTES_DEMO_POOL[idx % ACOMPANANTES_DEMO_POOL.length];
+        return {
+          nombre: demo.nombre,
+          documento: demo.documento,
+        };
+      }
+    );
+    setAcompanantes(nuevosAcompanantes);
     setAceptaHabeasData(true);
     setErroresCheckout({});
   };
@@ -368,12 +442,12 @@ export default function TyronaWildsCommercialStorefront() {
     }
   };
 
-  // Validación estricta campo por campo del formulario de Checkout (Paso 1)
+  // Validación estricta campo por campo + 3 reglas de integridad de identidad civil (Paso 1)
   const validarFormularioCheckout = (): boolean => {
     const nuevosErrores: ErroresFormularioCheckout = {};
-    const nombreLimpio = nombreViajero.trim();
-    const docLimpio = documentoViajero.trim();
-    const emailLimpio = emailViajero.trim();
+    const nombreLimpio = (sesionUsuario?.nombre || nombreViajero).trim();
+    const docLimpio = (sesionUsuario?.documento || documentoViajero).trim();
+    const emailLimpio = (sesionUsuario?.email || emailViajero).trim();
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!Number.isInteger(cantidadCupos) || cantidadCupos < 1 || cantidadCupos > 16) {
@@ -395,6 +469,52 @@ export default function TyronaWildsCommercialStorefront() {
     if (!aceptaHabeasData) {
       nuevosErrores.habeasData =
         "Debes autorizar el tratamiento de datos (Ley 1581 de 2012) y aceptar los términos RNT.";
+    }
+
+    const numAcompanantes = Math.max(0, cantidadCupos - 1);
+    const erroresAcomp: Record<number, { nombre?: string; documento?: string }> =
+      {};
+    for (let i = 0; i < numAcompanantes; i++) {
+      const item = acompanantes[i] || { nombre: "", documento: "" };
+      const nomA = item.nombre.trim();
+      const docA = item.documento.trim();
+      const errItem: { nombre?: string; documento?: string } = {};
+      if (nomA.length < 4 || /[<>]/.test(nomA)) {
+        errItem.nombre = `Ingresa el nombre completo del acompañante #${i + 2}.`;
+      }
+      if (docA.length < 5 || /[<>]/.test(docA)) {
+        errItem.documento = `Ingresa un documento válido para el acompañante #${i + 2}.`;
+      }
+      if (errItem.nombre || errItem.documento) {
+        erroresAcomp[i] = errItem;
+      }
+    }
+    if (Object.keys(erroresAcomp).length > 0) {
+      nuevosErrores.acompanantes = erroresAcomp;
+    }
+
+    // Si los campos básicos están completos, validar las 3 reglas de integridad de dominio
+    if (Object.keys(nuevosErrores).length === 0 && actividadSeleccionada) {
+      const horariosAct = disponibilidades.filter(
+        (d) => d.actividadId === actividadSeleccionada.id
+      );
+      const dispActual =
+        horariosAct.find((d) => d.id === horarioSeleccionadoId) ||
+        horariosAct[0] ||
+        null;
+      const pasajerosGrupo = construirListaPasajerosActual();
+      const resultadoIntegridad = validarIntegridadGrupoPasajeros(
+        pasajerosGrupo,
+        dispActual
+      );
+
+      if (!resultadoIntegridad.valido && resultadoIntegridad.mensajeError) {
+        nuevosErrores.integridadGrupo = {
+          httpStatus: resultadoIntegridad.httpStatus,
+          codigo: resultadoIntegridad.codigoError,
+          mensaje: resultadoIntegridad.mensajeError,
+        };
+      }
     }
 
     setErroresCheckout(nuevosErrores);
@@ -473,14 +593,16 @@ export default function TyronaWildsCommercialStorefront() {
     }
 
     const actorEfectivo = convertirSesionAActor(sesionUsuario);
+    const pasajerosGrupo = construirListaPasajerosActual();
     const respuesta = await crearReservaTransaccional(
       actorEfectivo,
       disp,
       cantidadCupos,
       {
-        nombreViajero: nombreViajero.trim(),
-        documentoViajero: documentoViajero.trim(),
-        emailViajero: emailViajero.trim(),
+        nombreViajero: pasajerosGrupo[0].nombre,
+        documentoViajero: pasajerosGrupo[0].documento,
+        emailViajero: (sesionUsuario?.email || emailViajero).trim(),
+        pasajeros: pasajerosGrupo,
         metodoPago: metodoPagoWompi,
         detalleMetodoPago: detalleInstrumento,
         escenarioDemo,
@@ -1418,138 +1540,342 @@ export default function TyronaWildsCommercialStorefront() {
                     </div>
                   </div>
 
-                  {/* Campos del Expedicionario */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div>
-                      <label
-                        htmlFor="checkout-cupos"
-                        className="block font-mono text-[11px] uppercase text-sand/70"
-                      >
-                        VIAJEROS
-                      </label>
-                      <div className="mt-1.5 flex items-center gap-2">
-                        <Users className="h-4 w-4 text-terracotta" />
+                  {/* Campos del Expedicionario #1 (Titular JWT) y Acompañantes #2..#N */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <div>
+                        <label
+                          htmlFor="checkout-cupos"
+                          className="block font-mono text-[11px] uppercase text-sand/70"
+                        >
+                          VIAJEROS (CUPOS)
+                        </label>
+                        <div className="mt-1.5 flex items-center gap-2">
+                          <Users className="h-4 w-4 text-terracotta" />
+                          <input
+                            id="checkout-cupos"
+                            type="number"
+                            min={1}
+                            max={16}
+                            value={cantidadCupos}
+                            onChange={(e) => {
+                              const nuevoValor = Math.max(
+                                1,
+                                Math.min(
+                                  16,
+                                  parseInt(e.target.value || "1", 10)
+                                )
+                              );
+                              setCantidadCupos(nuevoValor);
+                              setErroresCheckout((prev) => ({
+                                ...prev,
+                                cupos: undefined,
+                                integridadGrupo: undefined,
+                              }));
+                            }}
+                            className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                              erroresCheckout.cupos
+                                ? "border-terracotta"
+                                : "border-sand/30 focus:border-terracotta"
+                            }`}
+                          />
+                        </div>
+                        {erroresCheckout.cupos && (
+                          <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                            {erroresCheckout.cupos}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="checkout-nombre"
+                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                        >
+                          <span>VIAJERO #1 (TITULAR)</span>
+                          {sesionUsuario && (
+                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                              <Lock className="h-2.5 w-2.5" />
+                              JWT VERIFICADO
+                            </span>
+                          )}
+                        </label>
                         <input
-                          id="checkout-cupos"
-                          type="number"
-                          min={1}
-                          max={16}
-                          value={cantidadCupos}
+                          id="checkout-nombre"
+                          type="text"
+                          readOnly={Boolean(sesionUsuario)}
+                          value={sesionUsuario ? sesionUsuario.nombre : nombreViajero}
                           onChange={(e) => {
-                            setCantidadCupos(
-                              Math.max(1, parseInt(e.target.value || "1", 10))
-                            );
+                            if (sesionUsuario) return;
+                            setNombreViajero(e.target.value);
                             setErroresCheckout((prev) => ({
                               ...prev,
-                              cupos: undefined,
+                              nombre: undefined,
+                              integridadGrupo: undefined,
                             }));
                           }}
-                          className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                            erroresCheckout.cupos
-                              ? "border-terracotta"
-                              : "border-sand/30 focus:border-terracotta"
+                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                            sesionUsuario
+                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              : erroresCheckout.nombre
+                              ? "border-terracotta bg-obsidian text-sand"
+                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
                           }`}
                         />
+                        {erroresCheckout.nombre && (
+                          <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                            {erroresCheckout.nombre}
+                          </span>
+                        )}
                       </div>
-                      {erroresCheckout.cupos && (
-                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                          {erroresCheckout.cupos}
-                        </span>
-                      )}
+
+                      <div>
+                        <label
+                          htmlFor="checkout-doc"
+                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                        >
+                          <span>DOCUMENTO TITULAR #1</span>
+                          {sesionUsuario && (
+                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                              <Lock className="h-2.5 w-2.5" />
+                              SOLO LECTURA
+                            </span>
+                          )}
+                        </label>
+                        <input
+                          id="checkout-doc"
+                          type="text"
+                          readOnly={Boolean(sesionUsuario?.documento)}
+                          value={
+                            sesionUsuario?.documento
+                              ? sesionUsuario.documento
+                              : documentoViajero
+                          }
+                          onChange={(e) => {
+                            if (sesionUsuario?.documento) return;
+                            setDocumentoViajero(e.target.value);
+                            setErroresCheckout((prev) => ({
+                              ...prev,
+                              documento: undefined,
+                              integridadGrupo: undefined,
+                            }));
+                          }}
+                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                            sesionUsuario?.documento
+                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              : erroresCheckout.documento
+                              ? "border-terracotta bg-obsidian text-sand"
+                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
+                          }`}
+                        />
+                        {erroresCheckout.documento && (
+                          <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                            {erroresCheckout.documento}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="checkout-email"
+                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                        >
+                          <span>EMAIL DE CONFIRMACIÓN</span>
+                          {sesionUsuario && (
+                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                              <Lock className="h-2.5 w-2.5" />
+                              CUENTA ACTIVA
+                            </span>
+                          )}
+                        </label>
+                        <input
+                          id="checkout-email"
+                          type="email"
+                          readOnly={Boolean(sesionUsuario)}
+                          value={sesionUsuario ? sesionUsuario.email : emailViajero}
+                          onChange={(e) => {
+                            if (sesionUsuario) return;
+                            setEmailViajero(e.target.value);
+                            setErroresCheckout((prev) => ({
+                              ...prev,
+                              email: undefined,
+                            }));
+                          }}
+                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                            sesionUsuario
+                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              : erroresCheckout.email
+                              ? "border-terracotta bg-obsidian text-sand"
+                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
+                          }`}
+                        />
+                        {erroresCheckout.email && (
+                          <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                            {erroresCheckout.email}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div>
-                      <label
-                        htmlFor="checkout-nombre"
-                        className="block font-mono text-[11px] uppercase text-sand/70"
-                      >
-                        EXPEDICIONARIO TITULAR
-                      </label>
-                      <input
-                        id="checkout-nombre"
-                        type="text"
-                        value={nombreViajero}
-                        onChange={(e) => {
-                          setNombreViajero(e.target.value);
-                          setErroresCheckout((prev) => ({
-                            ...prev,
-                            nombre: undefined,
-                          }));
-                        }}
-                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                          erroresCheckout.nombre
-                            ? "border-terracotta"
-                            : "border-sand/30 focus:border-terracotta"
-                        }`}
-                      />
-                      {erroresCheckout.nombre && (
-                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                          {erroresCheckout.nombre}
-                        </span>
-                      )}
-                    </div>
+                    {/* Listado Dinámico de Acompañantes (#2 hasta #N) */}
+                    {cantidadCupos > 1 && (
+                      <div className="border border-sand/20 bg-obsidian p-4 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sand/15 pb-2.5 font-mono text-[11px]">
+                          <span className="font-bold uppercase text-terracotta">
+                            // NÓMINA DE ACOMPAÑANTES DE EXPEDICIÓN PNN / ICANH (VIAJEROS #2 AL #{cantidadCupos})
+                          </span>
+                          <span className="text-[10px] text-sand/60">
+                            Regla Civil: 1 Documento = 1 Persona · Sin duplicados en el grupo
+                          </span>
+                        </div>
 
-                    <div>
-                      <label
-                        htmlFor="checkout-doc"
-                        className="block font-mono text-[11px] uppercase text-sand/70"
-                      >
-                        DOCUMENTO / PASAPORTE
-                      </label>
-                      <input
-                        id="checkout-doc"
-                        type="text"
-                        value={documentoViajero}
-                        onChange={(e) => {
-                          setDocumentoViajero(e.target.value);
-                          setErroresCheckout((prev) => ({
-                            ...prev,
-                            documento: undefined,
-                          }));
-                        }}
-                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                          erroresCheckout.documento
-                            ? "border-terracotta"
-                            : "border-sand/30 focus:border-terracotta"
-                        }`}
-                      />
-                      {erroresCheckout.documento && (
-                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                          {erroresCheckout.documento}
-                        </span>
-                      )}
-                    </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {Array.from(
+                            { length: Math.max(0, cantidadCupos - 1) },
+                            (_, idx) => {
+                              const numViajero = idx + 2;
+                              const acomp = acompanantes[idx] || {
+                                nombre: "",
+                                documento: "",
+                              };
+                              const errAcomp =
+                                erroresCheckout.acompanantes?.[idx];
 
-                    <div>
-                      <label
-                        htmlFor="checkout-email"
-                        className="block font-mono text-[11px] uppercase text-sand/70"
-                      >
-                        EMAIL DE CONFIRMACIÓN
-                      </label>
-                      <input
-                        id="checkout-email"
-                        type="email"
-                        value={emailViajero}
-                        onChange={(e) => {
-                          setEmailViajero(e.target.value);
-                          setErroresCheckout((prev) => ({
-                            ...prev,
-                            email: undefined,
-                          }));
-                        }}
-                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                          erroresCheckout.email
-                            ? "border-terracotta"
-                            : "border-sand/30 focus:border-terracotta"
-                        }`}
-                      />
-                      {erroresCheckout.email && (
-                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                          {erroresCheckout.email}
-                        </span>
-                      )}
-                    </div>
+                              return (
+                                <div
+                                  key={`acomp-${numViajero}`}
+                                  className="grid grid-cols-1 gap-3 border border-sand/15 bg-jungle/15 p-3 sm:grid-cols-2"
+                                >
+                                  <div>
+                                    <label className="block font-mono text-[11px] uppercase text-sand/75">
+                                      Nombre Completo del Acompañante #{numViajero}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder={`Ej. ${
+                                        ACOMPANANTES_DEMO_POOL[
+                                          idx % ACOMPANANTES_DEMO_POOL.length
+                                        ].nombre
+                                      }`}
+                                      value={acomp.nombre}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        setAcompanantes((prev) => {
+                                          const copia = [...prev];
+                                          copia[idx] = {
+                                            ...(copia[idx] || {
+                                              nombre: "",
+                                              documento: "",
+                                            }),
+                                            nombre: val,
+                                          };
+                                          return copia;
+                                        });
+                                        setErroresCheckout((prev) => ({
+                                          ...prev,
+                                          integridadGrupo: undefined,
+                                          acompanantes: prev.acompanantes
+                                            ? {
+                                                ...prev.acompanantes,
+                                                [idx]: {
+                                                  ...prev.acompanantes[idx],
+                                                  nombre: undefined,
+                                                },
+                                              }
+                                            : undefined,
+                                        }));
+                                      }}
+                                      className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                                        errAcomp?.nombre
+                                          ? "border-terracotta"
+                                          : "border-sand/30 focus:border-terracotta"
+                                      }`}
+                                    />
+                                    {errAcomp?.nombre && (
+                                      <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                                        {errAcomp.nombre}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div>
+                                    <label className="block font-mono text-[11px] uppercase text-sand/75">
+                                      Documento / Pasaporte #{numViajero}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      placeholder={`Ej. ${
+                                        ACOMPANANTES_DEMO_POOL[
+                                          idx % ACOMPANANTES_DEMO_POOL.length
+                                        ].documento
+                                      }`}
+                                      value={acomp.documento}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        setAcompanantes((prev) => {
+                                          const copia = [...prev];
+                                          copia[idx] = {
+                                            ...(copia[idx] || {
+                                              nombre: "",
+                                              documento: "",
+                                            }),
+                                            documento: val,
+                                          };
+                                          return copia;
+                                        });
+                                        setErroresCheckout((prev) => ({
+                                          ...prev,
+                                          integridadGrupo: undefined,
+                                          acompanantes: prev.acompanantes
+                                            ? {
+                                                ...prev.acompanantes,
+                                                [idx]: {
+                                                  ...prev.acompanantes[idx],
+                                                  documento: undefined,
+                                                },
+                                              }
+                                            : undefined,
+                                        }));
+                                      }}
+                                      className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                                        errAcomp?.documento
+                                          ? "border-terracotta"
+                                          : "border-sand/30 focus:border-terracotta"
+                                      }`}
+                                    />
+                                    {errAcomp?.documento && (
+                                      <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                                        {errAcomp.documento}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            }
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Alerta Visual del Motor de Validación de Identidad Civil y Anti-Duplicidad */}
+                    {erroresCheckout.integridadGrupo && (
+                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-sand">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-2">
+                          <span className="flex items-center gap-2 font-bold text-terracotta">
+                            <ShieldAlert className="h-4 w-4" />
+                            HTTP {erroresCheckout.integridadGrupo.httpStatus || 422}{" "}
+                            {erroresCheckout.integridadGrupo.codigo ||
+                              "INTEGRIDAD_IDENTIDAD"}
+                          </span>
+                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-300 border border-amber-400/40">
+                            BLOQUEO PREVENTIVO DE INTEGRIDAD PNN
+                          </span>
+                        </div>
+                        <p className="mt-2.5 text-sand/95 leading-relaxed">
+                          {erroresCheckout.integridadGrupo.mensaje}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Casilla de Consentimiento Habeas Data (Ley 1581 de 2012) */}
@@ -1986,13 +2312,14 @@ export default function TyronaWildsCommercialStorefront() {
                     </span>
                   </button>
 
-                  {/* Resultado de Escenario 2: Colisión 409 + Reverso Automático Wompi + Rutas Alternativas */}
+                  {/* Resultado de Error Transaccional o Integridad (409 / 422) + Reverso Automático Wompi */}
                   {resultadoReserva && !resultadoReserva.exito && (
                     <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-sand space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-3">
                         <span className="flex items-center gap-2 font-bold text-terracotta text-sm">
                           <ShieldAlert className="h-5 w-5" />
-                          HTTP 409 CONFLICT — COLISIÓN DE ÚLTIMO CUPO DETECTADA
+                          HTTP {resultadoReserva.httpStatus}{" "}
+                          {resultadoReserva.errorCodigo || "CONFLICT"}
                         </span>
                         <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-emerald-300 border border-emerald-400/40">
                           ROLLBACK ACID + WOMPI REVERSADO

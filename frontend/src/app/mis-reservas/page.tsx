@@ -16,6 +16,7 @@ import {
   MapPin,
   QrCode,
   RefreshCw,
+  RotateCcw,
   Search,
   ShieldCheck,
   Terminal,
@@ -27,6 +28,7 @@ import {
   cerrarSesion,
   consultarMisReservas,
   obtenerSesionActual,
+  restablecerReservasDePruebaTurista,
 } from "@/lib/api";
 import PasaporteExpedicionQr from "@/components/PasaporteExpedicionQr";
 
@@ -217,6 +219,18 @@ export default function MisReservasWalletPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  restablecerReservasDePruebaTurista();
+                  cargarBilletera();
+                }}
+                className="inline-flex items-center gap-1.5 border border-sand/20 bg-obsidian px-3.5 py-3 text-[11px] uppercase text-sand/70 hover:border-terracotta hover:text-terracotta transition-colors"
+                title="Restablecer al estado inicial limpio de demostración para este viajero"
+              >
+                <RotateCcw className="h-3.5 w-3.5 text-terracotta" />
+                <span>Restablecer mis reservas de prueba</span>
+              </button>
               <button
                 type="button"
                 onClick={cargarBilletera}
@@ -429,6 +443,41 @@ export default function MisReservasWalletPage() {
                           </span>
                         </div>
                       </div>
+
+                      {/* NÓMINA DE PASAJEROS DE LA RESERVA */}
+                      {Array.isArray(res.pasajeros) && res.pasajeros.length > 0 && (
+                        <div className="mt-3 border border-sand/15 bg-obsidian p-3 font-mono text-[11px]">
+                          <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                            // EXPEDICIONARIOS REGISTRADOS EN PÓLIZA PNN ({res.pasajeros.length})
+                          </span>
+                          <div className="mt-1.5 space-y-1">
+                            {res.pasajeros.map((pax, idx) => (
+                              <div
+                                key={`${pax.documento}-${idx}`}
+                                className="flex items-center justify-between border-b border-sand/10 pb-1 last:border-b-0 last:pb-0"
+                              >
+                                <span className="text-sand">
+                                  <strong>#{idx + 1}</strong> {pax.nombre}{" "}
+                                  <span className="text-sand/65">
+                                    ({pax.documento})
+                                  </span>
+                                </span>
+                                <span
+                                  className={`text-[9px] font-bold uppercase px-1.5 py-0.5 ${
+                                    pax.esTitular
+                                      ? "bg-terracotta/20 text-terracotta"
+                                      : "bg-emerald-500/20 text-emerald-300"
+                                  }`}
+                                >
+                                  {pax.esTitular
+                                    ? "TITULAR"
+                                    : `ACOMPAÑANTE #${idx + 1}`}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       <div className="mt-3 flex items-start gap-2 font-mono text-xs text-sand/75">
                         <MapPin className="h-4 w-4 shrink-0 text-terracotta mt-0.5" />

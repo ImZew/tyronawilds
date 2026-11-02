@@ -117,6 +117,16 @@ export default function PasaporteExpedicionQr({
     reserva.operadorLicenciaRnt || "RNT #48921 · Operador Autorizado ICANH";
   const nombreViajero = reserva.nombreViajero || "Valeria Mejía";
   const documentoViajero = reserva.documentoViajero || "CC 1082940182";
+  const listaPasajeros =
+    Array.isArray(reserva.pasajeros) && reserva.pasajeros.length > 0
+      ? reserva.pasajeros
+      : [
+          {
+            nombre: nombreViajero,
+            documento: documentoViajero,
+            esTitular: true,
+          },
+        ];
   const tasaAmbientalCop =
     reserva.tasaAmbientalCop ?? Math.round(reserva.montoTotalCop * 0.12);
   const tarifaBaseOperadorCop = Math.max(
@@ -230,6 +240,39 @@ export default function PasaporteExpedicionQr({
                 <span className="text-[11px] text-emerald-300">
                   PÓLIZA EXTREMA ACTIVA
                 </span>
+              </div>
+            </div>
+
+            {/* NÓMINA OFICIAL DE PASAJEROS ASEGURADOS PNN / ICANH */}
+            <div className="mt-3 border border-sand/15 bg-obsidian p-3 font-mono text-xs">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                // NÓMINA NOMINAL DE EXPEDICIONARIOS ASEGURADOS PNN / ICANH ({listaPasajeros.length})
+              </span>
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {listaPasajeros.map((pax, idx) => (
+                  <div
+                    key={`${pax.documento}-${idx}`}
+                    className="flex items-center justify-between border border-sand/15 bg-jungle/15 px-2.5 py-1.5 text-[11px]"
+                  >
+                    <div>
+                      <strong className="text-sand">
+                        #{idx + 1} · {pax.nombre}
+                      </strong>
+                      <span className="block text-[10px] text-sand/65">
+                        {pax.documento}
+                      </span>
+                    </div>
+                    <span
+                      className={`px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                        pax.esTitular
+                          ? "bg-terracotta/25 text-terracotta border border-terracotta/40"
+                          : "bg-emerald-500/20 text-emerald-300 border border-emerald-400/35"
+                      }`}
+                    >
+                      {pax.esTitular ? "TITULAR" : `ACOMPAÑANTE #${idx + 1}`}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 

@@ -7,13 +7,30 @@ import java.util.UUID;
 
 public interface CrearReservaUseCase {
 
+    record PasajeroReservaComando(
+            String nombre,
+            String documento,
+            boolean esTitular
+    ) {
+    }
+
     record ComandoCrearReserva(
             UUID usuarioId,
             UUID disponibilidadId,
             int cantidadCupos,
             String idempotencyKey,
-            String traceId
+            String traceId,
+            List<PasajeroReservaComando> pasajeros
     ) {
+        public ComandoCrearReserva(
+                UUID usuarioId,
+                UUID disponibilidadId,
+                int cantidadCupos,
+                String idempotencyKey,
+                String traceId
+        ) {
+            this(usuarioId, disponibilidadId, cantidadCupos, idempotencyKey, traceId, List.of());
+        }
     }
 
     Reserva crearReserva(ComandoCrearReserva comando);

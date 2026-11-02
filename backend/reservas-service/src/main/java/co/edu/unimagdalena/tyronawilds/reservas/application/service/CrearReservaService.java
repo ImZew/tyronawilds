@@ -2,6 +2,7 @@ package co.edu.unimagdalena.tyronawilds.reservas.application.service;
 
 import co.edu.unimagdalena.tyronawilds.contratos.eventos.EventoReservaConfirmada;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.ConflictoConcurrenciaCupoException;
+import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.IntegridadIdentidadPasajeroException;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.exception.RecursoReservaNoEncontradoException;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.model.Disponibilidad;
 import co.edu.unimagdalena.tyronawilds.reservas.domain.model.EstadoReserva;
@@ -17,11 +18,17 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CrearReservaService implements
@@ -33,6 +40,9 @@ public class CrearReservaService implements
     private final ReservaRepositoryPort reservaRepositoryPort;
     private final ReservaEventPublisherPort reservaEventPublisherPort;
 
+    private final Map<String, String> directorioIdentidadCivil = new ConcurrentHashMap<>();
+    private final Set<String> pasajerosConfirmadosPorSalida = ConcurrentHashMap.newKeySet();
+
     public CrearReservaService(
             DisponibilidadRepositoryPort disponibilidadRepositoryPort,
             ReservaRepositoryPort reservaRepositoryPort,
@@ -41,6 +51,10 @@ public class CrearReservaService implements
         this.disponibilidadRepositoryPort = disponibilidadRepositoryPort;
         this.reservaRepositoryPort = reservaRepositoryPort;
         this.reservaEventPublisherPort = reservaEventPublisherPort;
+
+        // Registro civil semilla oficial (1 Documento = 1 Persona)
+        this.directorioIdentidadCivil.put("CC1083019450", "Sebastián Abaonza");
+        this.directorioIdentidadCivil.put("CC1082940182", "Valeria Mejía");
     }
 
     @Override
@@ -78,6 +92,9 @@ public class CrearReservaService implements
                 return existente.get();
             }
         }
+
+        // 0. Validación de integridad de identidad civil y anti-duplicidad por salida
+        validarIntegridadPasajeros(comando.disponibilidadId(), comando.pasajeros());
 
         // 1. Bloqueo pesimista por fila (SELECT ... FOR UPDATE) para evitar condiciones de carrera (RNF-13 / ER-02)
         Disponibilidad disponibilidad = disponibilidadRepositoryPort
@@ -130,6 +147,7 @@ public class CrearReservaService implements
         );
 
         Reserva guardada = reservaRepositoryPort.guardar(nuevaReserva);
+        registrarPasajerosConfirmados(disponibilidad.id(), comando.pasajeros());
 
         // 5. Publicación de EventoReservaConfirmada en RabbitMQ (exchange tyronawilds.events -> reservas.confirmada)
         EventoReservaConfirmada evento = new EventoReservaConfirmada(
@@ -148,6 +166,85 @@ public class CrearReservaService implements
         reservaEventPublisherPort.publicarReservaConfirmada(evento);
 
         return guardada;
+    }
+
+    private void validarIntegridadPasajeros(UUID disponibilidadId, List<PasajeroReservaComando> pasajeros) {
+        if (pasajeros == null || pasajeros.isEmpty()) {
+            return;
+        }
+
+        Set<String> documentosEnGrupo = new HashSet<>();
+        for (PasajeroReservaComando pasajero : pasajeros) {
+            String docNorm = normalizarDocumento(pasajero.documento());
+            String nombreLimpio = pasajero.nombre() != null ? pasajero.nombre().trim() : "";
+
+            // Regla 1: Unicidad de documento dentro de la misma reserva
+            if (!documentosEnGrupo.add(docNorm)) {
+                throw new IntegridadIdentidadPasajeroException(
+                        422,
+                        "DOCUMENTO_DUPLICADO_EN_GRUPO",
+                        "DOCUMENTO DUPLICADO EN EL GRUPO: Cada expedicionario debe registrar un documento de identidad único."
+                );
+            }
+
+            // Regla 2: Consistencia de Identidad Civil (1 Documento = 1 Persona)
+            String titularRegistrado = directorioIdentidadCivil.get(docNorm);
+            if (titularRegistrado != null && !normalizarNombre(titularRegistrado).equals(normalizarNombre(nombreLimpio))) {
+                throw new IntegridadIdentidadPasajeroException(
+                        422,
+                        "IDENTIDAD_INCONSISTENTE",
+                        String.format(
+                                "El documento %s ya se encuentra registrado en el sistema bajo el titular %s. No se permite asociar otra identidad a la misma cédula.",
+                                pasajero.documento(),
+                                titularRegistrado
+                        )
+                );
+            }
+
+            // Regla 3: Bloqueo de doble reserva en la misma salida
+            String claveSalida = disponibilidadId + "|" + docNorm;
+            if (pasajerosConfirmadosPorSalida.contains(claveSalida)) {
+                throw new IntegridadIdentidadPasajeroException(
+                        409,
+                        "PASAJERO_YA_REGISTRADO_EN_SALIDA",
+                        String.format(
+                                "RESERVA DUPLICADA EN SALIDA: El viajero con documento %s ya cuenta con un cupo confirmado en esta misma fecha y horario de expedición.",
+                                pasajero.documento()
+                        )
+                );
+            }
+        }
+    }
+
+    private void registrarPasajerosConfirmados(UUID disponibilidadId, List<PasajeroReservaComando> pasajeros) {
+        if (pasajeros == null || pasajeros.isEmpty()) {
+            return;
+        }
+        for (PasajeroReservaComando pasajero : pasajeros) {
+            String docNorm = normalizarDocumento(pasajero.documento());
+            if (!docNorm.isBlank() && pasajero.nombre() != null && !pasajero.nombre().isBlank()) {
+                directorioIdentidadCivil.putIfAbsent(docNorm, pasajero.nombre().trim());
+                pasajerosConfirmadosPorSalida.add(disponibilidadId + "|" + docNorm);
+            }
+        }
+    }
+
+    private String normalizarDocumento(String doc) {
+        if (doc == null) {
+            return "";
+        }
+        String limpio = doc.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]", "");
+        String soloDigitos = limpio.replaceAll("^(CC|CE|TI|PA|PAS|NIT)", "");
+        return soloDigitos.isBlank() ? limpio : "CC" + soloDigitos;
+    }
+
+    private String normalizarNombre(String nombre) {
+        if (nombre == null) {
+            return "";
+        }
+        String sinAcentos = Normalizer.normalize(nombre.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return sinAcentos.toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
     }
 
     @Override
