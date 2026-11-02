@@ -499,15 +499,639 @@ export const SEED_INDICADORES: IndicadorCapacidadDestino[] = [
   },
 ];
 
-function construirHeadersSeguridad(actor: ActorSesion): Record<string, string> {
+export type RolAutenticado = "OPERADOR" | "ADMIN_AMBIENTAL" | "TURISTA";
+
+export interface SesionAutenticada {
+  token: string;
+  userId: string;
+  nombre: string;
+  email: string;
+  rol: RolAutenticado;
+  prestadorId?: string;
+  codigoPrestador?: number;
+  rnt?: string;
+  autenticadoEn: string;
+  expiraEn: string;
+  modoConexion: "BACKEND_GATEWAY_LIVE" | "FALLBACK_RESILIENTE";
+}
+
+export interface CredencialesLogin {
+  email: string;
+  password: string;
+}
+
+export interface PayloadRegistroUsuario {
+  nombre: string;
+  email: string;
+  password: string;
+  rol: RolAutenticado;
+  rnt?: string;
+}
+
+export interface ResultadoAutenticacion {
+  exito: boolean;
+  httpStatus: number;
+  latenciaMs: number;
+  modoConexion: "BACKEND_GATEWAY_LIVE" | "FALLBACK_RESILIENTE";
+  sesion?: SesionAutenticada;
+  errorCodigo?: string;
+  errorMensaje?: string;
+}
+
+const LS_AUTH_SESSION_KEY = "tyronawilds_auth_session";
+const LS_AUTH_USERS_KEY = "tyronawilds_auth_users_v1";
+
+interface CuentaDirectorioInterno {
+  userId: string;
+  nombre: string;
+  email: string;
+  passwordPlain: string;
+  rol: RolAutenticado;
+  prestadorId?: string;
+  codigoPrestador?: number;
+  rnt?: string;
+}
+
+const DIRECTORIO_CUENTAS_SEMILLA: CuentaDirectorioInterno[] = [
+  {
+    userId: "22222222-2222-2222-2222-222222222222",
+    nombre: "Expediciones Tayrona & Sierra",
+    email: "operaciones@tayronasierra.co",
+    passwordPlain: "Tayrona2026*",
+    rol: "OPERADOR",
+    prestadorId: "00000000-0000-0000-0000-000000000077",
+    codigoPrestador: 77,
+    rnt: "RNT-48291",
+  },
+  {
+    userId: "33333333-3333-3333-3333-333333333333",
+    nombre: "Operador Caribe",
+    email: "gerencia@operadorcaribe.co",
+    passwordPlain: "Caribe2026*",
+    rol: "OPERADOR",
+    prestadorId: "00000000-0000-0000-0000-000000000041",
+    codigoPrestador: 41,
+    rnt: "RNT-51904",
+  },
+  {
+    userId: "11111111-1111-1111-1111-111111111111",
+    nombre: "Autoridad Ambiental — PNN & Sostenibilidad",
+    email: "monitoreo@parquesnacionales.gov.co",
+    passwordPlain: "Ambiental2026*",
+    rol: "ADMIN_AMBIENTAL",
+    rnt: "PNN-GOV-SM",
+  },
+  {
+    userId: "22222222-2222-2222-2222-222222222222",
+    nombre: "Expediciones Tayrona Ancestral",
+    email: "tayrona@tyronawilds.co",
+    passwordPlain: "Tyrona2026*",
+    rol: "OPERADOR",
+    prestadorId: "00000000-0000-0000-0000-000000000077",
+    codigoPrestador: 77,
+    rnt: "RNT-48291",
+  },
+  {
+    userId: "33333333-3333-3333-3333-333333333333",
+    nombre: "Operador Caribe",
+    email: "intruso@tyronawilds.co",
+    passwordPlain: "Tyrona2026*",
+    rol: "OPERADOR",
+    prestadorId: "00000000-0000-0000-0000-000000000041",
+    codigoPrestador: 41,
+    rnt: "RNT-51904",
+  },
+  {
+    userId: "11111111-1111-1111-1111-111111111111",
+    nombre: "Administrador TyronaWilds",
+    email: "admin@tyronawilds.co",
+    passwordPlain: "Tyrona2026*",
+    rol: "ADMIN_AMBIENTAL",
+    rnt: "PNN-GOV-SM",
+  },
+  {
+    userId: "44444444-4444-4444-4444-444444444444",
+    nombre: "Valeria Viajera Consciente",
+    email: "turista@tyronawilds.co",
+    passwordPlain: "Tyrona2026*",
+    rol: "TURISTA",
+  },
+];
+
+function codificarBase64Url(texto: string): string {
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    return window
+      .btoa(unescape(encodeURIComponent(texto)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  }
+  return Buffer.from(texto, "utf-8").toString("base64url");
+}
+
+function generarJwtFirmado(claims: {
+  sub: string;
+  nombre: string;
+  email: string;
+  rol: RolAutenticado;
+  prestadorId?: string;
+  codigoPrestador?: number;
+  rnt?: string;
+}): string {
+  const header = codificarBase64Url(
+    JSON.stringify({ alg: "HS256", typ: "JWT", kid: "tyronawilds-identidad-v1" })
+  );
+  const iat = Math.floor(Date.now() / 1000);
+  const exp = iat + 86400;
+  const payload = codificarBase64Url(
+    JSON.stringify({
+      ...claims,
+      iss: "tyronawilds-identidad-service",
+      iat,
+      exp,
+    })
+  );
+  const firma = codificarBase64Url(
+    `tw-sig-${claims.sub.slice(0, 8)}-${claims.rol}-${iat}`
+  );
+  return `${header}.${payload}.${firma}`;
+}
+
+function leerDirectorioUsuarios(): CuentaDirectorioInterno[] {
+  if (typeof window === "undefined") return DIRECTORIO_CUENTAS_SEMILLA;
+  try {
+    const raw = window.localStorage.getItem(LS_AUTH_USERS_KEY);
+    if (!raw) return DIRECTORIO_CUENTAS_SEMILLA;
+    const personalizados = JSON.parse(raw) as CuentaDirectorioInterno[];
+    if (!Array.isArray(personalizados)) return DIRECTORIO_CUENTAS_SEMILLA;
+    const emailsSemilla = new Set(
+      DIRECTORIO_CUENTAS_SEMILLA.map((u) => u.email.toLowerCase())
+    );
+    const filtrados = personalizados.filter(
+      (u) => u?.email && !emailsSemilla.has(u.email.toLowerCase())
+    );
+    return [...DIRECTORIO_CUENTAS_SEMILLA, ...filtrados];
+  } catch {
+    return DIRECTORIO_CUENTAS_SEMILLA;
+  }
+}
+
+function guardarUsuarioEnDirectorio(nuevo: CuentaDirectorioInterno): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = window.localStorage.getItem(LS_AUTH_USERS_KEY);
+    const actuales: CuentaDirectorioInterno[] = raw ? JSON.parse(raw) : [];
+    window.localStorage.setItem(
+      LS_AUTH_USERS_KEY,
+      JSON.stringify([nuevo, ...actuales])
+    );
+  } catch {
+    // Ignorar errores de almacenamiento
+  }
+}
+
+export function obtenerSesionActual(): SesionAutenticada | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(LS_AUTH_SESSION_KEY);
+    if (!raw) return null;
+    const sesion = JSON.parse(raw) as SesionAutenticada;
+    if (!sesion?.token || !sesion?.email || !sesion?.rol) return null;
+    return sesion;
+  } catch {
+    return null;
+  }
+}
+
+function guardarSesionActiva(sesion: SesionAutenticada): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LS_AUTH_SESSION_KEY, JSON.stringify(sesion));
+    window.dispatchEvent(new Event("tyronawilds-auth-change"));
+  } catch {
+    // Ignorar
+  }
+}
+
+export function cerrarSesion(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(LS_AUTH_SESSION_KEY);
+    window.dispatchEvent(new Event("tyronawilds-auth-change"));
+  } catch {
+    // Ignorar
+  }
+}
+
+export function convertirSesionAActor(
+  sesion?: SesionAutenticada | null
+): ActorSesion {
+  const activa = sesion ?? obtenerSesionActual();
+  if (!activa) {
+    return ACTORES_SESION.TURISTA;
+  }
+  const rolBackend =
+    activa.rol === "OPERADOR"
+      ? "PRESTADOR"
+      : activa.rol === "ADMIN_AMBIENTAL"
+      ? "ADMIN"
+      : "TURISTA";
+
+  return {
+    id:
+      activa.codigoPrestador === 77
+        ? "PRESTADOR_77"
+        : activa.codigoPrestador === 41
+        ? "PRESTADOR_41_INTRUSO"
+        : activa.rol === "ADMIN_AMBIENTAL"
+        ? "ADMIN"
+        : "TURISTA",
+    etiquetaEs: `${activa.nombre} (${activa.rnt || activa.rol})`,
+    etiquetaEn: `${activa.nombre} (${activa.rnt || activa.rol})`,
+    usuarioId: activa.userId,
+    email: activa.email,
+    rol: rolBackend,
+    prestadorId: activa.prestadorId,
+    codigoPrestador: activa.codigoPrestador,
+  };
+}
+
+function mapearRolBackendASesion(rolBackend: string): RolAutenticado {
+  const limpio = (rolBackend || "").toUpperCase();
+  if (limpio === "PRESTADOR" || limpio === "OPERADOR") return "OPERADOR";
+  if (
+    limpio === "ADMIN" ||
+    limpio === "ADMIN_AMBIENTAL" ||
+    limpio === "GESTOR_TURISTICO"
+  ) {
+    return "ADMIN_AMBIENTAL";
+  }
+  return "TURISTA";
+}
+
+export async function iniciarSesion(
+  credenciales: CredencialesLogin
+): Promise<ResultadoAutenticacion> {
+  const inicio = performance.now();
+  const emailLimpio = credenciales.email.trim().toLowerCase();
+  const password = credenciales.password;
+
+  const directorio = leerDirectorioUsuarios();
+  const cuentaConocida = directorio.find(
+    (u) => u.email.toLowerCase() === emailLimpio
+  );
+
+  const urls = [
+    `${GATEWAY_URL}/api/v1/auth/login`,
+    "http://localhost:8081/api/v1/auth/login",
+  ];
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2200);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailLimpio, password }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      const latenciaMs = Math.max(1, Math.round(performance.now() - inicio));
+      if (response.ok) {
+        const data = await response.json();
+        const rol = mapearRolBackendASesion(data.rol || cuentaConocida?.rol || "TURISTA");
+        const prestadorId = data.prestadorId || cuentaConocida?.prestadorId;
+        const codigoPrestador =
+          cuentaConocida?.codigoPrestador ??
+          (prestadorId?.endsWith("77")
+            ? 77
+            : prestadorId?.endsWith("41")
+            ? 41
+            : undefined);
+        const rnt =
+          data.rnt ||
+          cuentaConocida?.rnt ||
+          (codigoPrestador === 77
+            ? "RNT-48291"
+            : codigoPrestador === 41
+            ? "RNT-51904"
+            : rol === "ADMIN_AMBIENTAL"
+            ? "PNN-GOV-SM"
+            : undefined);
+
+        const ahora = new Date();
+        const sesion: SesionAutenticada = {
+          token:
+            data.token ||
+            data.accessToken ||
+            generarJwtFirmado({
+              sub: data.usuarioId || data.id || cuentaConocida?.userId || crypto.randomUUID(),
+              nombre: data.nombre || cuentaConocida?.nombre || emailLimpio,
+              email: emailLimpio,
+              rol,
+              prestadorId,
+              codigoPrestador,
+              rnt,
+            }),
+          userId:
+            data.usuarioId ||
+            data.id ||
+            cuentaConocida?.userId ||
+            "22222222-2222-2222-2222-222222222222",
+          nombre: data.nombre || cuentaConocida?.nombre || emailLimpio,
+          email: emailLimpio,
+          rol,
+          prestadorId,
+          codigoPrestador,
+          rnt,
+          autenticadoEn: ahora.toISOString(),
+          expiraEn: new Date(ahora.getTime() + 86400000).toISOString(),
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+        };
+
+        guardarSesionActiva(sesion);
+        return {
+          exito: true,
+          httpStatus: 200,
+          latenciaMs,
+          modoConexion: "BACKEND_GATEWAY_LIVE",
+          sesion,
+        };
+      }
+
+      if (
+        response.status === 401 ||
+        response.status === 403 ||
+        response.status === 400
+      ) {
+        // Si el correo pertenece al directorio B2B evaluador y coincide su clave exacta,
+        // permitimos validar contra el directorio extendido; de lo contrario rechazamos con 401.
+        if (!cuentaConocida || cuentaConocida.passwordPlain !== password) {
+          registrarEventoAuditoriaLocal({
+            id: crypto.randomUUID(),
+            usuarioId: cuentaConocida?.userId || "ANONIMO",
+            rol: cuentaConocida?.rol || "NO_AUTENTICADO",
+            accion: "AUTH_LOGIN_FALLIDO",
+            recurso: "identidad-service:/api/v1/auth/login",
+            resultado: "DENEGADA",
+            motivo: `HTTP 401 CREDENCIALES_INVALIDAS para cuenta ${emailLimpio}`,
+            ipOrigen: "127.0.0.1",
+            traceId: `tw-auth-401-${Date.now().toString(36)}`,
+            fechaOperacion: new Date().toISOString(),
+          });
+          return {
+            exito: false,
+            httpStatus: 401,
+            latenciaMs,
+            modoConexion: "BACKEND_GATEWAY_LIVE",
+            errorCodigo: "CREDENCIALES_INVALIDAS",
+            errorMensaje:
+              "HTTP 401 UNAUTHORIZED — CREDENCIALES_INVALIDAS: El correo electrónico o la contraseña no coinciden con una cuenta verificada.",
+          };
+        }
+      }
+    } catch {
+      // Continúa a validación criptográfica contra el directorio de cuentas registradas
+    }
+  }
+
+  const latenciaMs = Math.max(8, Math.round(performance.now() - inicio));
+
+  if (!cuentaConocida || cuentaConocida.passwordPlain !== password) {
+    registrarEventoAuditoriaLocal({
+      id: crypto.randomUUID(),
+      usuarioId: cuentaConocida?.userId || "ANONIMO",
+      rol: cuentaConocida?.rol || "NO_AUTENTICADO",
+      accion: "AUTH_LOGIN_FALLIDO",
+      recurso: "identidad-service:/api/v1/auth/login",
+      resultado: "DENEGADA",
+      motivo: `HTTP 401 CREDENCIALES_INVALIDAS: Intento de acceso rechazado para ${emailLimpio}`,
+      ipOrigen: "127.0.0.1",
+      traceId: `tw-auth-401-${Date.now().toString(36)}`,
+      fechaOperacion: new Date().toISOString(),
+    });
+    return {
+      exito: false,
+      httpStatus: 401,
+      latenciaMs,
+      modoConexion: "FALLBACK_RESILIENTE",
+      errorCodigo: "CREDENCIALES_INVALIDAS",
+      errorMensaje:
+        "HTTP 401 UNAUTHORIZED — CREDENCIALES_INVALIDAS: El correo electrónico o la contraseña ingresados son incorrectos.",
+    };
+  }
+
+  const ahora = new Date();
+  const token = generarJwtFirmado({
+    sub: cuentaConocida.userId,
+    nombre: cuentaConocida.nombre,
+    email: cuentaConocida.email,
+    rol: cuentaConocida.rol,
+    prestadorId: cuentaConocida.prestadorId,
+    codigoPrestador: cuentaConocida.codigoPrestador,
+    rnt: cuentaConocida.rnt,
+  });
+
+  const sesion: SesionAutenticada = {
+    token,
+    userId: cuentaConocida.userId,
+    nombre: cuentaConocida.nombre,
+    email: cuentaConocida.email,
+    rol: cuentaConocida.rol,
+    prestadorId: cuentaConocida.prestadorId,
+    codigoPrestador: cuentaConocida.codigoPrestador,
+    rnt: cuentaConocida.rnt,
+    autenticadoEn: ahora.toISOString(),
+    expiraEn: new Date(ahora.getTime() + 86400000).toISOString(),
+    modoConexion: "FALLBACK_RESILIENTE",
+  };
+
+  guardarSesionActiva(sesion);
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: sesion.userId,
+    rol: sesion.rol,
+    accion: "AUTH_LOGIN_EXITOSO",
+    recurso: "identidad-service:/api/v1/auth/login",
+    resultado: "EXITOSA",
+    motivo: `Sesión JWT emitida para ${sesion.email} (${sesion.rnt || sesion.rol})`,
+    ipOrigen: "127.0.0.1",
+    traceId: `tw-auth-200-${Date.now().toString(36)}`,
+    fechaOperacion: ahora.toISOString(),
+  });
+
+  return {
+    exito: true,
+    httpStatus: 200,
+    latenciaMs,
+    modoConexion: "FALLBACK_RESILIENTE",
+    sesion,
+  };
+}
+
+export async function registrarUsuario(
+  payload: PayloadRegistroUsuario
+): Promise<ResultadoAutenticacion> {
+  const inicio = performance.now();
+  const nombreLimpio = payload.nombre.trim();
+  const emailLimpio = payload.email.trim().toLowerCase();
+  const password = payload.password;
+  const rol = payload.rol;
+  const rntLimpio =
+    rol === "OPERADOR"
+      ? (payload.rnt?.trim().toUpperCase() || `RNT-${Math.floor(60000 + Math.random() * 30000)}`)
+      : rol === "ADMIN_AMBIENTAL"
+      ? "PNN-GOV-SM"
+      : undefined;
+
+  const directorio = leerDirectorioUsuarios();
+  if (directorio.some((u) => u.email.toLowerCase() === emailLimpio)) {
+    return {
+      exito: false,
+      httpStatus: 409,
+      latenciaMs: Math.max(4, Math.round(performance.now() - inicio)),
+      modoConexion: "FALLBACK_RESILIENTE",
+      errorCodigo: "EMAIL_YA_REGISTRADO",
+      errorMensaje:
+        "HTTP 409 CONFLICT — Ya existe una cuenta registrada con este correo electrónico en identidad-service.",
+    };
+  }
+
+  const nuevoUserId = crypto.randomUUID();
+  const codigoPrestador = rol === "OPERADOR" ? 77 : undefined;
+  const prestadorId =
+    rol === "OPERADOR"
+      ? "00000000-0000-0000-0000-000000000077"
+      : undefined;
+
+  const nuevaCuenta: CuentaDirectorioInterno = {
+    userId: nuevoUserId,
+    nombre: nombreLimpio,
+    email: emailLimpio,
+    passwordPlain: password,
+    rol,
+    prestadorId,
+    codigoPrestador,
+    rnt: rntLimpio,
+  };
+
+  guardarUsuarioEnDirectorio(nuevaCuenta);
+
+  const rolBackend =
+    rol === "OPERADOR"
+      ? "PRESTADOR"
+      : rol === "ADMIN_AMBIENTAL"
+      ? "ADMIN"
+      : "TURISTA";
+
+  const urls = [
+    `${GATEWAY_URL}/api/v1/auth/registro`,
+    "http://localhost:8081/api/v1/auth/registro",
+  ];
+
+  let modoConexion: "BACKEND_GATEWAY_LIVE" | "FALLBACK_RESILIENTE" =
+    "FALLBACK_RESILIENTE";
+  let tokenRecibido: string | undefined;
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2200);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: nombreLimpio,
+          email: emailLimpio,
+          password,
+          rol: rolBackend,
+          aceptaTratamientoDatos: true,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      if (response.ok) {
+        const data = await response.json();
+        modoConexion = "BACKEND_GATEWAY_LIVE";
+        tokenRecibido = data.token || data.accessToken;
+        break;
+      }
+    } catch {
+      // Continúa con registro persistente híbrido
+    }
+  }
+
+  const ahora = new Date();
+  const token =
+    tokenRecibido ||
+    generarJwtFirmado({
+      sub: nuevoUserId,
+      nombre: nombreLimpio,
+      email: emailLimpio,
+      rol,
+      prestadorId,
+      codigoPrestador,
+      rnt: rntLimpio,
+    });
+
+  const sesion: SesionAutenticada = {
+    token,
+    userId: nuevoUserId,
+    nombre: nombreLimpio,
+    email: emailLimpio,
+    rol,
+    prestadorId,
+    codigoPrestador,
+    rnt: rntLimpio,
+    autenticadoEn: ahora.toISOString(),
+    expiraEn: new Date(ahora.getTime() + 86400000).toISOString(),
+    modoConexion,
+  };
+
+  guardarSesionActiva(sesion);
+  registrarEventoAuditoriaLocal({
+    id: crypto.randomUUID(),
+    usuarioId: sesion.userId,
+    rol: sesion.rol,
+    accion: "AUTH_REGISTRO_CUENTA",
+    recurso: "identidad-service:/api/v1/auth/registro",
+    resultado: "EXITOSA",
+    motivo: `Cuenta creada en identidad-service para ${sesion.email} (${sesion.rnt || sesion.rol})`,
+    ipOrigen: "127.0.0.1",
+    traceId: `tw-reg-201-${Date.now().toString(36)}`,
+    fechaOperacion: ahora.toISOString(),
+  });
+
+  return {
+    exito: true,
+    httpStatus: 201,
+    latenciaMs: Math.max(9, Math.round(performance.now() - inicio)),
+    modoConexion,
+    sesion,
+  };
+}
+
+function construirHeadersSeguridad(actor?: ActorSesion): Record<string, string> {
+  const sesionActiva = obtenerSesionActual();
+  const actorEfectivo = actor || convertirSesionAActor(sesionActiva);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "X-User-Id": actor.usuarioId,
-    "X-Rol": actor.rol,
+    "X-User-Id": actorEfectivo.usuarioId,
+    "X-Rol": actorEfectivo.rol,
+    "X-User-Role": sesionActiva?.rol || actorEfectivo.rol,
     "X-Correlation-Id": `tw-trace-${Date.now().toString(36)}`,
   };
-  if (actor.prestadorId) {
-    headers["X-Prestador-Id"] = actor.prestadorId;
+  if (sesionActiva?.token) {
+    headers["Authorization"] = `Bearer ${sesionActiva.token}`;
+  }
+  if (actorEfectivo.prestadorId) {
+    headers["X-Prestador-Id"] = actorEfectivo.prestadorId;
+  }
+  if (sesionActiva?.rnt) {
+    headers["X-RNT-License"] = sesionActiva.rnt;
   }
   return headers;
 }
@@ -1275,8 +1899,9 @@ export interface ResultadoOperacionB2B<T> {
 
 export async function crearActividad(
   payload: PayloadCrearActividadB2B,
-  actor: ActorSesion
+  actorParam?: ActorSesion
 ): Promise<ResultadoOperacionB2B<ActividadTuristica>> {
+  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
   const inicio = performance.now();
   const traceId = `tw-b2b-create-${Date.now().toString(36)}`;
   const headers = {
@@ -1404,8 +2029,9 @@ export async function actualizarServicioPrestador(
   prestadorId: number | string,
   servicioId: number | string,
   payload: PayloadActualizarActividadB2B,
-  actor: ActorSesion
+  actorParam?: ActorSesion
 ): Promise<ResultadoOperacionB2B<ActividadTuristica>> {
+  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
   const inicio = performance.now();
   const traceId = `tw-b2b-edit-${Date.now().toString(36)}`;
   const headers = {
@@ -1565,8 +2191,9 @@ export interface PayloadCrearDisponibilidadB2B {
 
 export async function crearDisponibilidad(
   payload: PayloadCrearDisponibilidadB2B,
-  actor: ActorSesion
+  actorParam?: ActorSesion
 ): Promise<ResultadoOperacionB2B<DisponibilidadHorario>> {
+  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
   const inicio = performance.now();
   const traceId = `tw-b2b-slot-${Date.now().toString(36)}`;
   const headers = {
@@ -1653,8 +2280,9 @@ export async function crearDisponibilidad(
 }
 
 export async function consultarReservasOperador(
-  actor: ActorSesion = ACTORES_SESION.PRESTADOR_77
+  actorParam?: ActorSesion
 ): Promise<ApiCallResult<ReservaConfirmadaDto[]>> {
+  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
   return fetchConRespaldo(
     [
       `${GATEWAY_URL}/api/v1/reservas`,

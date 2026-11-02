@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ShieldAlert,
@@ -18,68 +19,38 @@ import {
   CheckCircle2,
   XCircle,
   Lock,
+  LogOut,
+  KeyRound,
   RefreshCw,
   Terminal,
   FileText,
   Layers,
 } from "lucide-react";
 import {
-  ACTORES_SESION,
   ActividadTuristica,
-  ActorSesion,
   DisponibilidadHorario,
   IndicadorCapacidadDestino,
   RegistroAuditoria,
   ReservaConfirmadaDto,
   ResultadoOperacionB2B,
+  SesionAutenticada,
   actualizarServicioPrestador,
+  cerrarSesion,
   consultarBitacoraAuditoria,
   consultarIndicadoresCapacidad,
   consultarReservasOperador,
+  convertirSesionAActor,
   crearActividad,
   crearDisponibilidad,
   obtenerCatalogoOfertas,
   obtenerDisponibilidades,
+  obtenerSesionActual,
 } from "@/lib/api";
 
-type RolOperativoB2B =
-  | "PRESTADOR_77"
-  | "PRESTADOR_41_INTRUSO"
-  | "GESTOR_TURISTICO";
-
-type PestanaActiva = "EXPEDICIONES" | "CUPOS_RESERVAS" | "SOSTENIBILIDAD_AUDITORIA";
-
-const PERFILES_OPERATIVOS_B2B: Record<
-  RolOperativoB2B,
-  {
-    id: RolOperativoB2B;
-    etiquetaSelector: string;
-    rntLicencia: string;
-    actor: ActorSesion;
-  }
-> = {
-  PRESTADOR_77: {
-    id: "PRESTADOR_77",
-    etiquetaSelector:
-      "OPERADOR #77 — EXPEDICIONES TAYRONA & SIERRA (RNT-48291 · TITULAR)",
-    rntLicencia: "RNT-48291 · TITULAR CERTIFICADO",
-    actor: ACTORES_SESION.PRESTADOR_77,
-  },
-  PRESTADOR_41_INTRUSO: {
-    id: "PRESTADOR_41_INTRUSO",
-    etiquetaSelector:
-      "OPERADOR #41 — OPERADOR CARIBE (RNT-51904 · TERCERO)",
-    rntLicencia: "RNT-51904 · OPERADOR MARÍTIMO",
-    actor: ACTORES_SESION.PRESTADOR_41_INTRUSO,
-  },
-  GESTOR_TURISTICO: {
-    id: "GESTOR_TURISTICO",
-    etiquetaSelector:
-      "AUTORIDAD AMBIENTAL — GESTIÓN DE DESTINO & SOSTENIBILIDAD",
-    rntLicencia: "DISTRITO DE SANTA MARTA · PNN & DADSA",
-    actor: ACTORES_SESION.GESTOR_TURISTICO,
-  },
-};
+type PestanaActiva =
+  | "EXPEDICIONES"
+  | "CUPOS_RESERVAS"
+  | "SOSTENIBILIDAD_AUDITORIA";
 
 function formatearCop(valor: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -107,9 +78,12 @@ function formatearFechaHora(iso?: string): string {
 }
 
 export default function PortalOperadoresB2BPage() {
-  const [rolB2B, setRolB2B] = useState<RolOperativoB2B>("PRESTADOR_77");
-  const perfilActivo = PERFILES_OPERATIVOS_B2B[rolB2B];
-  const actorActivo = perfilActivo.actor;
+  const router = useRouter();
+  const [sesionAutenticada, setSesionAutenticada] =
+    useState<SesionAutenticada | null>(null);
+  const [verificandoSesion, setVerificandoSesion] = useState<boolean>(true);
+
+  const actorActivo = convertirSesionAActor(sesionAutenticada);
 
   const [pestana, setPestana] = useState<PestanaActiva>("EXPEDICIONES");
   const [modoConexion, setModoConexion] = useState<
@@ -213,8 +187,42 @@ export default function PortalOperadoresB2BPage() {
   }, [actorActivo]);
 
   useEffect(() => {
-    sincronizarEcosistemaB2B();
-  }, [sincronizarEcosistemaB2B]);
+    const actualizarEstadoSesion = () => {
+      const sesion = obtenerSesionActual();
+      setSesionAutenticada(sesion);
+      setVerificandoSesion(false);
+    };
+    actualizarEstadoSesion();
+    window.addEventListener("tyronawilds-auth-change", actualizarEstadoSesion);
+    return () =>
+      window.removeEventListener(
+        "tyronawilds-auth-change",
+        actualizarEstadoSesion
+      );
+  }, []);
+
+  useEffect(() => {
+    if (
+      !verificandoSesion &&
+      (!sesionAutenticada || sesionAutenticada.rol === "TURISTA")
+    ) {
+      const timer = setTimeout(() => {
+        router.replace("/login?redirect=/operadores");
+      }, 1600);
+      return () => clearTimeout(timer);
+    }
+  }, [verificandoSesion, sesionAutenticada, router]);
+
+  useEffect(() => {
+    if (sesionAutenticada && sesionAutenticada.rol !== "TURISTA") {
+      sincronizarEcosistemaB2B();
+    }
+  }, [sesionAutenticada, sincronizarEcosistemaB2B]);
+
+  const manejarCerrarSesionB2B = () => {
+    cerrarSesion();
+    router.push("/login?redirect=/operadores");
+  };
 
   // Abrir Drawer de edición de una expedición
   const abrirEdicionExpedicion = (act: ActividadTuristica) => {
@@ -416,10 +424,72 @@ export default function PortalOperadoresB2BPage() {
     setCreandoSlot(false);
   };
 
+  if (verificandoSesion) {
+    return (
+      <div className="min-h-screen bg-obsidian text-sand flex items-center justify-center p-6 font-mono text-xs uppercase tracking-[0.18em]">
+        <div className="flex items-center gap-3 border border-sand/20 bg-jungle/20 px-6 py-4">
+          <Lock className="h-4 w-4 animate-pulse text-terracotta" />
+          <span>VERIFICANDO FIRMA JWT &amp; LICENCIA RNT EN IDENTIDAD-SERVICE...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!sesionAutenticada || sesionAutenticada.rol === "TURISTA") {
+    return (
+      <div className="min-h-screen bg-obsidian text-sand flex flex-col items-center justify-center p-6 selection:bg-terracotta selection:text-sand">
+        <div className="w-full max-w-xl border-2 border-terracotta bg-obsidian p-8 shadow-2xl">
+          <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-sand">
+            <ShieldAlert className="h-4 w-4" />
+            <span>
+              {sesionAutenticada?.rol === "TURISTA"
+                ? "HTTP 403 FORBIDDEN — ROL INSUFICIENTE (TURISTA)"
+                : "HTTP 401 UNAUTHORIZED — SESIÓN JWT REQUERIDA"}
+            </span>
+          </div>
+
+          <h1 className="mt-4 font-display text-4xl sm:text-5xl uppercase leading-none text-sand">
+            ACCESO PROTEGIDO AL PORTAL DE OPERADORES RNT
+          </h1>
+
+          <p className="mt-4 font-mono text-xs text-sand/80 leading-relaxed">
+            {sesionAutenticada?.rol === "TURISTA"
+              ? `Tu sesión actual (${sesionAutenticada.email}) tiene rol TURISTA. Esta consola de gestión requiere credenciales verificadas de Operador Turístico (RNT) o Autoridad Ambiental (PNN).`
+              : "La consola de gestión de expediciones y gobernanza ambiental exige autenticación mediante credenciales verificadas y token JWT emitido por identidad-service."}
+          </p>
+
+          <div className="mt-6 border border-sand/15 bg-jungle/20 p-3.5 font-mono text-[11px] text-sand/70">
+            Redirigiendo automáticamente a{" "}
+            <code className="text-terracotta">/login?redirect=/operadores</code>
+            ...
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/login?redirect=/operadores"
+              className="inline-flex items-center gap-2 bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+            >
+              <Lock className="h-4 w-4" />
+              <span>INICIAR SESIÓN RNT / AUTORIDAD AMBIENTAL</span>
+            </Link>
+
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 border border-sand/25 px-4 py-3.5 font-mono text-xs uppercase text-sand/80 hover:border-terracotta hover:text-terracotta transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>VOLVER AL CATÁLOGO</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
       {/* =====================================================================
-          BARRA SUPERIOR DE SESIÓN OPERATIVA B2B (ROLE SWITCHER)
+          BARRA SUPERIOR DE SESIÓN AUTENTICADA JWT (SIN SELECTOR LIBRE)
       ====================================================================== */}
       <header className="sticky top-0 z-40 border-b border-sand/15 bg-obsidian/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
@@ -438,7 +508,7 @@ export default function PortalOperadoresB2BPage() {
             </div>
           </div>
 
-          {/* Estado del enlace con API Gateway + Role Switcher B2B */}
+          {/* Insignia Oficial del Usuario Autenticado + Estado JWT + Cerrar Sesión */}
           <div className="flex flex-wrap items-center gap-2.5">
             <div className="hidden xl:flex items-center gap-2 border border-sand/20 bg-obsidian px-3 py-1.5 font-mono text-[11px] uppercase">
               <span
@@ -457,33 +527,37 @@ export default function PortalOperadoresB2BPage() {
               <span className="text-terracotta">{ultimaLatenciaMs} ms</span>
             </div>
 
-            {/* Selector de Cuenta Operativa B2B */}
-            <div className="flex items-center border border-terracotta/60 bg-jungle/25 px-2.5 py-1.5">
-              <Award className="mr-2 h-4 w-4 shrink-0 text-terracotta" />
-              <label htmlFor="selector-operador-b2b" className="sr-only">
-                Cuenta Operativa Activa
-              </label>
-              <select
-                id="selector-operador-b2b"
-                value={rolB2B}
-                onChange={(e) => {
-                  setRolB2B(e.target.value as RolOperativoB2B);
-                  setResultadoEdicion(null);
-                  setResultadoCreacionExp(null);
-                }}
-                className="bg-transparent font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-sand focus:outline-none"
-              >
-                {Object.values(PERFILES_OPERATIVOS_B2B).map((op) => (
-                  <option
-                    key={op.id}
-                    value={op.id}
-                    className="bg-obsidian text-sand"
-                  >
-                    {op.etiquetaSelector}
-                  </option>
-                ))}
-              </select>
+            {/* Insignia Oficial de Sesión JWT */}
+            <div className="flex flex-wrap items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-3 py-1.5 font-mono text-[11px]">
+              <KeyRound className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="font-bold uppercase text-sand">
+                {sesionAutenticada.nombre}
+              </span>
+              <span className="text-sand/40">·</span>
+              <span className="text-emerald-300">
+                {sesionAutenticada.email}
+              </span>
+              <span className="bg-terracotta px-1.5 py-0.5 text-[10px] font-bold uppercase text-sand">
+                {sesionAutenticada.rol}
+              </span>
+              {sesionAutenticada.rnt && (
+                <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] uppercase text-sand/85">
+                  {sesionAutenticada.rnt}
+                </span>
+              )}
+              <span className="hidden md:inline-flex items-center gap-1 bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-300">
+                JWT ACTIVO
+              </span>
             </div>
+
+            <button
+              type="button"
+              onClick={manejarCerrarSesionB2B}
+              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-terracotta transition-colors"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>CERRAR SESIÓN</span>
+            </button>
 
             <Link
               href="/lab"
@@ -505,7 +579,10 @@ export default function PortalOperadoresB2BPage() {
             <div>
               <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <span>SESIÓN ACTIVA: {perfilActivo.rntLicencia}</span>
+                <span>
+                  SESIÓN AUTENTICADA: {sesionAutenticada.rnt || sesionAutenticada.rol} ·{" "}
+                  {sesionAutenticada.nombre}
+                </span>
               </div>
               <h1 className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl uppercase leading-none text-sand">
                 PORTAL B2B DE OPERADORES &amp; GOBERNANZA AMBIENTAL
@@ -520,16 +597,19 @@ export default function PortalOperadoresB2BPage() {
 
             <div className="border border-sand/20 bg-obsidian p-4 font-mono text-xs shrink-0">
               <div className="text-[10px] uppercase text-sand/55">
-                CREDENCIAL DE OPERACIÓN ACTIVA
+                TOKEN JWT FIRMADO // CREDENCIAL ACTIVA
               </div>
               <div className="mt-1 font-bold text-sand">
-                {actorActivo.email}
+                {sesionAutenticada.email}
               </div>
               <div className="mt-0.5 text-terracotta">
-                ROL: {actorActivo.rol}{" "}
+                ROL: {sesionAutenticada.rol}{" "}
                 {actorActivo.codigoPrestador
-                  ? `· TITULAR PRESTADOR #${actorActivo.codigoPrestador}`
-                  : "· SUPERVISIÓN DISTRITAL"}
+                  ? `· TITULAR PRESTADOR #${actorActivo.codigoPrestador} (${sesionAutenticada.rnt})`
+                  : "· SUPERVISIÓN AMBIENTAL PNN"}
+              </div>
+              <div className="mt-1 text-[10px] text-emerald-400">
+                Bearer {sesionAutenticada.token.slice(0, 26)}...
               </div>
             </div>
           </div>

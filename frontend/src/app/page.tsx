@@ -26,6 +26,8 @@ import {
   Award,
   Check,
   CreditCard,
+  Lock,
+  LogOut,
   Compass as CompassIcon,
 } from "lucide-react";
 import {
@@ -38,6 +40,8 @@ import {
   RespuestaCrearReserva,
   ResultadoRecomendacionIa,
   SEED_ACTIVIDADES,
+  SesionAutenticada,
+  cerrarSesion,
   crearReservaTransaccional,
   ejecutarRecomendacionIa,
   obtenerCatalogoOfertas,
@@ -45,6 +49,7 @@ import {
   obtenerDisponibilidades,
   obtenerFichaTecnicaExpedicion,
   obtenerIndicadoresCapacidad,
+  obtenerSesionActual,
 } from "@/lib/api";
 import { registrarEventoAnalitica } from "@/lib/analytics";
 
@@ -134,6 +139,17 @@ function formatearCop(valor: number): string {
 export default function TyronaWildsCommercialStorefront() {
   const [idioma, setIdioma] = useState<Idioma>("es");
   const [altoContraste, setAltoContraste] = useState<boolean>(false);
+  const [sesionUsuario, setSesionUsuario] = useState<SesionAutenticada | null>(
+    null
+  );
+
+  useEffect(() => {
+    const actualizarSesion = () => setSesionUsuario(obtenerSesionActual());
+    actualizarSesion();
+    window.addEventListener("tyronawilds-auth-change", actualizarSesion);
+    return () =>
+      window.removeEventListener("tyronawilds-auth-change", actualizarSesion);
+  }, []);
 
   const [actividades, setActividades] =
     useState<ActividadTuristica[]>(SEED_ACTIVIDADES);
@@ -454,12 +470,42 @@ export default function TyronaWildsCommercialStorefront() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/operadores"
-              className="lg:hidden border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
-            >
-              {idioma === "es" ? "OPERADORES" : "OPERATORS"}
-            </Link>
+            {sesionUsuario ? (
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href="/operadores"
+                  className="inline-flex items-center gap-1.5 border border-emerald-500/45 bg-emerald-950/35 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
+                  title="Ir al panel operativo"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="max-w-[140px] truncate">
+                    {sesionUsuario.nombre}
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    cerrarSesion();
+                    setSesionUsuario(null);
+                  }}
+                  className="inline-flex items-center gap-1 border border-sand/25 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-sand/75 hover:border-terracotta hover:text-terracotta transition-colors"
+                  title="Cerrar sesión JWT"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">
+                    {idioma === "es" ? "SALIR" : "LOGOUT"}
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 bg-terracotta px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+              >
+                <Lock className="h-3.5 w-3.5" />
+                <span>{idioma === "es" ? "INICIAR SESIÓN" : "SIGN IN"}</span>
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setIdioma(idioma === "es" ? "en" : "es")}
