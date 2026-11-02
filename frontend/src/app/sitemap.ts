@@ -13,6 +13,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/expediciones`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/baquiano`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/pulso`,
+      lastModified,
+      changeFrequency: "hourly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/mis-reservas`,
       lastModified,
       changeFrequency: "daily",

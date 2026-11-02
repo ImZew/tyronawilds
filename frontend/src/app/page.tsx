@@ -35,7 +35,13 @@ import {
   ShieldAlert,
   RotateCcw,
   Compass as CompassIcon,
+  ChevronLeft,
+  ArrowRight,
+  Layers,
+  Play,
+  Pause,
 } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import {
   ACOMPANANTES_DEMO_POOL,
   ACTORES_SESION,
@@ -148,6 +154,73 @@ const ESTILOS_BAQUIANO: Record<
   },
 };
 
+interface DestinoHeroItem {
+  id: string;
+  palabraClave: string;
+  titulo: string;
+  region: string;
+  altitud: string;
+  coordenadas: string;
+  imagen: string;
+  badge: string;
+  descripcion: string;
+}
+
+const DESTINOS_HERO: DestinoHeroItem[] = [
+  {
+    id: "01",
+    palabraClave: "TAYRONA",
+    titulo: "Santuario de Arrecifes & Selva Litoral",
+    region: "PARQUE NACIONAL NATURAL TAYRONA",
+    altitud: "0m — 200m MSNM",
+    coordenadas: "11°18'04\"N 74°00'45\"W",
+    imagen:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=85",
+    badge: "CONSERVACIÓN COSTERA",
+    descripcion:
+      "Arrecifes coralinos vírgenes, ensenadas esmeralda y senderos bajo el dosel tropical donde los ecosistemas marinos se funden con los estribos de la Sierra Nevada.",
+  },
+  {
+    id: "02",
+    palabraClave: "TEYUNA",
+    titulo: "Terrazas Líticas de la Ciudad Perdida",
+    region: "CUENCA DEL RÍO BURITACA · ALTA MONTAÑA",
+    altitud: "1.200m MSNM",
+    coordenadas: "11°02'22\"N 73°55'30\"W",
+    imagen:
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=85",
+    badge: "PATRIMONIO ARQUEOLÓGICO",
+    descripcion:
+      "169 terrazas de piedra talladas en el siglo VIII d.C., conectadas por calzadas precolombinas rodeadas de bosque de niebla y sabiduría de los cuatro pueblos originarios.",
+  },
+  {
+    id: "03",
+    palabraClave: "SIERRA",
+    titulo: "Glaciares Ancestrales & Cumbres Sagradas",
+    region: "MACIZO COLÓN Y BOLÍVAR · LÍMITE NIVAL",
+    altitud: "5.775m MSNM",
+    coordenadas: "10°50'18\"N 73°41'12\"W",
+    imagen:
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=85",
+    badge: "RESERVA DE LA BIOSFERA",
+    descripcion:
+      "El macizo montañoso litoral más alto del planeta. Desde el calor del trópico hasta los hielos perpetuos que alimentan 36 cuencas hidrográficas sagradas.",
+  },
+  {
+    id: "04",
+    palabraClave: "CARIBE",
+    titulo: "Ensenadas Salvajes & Bahías de Coral",
+    region: "BAHÍA CONCHA · CHENQUE · GAYRACA",
+    altitud: "0m MSNM",
+    coordenadas: "11°17'40\"N 74°08'15\"W",
+    imagen:
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1920&q=85",
+    badge: "REFUGIO MARINO",
+    descripcion:
+      "Aguas cristalinas protegidas por formaciones rocosas milenarias, santuarios de tortugas marinas y manglares que actúan como guardianes del litoral caribeño.",
+  },
+];
+
 function formatearCop(valor: number): string {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -163,6 +236,16 @@ export default function TyronaWildsCommercialStorefront() {
     null
   );
   const [misReservasCount, setMisReservasCount] = useState<number>(0);
+  const [destinoHeroIndex, setDestinoHeroIndex] = useState<number>(0);
+  const [heroEnPausa, setHeroEnPausa] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (heroEnPausa) return;
+    const interval = setInterval(() => {
+      setDestinoHeroIndex((prev) => (prev + 1) % DESTINOS_HERO.length);
+    }, 6500);
+    return () => clearInterval(interval);
+  }, [heroEnPausa]);
 
   useEffect(() => {
     const actualizarSesion = () => setSesionUsuario(obtenerSesionActual());
@@ -717,283 +800,384 @@ export default function TyronaWildsCommercialStorefront() {
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
       {/* =====================================================================
-          BARRA SUPERIOR EDITORIAL Y TELEMETRÍA CLIMÁTICA REAL
+          BARRA SUPERIOR GLOBAL MULTIPÁGINA (PÍLDORA FLOTANTE GLASSMORPHISM)
       ====================================================================== */}
-      <header className="sticky top-0 z-40 border-b border-sand/15 bg-obsidian/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-3.5">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <a
-              href="#hero"
-              className="font-display text-xl sm:text-2xl tracking-[0.14em] text-sand hover:text-terracotta transition-colors"
-            >
-              TYRONAWILDS<span className="text-terracotta">™</span>
-            </a>
-            <div className="hidden md:flex items-center gap-2 border border-sand/20 bg-obsidian px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-sand/75">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <span>SANTA MARTA · SIERRA NEVADA &amp; CARIBE</span>
-            </div>
-          </div>
-
-          <nav
-            aria-label="Navegación Principal"
-            className="hidden lg:flex items-center gap-8 font-mono text-xs uppercase tracking-[0.18em] text-sand/75"
-          >
-            <a
-              href="#expediciones"
-              className="hover:text-terracotta transition-colors"
-            >
-              01 // {idioma === "es" ? "EXPEDICIONES" : "EXPEDITIONS"}
-            </a>
-            <a
-              href="#baquiano-ai"
-              className="hover:text-terracotta transition-colors"
-            >
-              02 // {idioma === "es" ? "BAQUIANO AI" : "BAQUIANO AI"}
-            </a>
-            <a
-              href="#sostenibilidad"
-              className="hover:text-terracotta transition-colors"
-            >
-              03 //{" "}
-              {idioma === "es"
-                ? "PULSO DEL TERRITORIO"
-                : "TERRITORIAL PULSE"}
-            </a>
-            {sesionUsuario && sesionUsuario.rol === "TURISTA" && (
-              <Link
-                href="/mis-reservas"
-                className="inline-flex items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-2.5 py-1 text-[11px] font-bold text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
-              >
-                <QrCode className="h-3.5 w-3.5 text-emerald-400" />
-                <span>
-                  {idioma === "es" ? "MIS RESERVAS" : "MY PASSPORTS"} (
-                  {misReservasCount})
-                </span>
-              </Link>
-            )}
-            {sesionUsuario &&
-              (sesionUsuario.rol === "OPERADOR" ||
-                sesionUsuario.rol === "ADMIN_AMBIENTAL") && (
-                <Link
-                  href="/operadores"
-                  className="border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 text-[11px] font-bold text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
-                >
-                  {idioma === "es" ? "PORTAL OPERADORES" : "OPERATOR PORTAL"}
-                </Link>
-              )}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            {sesionUsuario ? (
-              <div className="flex items-center gap-1.5">
-                {sesionUsuario.rol === "TURISTA" ? (
-                  <>
-                    <Link
-                      href="/mis-reservas"
-                      className="lg:hidden inline-flex items-center gap-1 border border-emerald-500/45 bg-emerald-950/35 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
-                    >
-                      <QrCode className="h-3.5 w-3.5 text-emerald-400" />
-                      <span>MIS RESERVAS ({misReservasCount})</span>
-                    </Link>
-                    <Link
-                      href="/mis-reservas"
-                      className="inline-flex items-center gap-1.5 border border-sand/30 bg-sand/10 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:border-terracotta hover:text-terracotta transition-colors"
-                      title="Ver mi billetera personal de pasaportes QR"
-                    >
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                      <span className="max-w-[150px] truncate">
-                        {sesionUsuario.nombre}
-                      </span>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/operadores"
-                      className="lg:hidden inline-flex items-center gap-1 border border-terracotta/50 bg-terracotta/15 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
-                    >
-                      <span>PORTAL OPERADORES</span>
-                    </Link>
-                    <Link
-                      href="/operadores"
-                      className="inline-flex items-center gap-1.5 border border-emerald-500/45 bg-emerald-950/35 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 hover:border-terracotta hover:text-sand transition-colors"
-                      title="Ir a la consola operativa B2B"
-                    >
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                      <span className="max-w-[160px] truncate">
-                        {sesionUsuario.nombre} · {sesionUsuario.rnt}
-                      </span>
-                    </Link>
-                  </>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    cerrarSesion();
-                    setSesionUsuario(null);
-                  }}
-                  className="inline-flex items-center gap-1 border border-sand/25 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-sand/75 hover:border-terracotta hover:text-terracotta transition-colors"
-                  title="Cerrar sesión JWT"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">
-                    {idioma === "es" ? "SALIR" : "LOGOUT"}
-                  </span>
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 bg-terracotta px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
-              >
-                <Lock className="h-3.5 w-3.5" />
-                <span>{idioma === "es" ? "INICIAR SESIÓN" : "SIGN IN"}</span>
-              </Link>
-            )}
-            <button
-              type="button"
-              onClick={() => setIdioma(idioma === "es" ? "en" : "es")}
-              className="flex items-center gap-1.5 border border-sand/25 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider hover:border-terracotta hover:text-terracotta transition-colors"
-              title="Idioma / Language"
-            >
-              <Globe className="h-3.5 w-3.5 text-terracotta" />
-              <span>{idioma.toUpperCase()}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAltoContraste(!altoContraste)}
-              className={`flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
-                altoContraste
-                  ? "border-sand bg-sand text-obsidian font-bold"
-                  : "border-sand/25 text-sand hover:border-terracotta"
-              }`}
-              title="Modo de lectura de alto contraste"
-            >
-              <Eye className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">
-                {altoContraste ? "ALTO CONTRASTE" : "LECTURA"}
-              </span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navbar
+        idioma={idioma}
+        onCambiarIdioma={setIdioma}
+        altoContraste={altoContraste}
+        onCambiarAltoContraste={setAltoContraste}
+      />
 
       {/* =====================================================================
-          SECCIÓN 1: HERO EDITORIAL INMERSIVO "PIERDE EL MAPA"
+          SECCIÓN 1: HERO CINEMATOGRÁFICO DE PROFUNDIDAD (SANTA MARTA MONUMENTAL)
+          "Texto Monumental situado ópticamente detrás de las cumbres de Santa Marta"
       ====================================================================== */}
       <section
         id="hero"
-        className="relative min-h-[86vh] w-full overflow-hidden border-b border-sand/15 flex flex-col justify-between"
+        aria-label="Hero Cinematográfico de Santa Marta"
+        className="relative mx-3 mt-3 sm:mx-4 sm:mt-4 overflow-hidden rounded-3xl border border-white/10 bg-obsidian shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+        onMouseEnter={() => setHeroEnPausa(true)}
+        onMouseLeave={() => setHeroEnPausa(false)}
       >
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=2000&q=85"
-            alt="Sierra Nevada de Santa Marta y Parque Tayrona"
-            className="h-full w-full object-cover object-center scale-105 opacity-55"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(circle at 60% 35%, rgba(13, 38, 28, 0.35) 0%, rgba(10, 10, 10, 0.94) 85%)",
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent" />
-        </div>
+        <div className="relative min-h-[88vh] md:min-h-[92vh] w-full flex flex-col justify-between overflow-hidden">
+          {/* =================================================================
+              CAPA 1 (FONDO z-10): FOTOGRAFÍA PANORÁMICA DE ALTA RESOLUCIÓN
+          ================================================================== */}
+          <div className="absolute inset-0 z-10">
+            {DESTINOS_HERO.map((dest, idx) => (
+              <div
+                key={dest.id}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  idx === destinoHeroIndex ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+              >
+                <img
+                  src={dest.imagen}
+                  alt={`${dest.palabraClave} · ${dest.region}`}
+                  className="h-full w-full object-cover object-center scale-105 transform transition-transform duration-1000 ease-out"
+                />
+              </div>
+            ))}
+            {/* Gradientes atmosféricos y oscurecimiento editorial */}
+            <div
+              className="absolute inset-0 z-10"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 40%, rgba(13, 38, 28, 0.25) 0%, rgba(10, 10, 10, 0.75) 85%)",
+              }}
+            />
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-obsidian via-obsidian/45 to-obsidian/30" />
+          </div>
 
-        {/* Fila Superior del HUD de Expedición */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 pt-6 sm:px-6 sm:pt-8 font-mono text-[11px] sm:text-xs uppercase tracking-[0.14em] text-sand/80">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Compass className="h-4 w-4 shrink-0 text-terracotta" />
-            <span>11°14&apos;27&quot;N 74°11&apos;56&quot;W // SANTA MARTA, CO</span>
-            <span className="hidden md:inline text-sand/40">//</span>
-            <span className="hidden md:inline text-sand/65">
-              ALTITUD: 0m — 5.775m MSNM (PICO CRISTÓBAL COLÓN)
+          {/* =================================================================
+              CAPA 2 (TEXTO MONUMENTAL z-20): PALABRA DETRÁS DE LAS CUMBRES
+          ================================================================== */}
+          <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none select-none overflow-hidden px-4">
+            <span
+              key={destinoHeroIndex}
+              className="font-display text-[15vw] font-black tracking-tighter uppercase text-white/80 leading-none drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)] animate-in fade-in zoom-in-95 duration-700"
+            >
+              {DESTINOS_HERO[destinoHeroIndex].palabraClave}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 border border-sand/20 bg-obsidian/80 px-3 py-1.5 backdrop-blur-md">
-            <Sun className="h-4 w-4 shrink-0 text-terracotta" />
-            <span>
-              {idioma === "es"
-                ? `SIERRA NEVADA ${tempActual}°C · HUMEDAD ${humedadActual}% · VIENTO 14 KM/H`
-                : `SIERRA NEVADA ${tempActual}°C · HUMIDITY ${humedadActual}% · WIND 14 KM/H`}
-            </span>
-            <Wind className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-          </div>
-        </div>
+          {/* =================================================================
+              CAPA 3 (RELIEVE / CUMBRES z-30): GRADIENTE ATMOSFÉRICO DE MONTAÑA
+              Cubre la mitad inferior del texto monumental creando profundidad
+          ================================================================== */}
+          <div className="absolute inset-0 z-30 pointer-events-none bg-gradient-to-t from-obsidian via-obsidian/80 via-40% to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 z-30 pointer-events-none h-64 bg-gradient-to-t from-obsidian via-obsidian/90 to-transparent" />
 
-        {/* Titular Monumental Escalonado */}
-        <div className="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-4 py-10 sm:px-6 sm:py-12">
-          <div className="mb-4 inline-flex items-center gap-2 border border-terracotta/50 bg-terracotta/10 px-3 py-1 font-mono text-[10px] sm:text-xs uppercase tracking-[0.18em] text-terracotta">
-            <Radio className="h-3.5 w-3.5 shrink-0 animate-pulse" />
-            <span>
-              {idioma === "es"
-                ? "EXPEDICIONES DE CONSERVACIÓN Y ALTA MONTAÑA · SANTA MARTA"
-                : "CONSERVATION & HIGH-MOUNTAIN EXPEDITIONS · SANTA MARTA"}
-            </span>
-          </div>
+          {/* =================================================================
+              OVERLAYS DE CONTENIDO (z-40): HUD, MÉTRICAS Y CONTROLES
+          ================================================================== */}
+          {/* Fila Superior del HUD */}
+          <div className="relative z-40 flex w-full flex-wrap items-center justify-between gap-3 p-4 sm:p-6 md:p-8 font-mono text-[11px] sm:text-xs uppercase tracking-[0.16em] text-sand/85">
+            <div className="flex items-center gap-2 sm:gap-3 rounded-full border border-white/15 bg-black/40 px-3.5 py-1.5 backdrop-blur-md">
+              <Compass className="h-4 w-4 shrink-0 text-terracotta" />
+              <span>{DESTINOS_HERO[destinoHeroIndex].coordenadas}</span>
+              <span className="hidden sm:inline text-sand/40">//</span>
+              <span className="hidden sm:inline text-sand/75">
+                {DESTINOS_HERO[destinoHeroIndex].altitud}
+              </span>
+            </div>
 
-          <h1 className="font-display uppercase leading-[0.86] tracking-[-0.02em]">
-            <span className="block text-[clamp(3.6rem,11.5vw,10.5rem)] text-sand">
-              {idioma === "es" ? "PIERDE" : "LOSE"}
-            </span>
-            <span className="block pl-[4vw] sm:pl-[6vw] text-[clamp(3.6rem,11.5vw,10.5rem)] text-terracotta">
-              {idioma === "es" ? "EL MAPA" : "THE MAP"}
-            </span>
-          </h1>
+            <div className="flex items-center gap-2 rounded-full border border-terracotta/40 bg-terracotta/15 px-3 py-1 font-mono text-[10px] sm:text-xs font-semibold tracking-widest text-terracotta backdrop-blur-md">
+              <Radio className="h-3.5 w-3.5 shrink-0 animate-pulse" />
+              <span>{DESTINOS_HERO[destinoHeroIndex].badge}</span>
+            </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-6 lg:col-start-2 border-l-2 border-terracotta pl-4 sm:pl-5">
-              <p className="text-sm sm:text-base md:text-lg text-sand/85 leading-relaxed">
+            <div className="hidden lg:flex items-center gap-2.5 rounded-full border border-white/15 bg-black/40 px-3.5 py-1.5 backdrop-blur-md">
+              <Sun className="h-4 w-4 shrink-0 text-terracotta" />
+              <span>
                 {idioma === "es"
-                  ? "Desde los arrecifes coralinos del Parque Tayrona hasta las terrazas líticas de Teyuna a 1.200 metros sobre el nivel del mar. Travesías curadas junto a comunidades indígenas y guías locales con cupos diarios estrictamente limitados para proteger cada ecosistema."
-                  : "From the coral reefs of Tayrona National Park to the ancient stone terraces of Teyuna at 1,200 meters above sea level. Expeditions curated alongside indigenous elders and local guides with strictly limited daily departures to protect every ecosystem."}
+                  ? `SANTA MARTA ${tempActual}°C · HUMEDAD ${humedadActual}%`
+                  : `SANTA MARTA ${tempActual}°C · HUMIDITY ${humedadActual}%`}
+              </span>
+              <Wind className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+            </div>
+          </div>
+
+          {/* Zona Central / Inferior del Hero */}
+          <div className="relative z-40 mt-auto w-full p-4 sm:p-6 md:p-8 lg:p-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+              {/* Abajo Izquierda: Titular, Métricas y Acciones */}
+              <div className="lg:col-span-8 flex flex-col gap-6">
+                <div>
+                  <div className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
+                    {DESTINOS_HERO[destinoHeroIndex].region}
+                  </div>
+                  <h1 className="font-display text-3xl sm:text-5xl md:text-6xl uppercase tracking-tight text-white leading-[0.95]">
+                    {DESTINOS_HERO[destinoHeroIndex].titulo}
+                  </h1>
+                  <p className="mt-3 max-w-2xl text-xs sm:text-sm md:text-base text-sand/85 leading-relaxed font-sans">
+                    {DESTINOS_HERO[destinoHeroIndex].descripcion}
+                  </p>
+                </div>
+
+                {/* 3 Métricas Clave */}
+                <div className="grid grid-cols-3 gap-3 border-y border-white/15 py-3 max-w-xl">
+                  <div>
+                    <div className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                      15K+
+                    </div>
+                    <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-sand/70">
+                      {idioma === "es" ? "Hectáreas Protegidas" : "Protected Hectares"}
+                    </div>
+                  </div>
+                  <div className="border-l border-white/15 pl-3">
+                    <div className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                      24+
+                    </div>
+                    <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-sand/70">
+                      {idioma === "es" ? "Rutas con Baquianos" : "Baquiano Routes"}
+                    </div>
+                  </div>
+                  <div className="border-l border-white/15 pl-3">
+                    <div className="font-display text-2xl sm:text-3xl font-bold text-emerald-400 tracking-tight">
+                      100%
+                    </div>
+                    <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-sand/70">
+                      {idioma === "es" ? "Trazabilidad de Cupos" : "Slot Traceability"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fila de Acción con Botones Píldora */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/expediciones"
+                    className="inline-flex items-center gap-2.5 rounded-full bg-terracotta px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember shadow-lg shadow-terracotta/25 transition-all group"
+                  >
+                    <span>{idioma === "es" ? "RESERVAR AHORA" : "BOOK NOW"}</span>
+                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Link>
+
+                  <Link
+                    href="/baquiano"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/40 backdrop-blur-md px-5 py-3 font-mono text-xs uppercase tracking-wider text-sand hover:border-terracotta hover:bg-black/60 transition-all"
+                  >
+                    <Sparkles className="h-4 w-4 text-terracotta" />
+                    <span>{idioma === "es" ? "CONSULTAR BAQUIANO AI" : "ASK BAQUIANO AI"}</span>
+                  </Link>
+
+                  <Link
+                    href="/pulso"
+                    className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/30 backdrop-blur-md px-4 py-3 font-mono text-xs uppercase tracking-wider text-sand/80 hover:border-emerald-400 hover:text-emerald-300 transition-all"
+                  >
+                    <Radio className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{idioma === "es" ? "PULSO TERRITORIAL" : "TERRITORY PULSE"}</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Abajo Derecha: Tarjeta Flotante Glassmorphism de Previsualización */}
+              <div className="lg:col-span-4 flex justify-start lg:justify-end">
+                <div className="w-full max-w-sm rounded-2xl border border-white/20 bg-black/60 p-4 backdrop-blur-xl shadow-2xl">
+                  <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-sand/75">
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-terracotta" />
+                      <span>{idioma === "es" ? "SIGUIENTE PARADA" : "NEXT STOP"}</span>
+                    </span>
+                    <span className="font-bold text-white">
+                      0{destinoHeroIndex + 1} <span className="text-terracotta">/</span> 0{DESTINOS_HERO.length}
+                    </span>
+                  </div>
+
+                  <div
+                    onClick={() =>
+                      setDestinoHeroIndex(
+                        (prev) => (prev + 1) % DESTINOS_HERO.length
+                      )
+                    }
+                    className="group relative mt-3 h-28 w-full cursor-pointer overflow-hidden rounded-xl border border-white/15"
+                  >
+                    <img
+                      src={
+                        DESTINOS_HERO[
+                          (destinoHeroIndex + 1) % DESTINOS_HERO.length
+                        ].imagen
+                      }
+                      alt={
+                        DESTINOS_HERO[
+                          (destinoHeroIndex + 1) % DESTINOS_HERO.length
+                        ].palabraClave
+                      }
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
+                      <div>
+                        <div className="font-mono text-[9px] uppercase tracking-wider text-terracotta">
+                          {
+                            DESTINOS_HERO[
+                              (destinoHeroIndex + 1) % DESTINOS_HERO.length
+                            ].region
+                          }
+                        </div>
+                        <div className="font-display text-lg font-bold text-white uppercase tracking-tight leading-tight">
+                          {
+                            DESTINOS_HERO[
+                              (destinoHeroIndex + 1) % DESTINOS_HERO.length
+                            ].palabraClave
+                          }
+                        </div>
+                      </div>
+                      <span className="rounded-full bg-white/20 p-1.5 backdrop-blur-md group-hover:bg-terracotta text-white transition-colors">
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Barra de progreso y Controles */}
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-1.5">
+                      {DESTINOS_HERO.map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setDestinoHeroIndex(i)}
+                          className={`h-1.5 rounded-full transition-all ${
+                            i === destinoHeroIndex
+                              ? "w-6 bg-terracotta"
+                              : "w-2 bg-white/30 hover:bg-white/60"
+                          }`}
+                          aria-label={`Ir al destino 0${i + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDestinoHeroIndex(
+                            (prev) =>
+                              (prev - 1 + DESTINOS_HERO.length) %
+                              DESTINOS_HERO.length
+                          )
+                        }
+                        className="rounded-full border border-white/20 bg-white/10 p-1.5 text-sand hover:bg-white/20 transition-colors"
+                        aria-label="Destino anterior"
+                      >
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setHeroEnPausa(!heroEnPausa)}
+                        className="rounded-full border border-white/20 bg-white/10 p-1.5 text-sand hover:bg-white/20 transition-colors"
+                        aria-label={heroEnPausa ? "Reanudar" : "Pausar"}
+                      >
+                        {heroEnPausa ? (
+                          <Play className="h-3.5 w-3.5 text-terracotta" />
+                        ) : (
+                          <Pause className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDestinoHeroIndex(
+                            (prev) => (prev + 1) % DESTINOS_HERO.length
+                          )
+                        }
+                        className="rounded-full border border-white/20 bg-white/10 p-1.5 text-sand hover:bg-white/20 transition-colors"
+                        aria-label="Siguiente destino"
+                      >
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECCIÓN DE ACCESO RÁPIDO MULTIPÁGINA (3 TARJETAS RESUMEN INTERACTIVAS)
+      ====================================================================== */}
+      <section
+        aria-label="Rutas Multipágina de TYRONAWILDS"
+        className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/expediciones"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+          >
+            <div>
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
+                <span>01 // CATÁLOGO OFICIAL</span>
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </div>
+              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
+                {idioma === "es" ? "Expediciones & Reservas" : "Expeditions & Booking"}
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+                {idioma === "es"
+                  ? "Colección curada de 6 travesías de alta montaña y costa caribeña con checkout Wompi Sandbox y asignación de acompañantes nominales."
+                  : "Curated collection of 6 high-mountain and Caribbean coastal expeditions with Wompi Sandbox checkout and nominal companion management."}
               </p>
             </div>
-
-            <div className="lg:col-span-5 flex flex-wrap items-center gap-3 sm:gap-4 lg:justify-end">
-              <a
-                href="#expediciones"
-                className="inline-flex w-full sm:w-auto justify-center items-center gap-3 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
-              >
-                <span>
-                  {idioma === "es"
-                    ? "EXPLORAR EXPEDICIONES"
-                    : "EXPLORE EXPEDITIONS"}
-                </span>
-                <ArrowUpRight className="h-4 w-4" />
-              </a>
-              <a
-                href="#baquiano-ai"
-                className="inline-flex w-full sm:w-auto justify-center items-center gap-2 border border-sand/30 bg-obsidian/80 px-5 py-4 font-mono text-xs uppercase tracking-[0.18em] text-sand hover:border-terracotta transition-colors"
-              >
-                <Sparkles className="h-4 w-4 text-terracotta" />
-                <span>
-                  {idioma === "es"
-                    ? "CONSULTAR A BAQUIANO AI"
-                    : "ASK BAQUIANO AI"}
-                </span>
-              </a>
+            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
+              <span>{idioma === "es" ? "VER CATÁLOGO COMPLETO" : "VIEW FULL CATALOG"}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </div>
-          </div>
-        </div>
+          </Link>
 
-        {/* Barra Inferior del Hero */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-between border-t border-sand/15 px-4 py-4 sm:px-6 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] text-sand/70">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-block h-2 w-2 bg-terracotta" />
-            <span>SCROLL TO EXPLORE // SIERRA NEVADA &amp; CARIBE</span>
-          </div>
+          <Link
+            href="/baquiano"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+          >
+            <div>
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-terracotta">
+                <span>02 // CONCIERGE TERRITORIAL</span>
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </div>
+              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-terracotta transition-colors">
+                Baquiano AI Concierge
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+                {idioma === "es"
+                  ? "Asesor inteligente en tiempo real que equilibra condición física, presupuesto y ritmos bioculturales con trazabilidad explicable."
+                  : "Intelligent real-time concierge matching fitness, budget, and biocultural rhythms with explainable algorithmic traceability."}
+              </p>
+            </div>
+            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-sand group-hover:text-terracotta">
+              <span>{idioma === "es" ? "CONSULTAR AHORA" : "CONSULT NOW"}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </div>
+          </Link>
 
-          <div className="hidden md:flex items-center gap-6 text-[11px]">
-            <span>TEMPORADA SECA · VISIBILIDAD ÓPTIMA EN CUMBRES</span>
-          </div>
-
-          <div className="font-bold text-sand">
-            01 <span className="text-terracotta">/</span> 06
-          </div>
+          <Link
+            href="/pulso"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sand/15 bg-obsidian/80 p-6 transition-all hover:border-terracotta hover:bg-jungle/20 shadow-md"
+          >
+            <div>
+              <div className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.18em] text-emerald-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>03 // TELEMETRÍA EN VIVO</span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </div>
+              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-sand group-hover:text-emerald-300 transition-colors">
+                {idioma === "es" ? "Pulso del Territorio" : "Territorial Pulse"}
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-sand/70 leading-relaxed font-sans">
+                {idioma === "es"
+                  ? "Monitoreo ambiental continuo: capacidad de carga de playas, alertas DIMAR, clima IDEAM y desvío a senderos de bajo impacto."
+                  : "Continuous environmental monitoring: beach carrying capacity, DIMAR marine alerts, IDEAM weather, and quiet low-impact trail diverters."}
+              </p>
+            </div>
+            <div className="mt-6 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-300 group-hover:text-emerald-200">
+              <span>{idioma === "es" ? "EXPLORAR TELEMETRÍA" : "EXPLORE TELEMETRY"}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </div>
+          </Link>
         </div>
       </section>
 
