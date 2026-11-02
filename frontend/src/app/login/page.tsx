@@ -103,11 +103,23 @@ function LoginContenido() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get("redirect");
+  const tabParam = searchParams.get("tab");
 
-  const [pestana, setPestana] = useState<"LOGIN" | "REGISTRO">("LOGIN");
+  const [pestana, setPestana] = useState<"LOGIN" | "REGISTRO">(
+    tabParam === "register" ? "REGISTRO" : "LOGIN"
+  );
   const [sesionActiva, setSesionActiva] = useState<SesionAutenticada | null>(
     null
   );
+
+  useEffect(() => {
+    if (tabParam === "register") {
+      setPestana("REGISTRO");
+      setRolReg("TURISTA");
+    } else if (tabParam === "login") {
+      setPestana("LOGIN");
+    }
+  }, [tabParam]);
 
   // Estado formulario Iniciar Sesión
   const [emailLogin, setEmailLogin] = useState("");
