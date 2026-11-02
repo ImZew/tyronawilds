@@ -20,3 +20,21 @@ html {
   background-image: radial-gradient(rgba(230, 48, 0, 0.14) 1px, transparent 0);
   background-size: 28px 28px;
 }
+
+/* Impresión oficial de Pasaporte Digital QR (PDF) */
+@media print {
+  body {
+    background: #0a0a0a !important;
+    color: #f4f0ea !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .pasaporte-oficial-imprimible {
+    border: 2px solid #e63000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}

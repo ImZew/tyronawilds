@@ -28,6 +28,12 @@ import {
   CreditCard,
   Lock,
   LogOut,
+  Smartphone,
+  Landmark,
+  QrCode,
+  Zap,
+  ShieldAlert,
+  RotateCcw,
   Compass as CompassIcon,
 } from "lucide-react";
 import {
@@ -35,13 +41,16 @@ import {
   ActividadTuristica,
   ContextoTerritorial,
   DisponibilidadHorario,
+  EscenarioDemoCheckout,
   Idioma,
   IndicadorCapacidadDestino,
+  MetodoPagoWompi,
   RespuestaCrearReserva,
   ResultadoRecomendacionIa,
   SEED_ACTIVIDADES,
   SesionAutenticada,
   cerrarSesion,
+  convertirSesionAActor,
   crearReservaTransaccional,
   ejecutarRecomendacionIa,
   obtenerCatalogoOfertas,
@@ -52,6 +61,7 @@ import {
   obtenerSesionActual,
 } from "@/lib/api";
 import { registrarEventoAnalitica } from "@/lib/analytics";
+import PasaporteExpedicionQr from "@/components/PasaporteExpedicionQr";
 
 type EstiloViajeId =
   | "AVENTURA_EXTREMA"
@@ -163,10 +173,11 @@ export default function TyronaWildsCommercialStorefront() {
     []
   );
 
-  // Drawer de Producto Completo + Checkout Comercial con Validación de Campos
+  // Drawer de Producto Completo + Checkout Comercial en 3 Pasos con Pasarela Wompi Sandbox
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<ActividadTuristica | null>(null);
   const [indiceFotoActiva, setIndiceFotoActiva] = useState<number>(0);
+  const [pasoCheckout, setPasoCheckout] = useState<1 | 2 | 3>(1);
   const [horarioSeleccionadoId, setHorarioSeleccionadoId] =
     useState<string>("");
   const [cantidadCupos, setCantidadCupos] = useState<number>(2);
@@ -175,13 +186,44 @@ export default function TyronaWildsCommercialStorefront() {
     "valeria@expedicion.co"
   );
   const [documentoViajero, setDocumentoViajero] =
-    useState<string>("CC 1082940122");
+    useState<string>("CC 1082940182");
   const [aceptaHabeasData, setAceptaHabeasData] = useState<boolean>(true);
   const [erroresCheckout, setErroresCheckout] =
     useState<ErroresFormularioCheckout>({});
+
+  // Estado de Pasarela Wompi Sandbox (Paso 2)
+  const [metodoPagoWompi, setMetodoPagoWompi] =
+    useState<MetodoPagoWompi>("NEQUI");
+  const [celularNequi, setCelularNequi] = useState<string>("3005550199");
+  const [estadoPushNequi, setEstadoPushNequi] = useState<
+    "IDLE" | "ENVIANDO" | "APROBADO"
+  >("IDLE");
+  const [bancoPse, setBancoPse] = useState<string>("Nu Colombia");
+  const [tipoPersonaPse, setTipoPersonaPse] = useState<"NATURAL" | "JURIDICA">(
+    "NATURAL"
+  );
+  const [documentoPse, setDocumentoPse] = useState<string>("1082940182");
+  const [numeroTarjeta, setNumeroTarjeta] = useState<string>(
+    "4242 4242 4242 4242"
+  );
+  const [expiracionTarjeta, setExpiracionTarjeta] = useState<string>("12/28");
+  const [cvcTarjeta, setCvcTarjeta] = useState<string>("842");
+  const [cuotasTarjeta, setCuotasTarjeta] = useState<string>("1");
+  const [escenarioDemo, setEscenarioDemo] =
+    useState<EscenarioDemoCheckout>("EXITO_201");
+  const [errorPagoWompi, setErrorPagoWompi] = useState<string | null>(null);
+
   const [procesandoReserva, setProcesandoReserva] = useState<boolean>(false);
   const [resultadoReserva, setResultadoReserva] =
     useState<RespuestaCrearReserva | null>(null);
+
+  // Sincronizar automáticamente datos del expedicionario si hay sesión JWT activa
+  useEffect(() => {
+    if (sesionUsuario) {
+      setNombreViajero(sesionUsuario.nombre);
+      setEmailViajero(sesionUsuario.email);
+    }
+  }, [sesionUsuario]);
 
   // BAQUIANO AI — Concierge de Expediciones
   const [estiloViaje, setEstiloViaje] = useState<EstiloViajeId>(
@@ -236,9 +278,18 @@ export default function TyronaWildsCommercialStorefront() {
   const abrirDrawerExpedicion = async (actividad: ActividadTuristica) => {
     setActividadSeleccionada(actividad);
     setIndiceFotoActiva(0);
+    setPasoCheckout(1);
     setResultadoReserva(null);
     setErroresCheckout({});
+    setErrorPagoWompi(null);
+    setEstadoPushNequi("IDLE");
+    setEscenarioDemo("EXITO_201");
     setCantidadCupos(2);
+
+    if (sesionUsuario) {
+      setNombreViajero(sesionUsuario.nombre);
+      setEmailViajero(sesionUsuario.email);
+    }
 
     registrarEventoAnalitica("EXPEDITION_DRAWER_OPEN", {
       codigoServicio: actividad.codigoServicio,
@@ -257,7 +308,36 @@ export default function TyronaWildsCommercialStorefront() {
     }
   };
 
-  // Validación estricta campo por campo del formulario de Checkout
+  // Autocompletar 1-Clic Datos del Viajero (Paso 1)
+  const autocompletarDatosViajeroDemo = () => {
+    setNombreViajero(sesionUsuario?.nombre || "Valeria Mejía");
+    setEmailViajero(sesionUsuario?.email || "valeria.mejia@expedicion.co");
+    setDocumentoViajero("CC 1082940182");
+    setCantidadCupos(2);
+    setAceptaHabeasData(true);
+    setErroresCheckout({});
+  };
+
+  // Autocompletar 1-Clic Datos de Prueba en Pasarela Wompi Sandbox (Paso 2)
+  const autocompletarMetodoWompiDemo = (metodo: MetodoPagoWompi) => {
+    setMetodoPagoWompi(metodo);
+    setErrorPagoWompi(null);
+    if (metodo === "NEQUI") {
+      setCelularNequi("3005550199");
+      setEstadoPushNequi("IDLE");
+    } else if (metodo === "PSE") {
+      setBancoPse("Nu Colombia");
+      setTipoPersonaPse("NATURAL");
+      setDocumentoPse("1082940182");
+    } else {
+      setNumeroTarjeta("4242 4242 4242 4242");
+      setExpiracionTarjeta("12/28");
+      setCvcTarjeta("842");
+      setCuotasTarjeta("1");
+    }
+  };
+
+  // Validación estricta campo por campo del formulario de Checkout (Paso 1)
   const validarFormularioCheckout = (): boolean => {
     const nuevosErrores: ErroresFormularioCheckout = {};
     const nombreLimpio = nombreViajero.trim();
@@ -290,14 +370,56 @@ export default function TyronaWildsCommercialStorefront() {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  // Ejecutar Checkout conectado al backend
-  const manejarConfirmarCheckout = async () => {
+  const avanzarAPaso2Wompi = () => {
     if (!actividadSeleccionada) return;
     if (!validarFormularioCheckout()) {
       registrarEventoAnalitica("CHECKOUT_VALIDATION_ERROR", {
         codigoServicio: actividadSeleccionada.codigoServicio,
       });
       return;
+    }
+    setErrorPagoWompi(null);
+    setResultadoReserva(null);
+    setPasoCheckout(2);
+  };
+
+  // Ejecutar Pago Wompi Sandbox + Reserva ACID conectada al backend (Paso 2 -> Paso 3)
+  const manejarConfirmarCheckout = async () => {
+    if (!actividadSeleccionada) return;
+    if (!validarFormularioCheckout()) {
+      setPasoCheckout(1);
+      return;
+    }
+
+    setErrorPagoWompi(null);
+    let detalleInstrumento = "";
+
+    if (metodoPagoWompi === "NEQUI") {
+      const celLimpio = celularNequi.replace(/\s+/g, "");
+      if (!/^\d{10}$/.test(celLimpio)) {
+        setErrorPagoWompi(
+          "Ingresa un número celular Nequi de 10 dígitos (ej. 3005550199)."
+        );
+        return;
+      }
+      detalleInstrumento = `Nequi Push Aprobado · ${celLimpio}`;
+    } else if (metodoPagoWompi === "PSE") {
+      if (!documentoPse.trim() || documentoPse.trim().length < 5) {
+        setErrorPagoWompi(
+          "Ingresa el documento del titular bancario para débito PSE."
+        );
+        return;
+      }
+      detalleInstrumento = `PSE Débito · ${bancoPse} (${tipoPersonaPse})`;
+    } else {
+      const digitosTarjeta = numeroTarjeta.replace(/\s+/g, "");
+      if (digitosTarjeta.length < 15 || cvcTarjeta.trim().length < 3) {
+        setErrorPagoWompi(
+          "Completa los datos de la tarjeta Sandbox (ej. 4242 4242 4242 4242 · CVC 842)."
+        );
+        return;
+      }
+      detalleInstrumento = `Tarjeta Sandbox ·••• ${digitosTarjeta.slice(-4)} (${cuotasTarjeta} cuota${cuotasTarjeta === "1" ? "" : "s"})`;
     }
 
     const horariosAct = disponibilidades.filter(
@@ -309,16 +431,38 @@ export default function TyronaWildsCommercialStorefront() {
     if (!disp) return;
 
     setProcesandoReserva(true);
+    setResultadoReserva(null);
+
+    if (metodoPagoWompi === "NEQUI") {
+      setEstadoPushNequi("ENVIANDO");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setEstadoPushNequi("APROBADO");
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 750));
+    }
+
+    const actorEfectivo = convertirSesionAActor(sesionUsuario);
     const respuesta = await crearReservaTransaccional(
-      ACTORES_SESION.TURISTA,
+      actorEfectivo,
       disp,
-      cantidadCupos
+      cantidadCupos,
+      {
+        nombreViajero: nombreViajero.trim(),
+        documentoViajero: documentoViajero.trim(),
+        emailViajero: emailViajero.trim(),
+        metodoPago: metodoPagoWompi,
+        detalleMetodoPago: detalleInstrumento,
+        escenarioDemo,
+        actividad: actividadSeleccionada,
+      }
     );
     setResultadoReserva(respuesta);
 
     if (respuesta.exito && respuesta.reserva) {
       registrarEventoAnalitica("CHECKOUT_CONVERSION", {
         codigoReserva: respuesta.reserva.codigoReserva,
+        referenciaWompi: respuesta.reserva.referenciaPagoWompi || "WMP-SANDBOX",
+        metodoPago: metodoPagoWompi,
         montoTotalCop: respuesta.reserva.montoTotalCop,
         cupos: cantidadCupos,
       });
@@ -335,6 +479,7 @@ export default function TyronaWildsCommercialStorefront() {
             : item
         )
       );
+      setPasoCheckout(3);
     }
     setProcesandoReserva(false);
   };
@@ -461,6 +606,12 @@ export default function TyronaWildsCommercialStorefront() {
                 ? "PULSO DEL TERRITORIO"
                 : "TERRITORIAL PULSE"}
             </a>
+            <Link
+              href="/mis-reservas"
+              className="hover:text-terracotta transition-colors font-bold text-sand"
+            >
+              {idioma === "es" ? "MIS RESERVAS" : "MY PASSPORTS"}
+            </Link>
             <Link
               href="/operadores"
               className="border border-terracotta/50 bg-terracotta/10 px-2.5 py-1 text-[11px] font-bold text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
@@ -1037,353 +1188,812 @@ export default function TyronaWildsCommercialStorefront() {
               </div>
             </div>
 
-            {/* Bloque de Checkout Comercial y Selección de Salida */}
+            {/* Bloque de Checkout Comercial en 3 Pasos con Pasarela Wompi Sandbox y Pasaporte QR */}
             <div className="mt-8 border-t-2 border-terracotta bg-jungle/15 p-4 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="font-display text-2xl sm:text-3xl uppercase text-sand">
                   {idioma === "es"
-                    ? "CHECKOUT & EMISIÓN DE PERMISO DE INGRESO"
-                    : "EXPEDITION CHECKOUT & PERMIT ISSUANCE"}
+                    ? "CHECKOUT & PASARELA WOMPI SANDBOX"
+                    : "EXPEDITION CHECKOUT & WOMPI SANDBOX GATEWAY"}
                 </h3>
                 <span className="flex items-center gap-1.5 font-mono text-xs text-emerald-400">
                   <ShieldCheck className="h-4 w-4" />
-                  CUPO GARANTIZADO EN TIEMPO REAL
+                  TRANSACCIÓN ACID · CUPO EN TIEMPO REAL
                 </span>
               </div>
 
-              {/* Paso 1: Fecha y Horario */}
-              <div className="mt-5">
-                <label className="block font-mono text-xs uppercase tracking-wider text-sand/75">
-                  1. SELECCIONA FECHA DE SALIDA PROGRAMADA:
-                </label>
-                <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {horariosModal.map((h) => (
-                    <button
-                      key={h.id}
-                      type="button"
-                      onClick={() => {
-                        setHorarioSeleccionadoId(h.id);
-                        setResultadoReserva(null);
-                      }}
-                      className={`border p-3.5 text-left font-mono text-xs transition-colors ${
-                        horarioSeleccionadoId === h.id
-                          ? "border-terracotta bg-terracotta/15 text-sand"
-                          : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="h-3.5 w-3.5 text-terracotta" />
-                          {h.fecha}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5 text-terracotta" />
-                          {h.horaInicio.slice(0, 5)}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex items-center justify-between text-[11px]">
-                        <span>
-                          CUPOS RESTANTES:{" "}
-                          <strong className="text-emerald-400">
-                            {h.cuposDisponibles}
-                          </strong>{" "}
-                          DE {h.capacidadTotal}
-                        </span>
-                        <span>{formatearCop(h.precioUnitarioCop)}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Paso 2: Datos del Expedicionario Principal con Validación Visual */}
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div>
-                  <label
-                    htmlFor="checkout-cupos"
-                    className="block font-mono text-[11px] uppercase text-sand/70"
-                  >
-                    VIAJEROS
-                  </label>
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-terracotta" />
-                    <input
-                      id="checkout-cupos"
-                      type="number"
-                      min={1}
-                      max={16}
-                      value={cantidadCupos}
-                      onChange={(e) => {
-                        setCantidadCupos(
-                          Math.max(1, parseInt(e.target.value || "1", 10))
-                        );
-                        setErroresCheckout((prev) => ({
-                          ...prev,
-                          cupos: undefined,
-                        }));
-                      }}
-                      className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                        erroresCheckout.cupos
-                          ? "border-terracotta"
-                          : "border-sand/30 focus:border-terracotta"
-                      }`}
-                    />
-                  </div>
-                  {erroresCheckout.cupos && (
-                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                      {erroresCheckout.cupos}
-                    </span>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="checkout-nombre"
-                    className="block font-mono text-[11px] uppercase text-sand/70"
-                  >
-                    EXPEDICIONARIO TITULAR
-                  </label>
-                  <input
-                    id="checkout-nombre"
-                    type="text"
-                    value={nombreViajero}
-                    onChange={(e) => {
-                      setNombreViajero(e.target.value);
-                      setErroresCheckout((prev) => ({
-                        ...prev,
-                        nombre: undefined,
-                      }));
-                    }}
-                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                      erroresCheckout.nombre
-                        ? "border-terracotta"
-                        : "border-sand/30 focus:border-terracotta"
-                    }`}
-                  />
-                  {erroresCheckout.nombre && (
-                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                      {erroresCheckout.nombre}
-                    </span>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="checkout-doc"
-                    className="block font-mono text-[11px] uppercase text-sand/70"
-                  >
-                    DOCUMENTO / PASAPORTE
-                  </label>
-                  <input
-                    id="checkout-doc"
-                    type="text"
-                    value={documentoViajero}
-                    onChange={(e) => {
-                      setDocumentoViajero(e.target.value);
-                      setErroresCheckout((prev) => ({
-                        ...prev,
-                        documento: undefined,
-                      }));
-                    }}
-                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                      erroresCheckout.documento
-                        ? "border-terracotta"
-                        : "border-sand/30 focus:border-terracotta"
-                    }`}
-                  />
-                  {erroresCheckout.documento && (
-                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                      {erroresCheckout.documento}
-                    </span>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="checkout-email"
-                    className="block font-mono text-[11px] uppercase text-sand/70"
-                  >
-                    EMAIL DE CONFIRMACIÓN
-                  </label>
-                  <input
-                    id="checkout-email"
-                    type="email"
-                    value={emailViajero}
-                    onChange={(e) => {
-                      setEmailViajero(e.target.value);
-                      setErroresCheckout((prev) => ({
-                        ...prev,
-                        email: undefined,
-                      }));
-                    }}
-                    className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
-                      erroresCheckout.email
-                        ? "border-terracotta"
-                        : "border-sand/30 focus:border-terracotta"
-                    }`}
-                  />
-                  {erroresCheckout.email && (
-                    <span className="mt-1 block font-mono text-[10px] text-terracotta">
-                      {erroresCheckout.email}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Casilla de Consentimiento Habeas Data (Ley 1581 de 2012) */}
-              <div className="mt-4">
-                <label className="flex items-start gap-2.5 font-mono text-xs text-sand/80 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={aceptaHabeasData}
-                    onChange={(e) => {
-                      setAceptaHabeasData(e.target.checked);
-                      setErroresCheckout((prev) => ({
-                        ...prev,
-                        habeasData: undefined,
-                      }));
-                    }}
-                    className="mt-0.5 h-4 w-4 accent-terracotta"
-                  />
-                  <span>
-                    Autorizo el tratamiento de mis datos personales conforme a la{" "}
-                    <Link
-                      href="/privacidad"
-                      className="text-terracotta underline hover:text-sand"
-                    >
-                      Ley 1581 de 2012 (Política de Privacidad)
-                    </Link>{" "}
-                    y acepto los{" "}
-                    <Link
-                      href="/terminos"
-                      className="text-terracotta underline hover:text-sand"
-                    >
-                      Términos y Condiciones RNT
-                    </Link>
-                    .
-                  </span>
-                </label>
-                {erroresCheckout.habeasData && (
-                  <span className="mt-1 block font-mono text-[11px] text-terracotta">
-                    {erroresCheckout.habeasData}
-                  </span>
-                )}
-              </div>
-
-              {/* Resumen de Pago */}
-              <div className="mt-5 border border-sand/20 bg-obsidian p-4 font-mono text-xs">
-                <div className="flex justify-between text-sand/75">
-                  <span>
-                    Expedición ({cantidadCupos} x{" "}
-                    {formatearCop(actividadSeleccionada.precioCop)})
-                  </span>
-                  <span>
-                    {formatearCop(
-                      actividadSeleccionada.precioCop * cantidadCupos
-                    )}
-                  </span>
-                </div>
-                <div className="mt-1.5 flex justify-between text-emerald-400">
-                  <span>
-                    Tasa Ambiental Parques Nacionales / Contribución Comunitaria
-                  </span>
-                  <span>INCLUIDA ($0 COP)</span>
-                </div>
-                <div className="mt-3 flex items-center justify-between border-t border-sand/15 pt-3 text-sm font-bold text-sand">
-                  <span>TOTAL A PAGAR</span>
-                  <span className="text-lg text-terracotta">
-                    {formatearCop(
-                      actividadSeleccionada.precioCop * cantidadCupos
-                    )}
-                  </span>
-                </div>
-              </div>
-
-              {/* Botón de Confirmación */}
-              <button
-                type="button"
-                disabled={procesandoReserva}
-                onClick={manejarConfirmarCheckout}
-                className="mt-5 w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
-              >
-                <CreditCard className="h-4 w-4" />
-                <span>
-                  {procesandoReserva
-                    ? "EMITIENDO CÓDIGO DE RESERVA Y PERMISOS..."
-                    : "CONFIRMAR Y EMITIR RESERVA DE EXPEDICIÓN"}
-                </span>
-              </button>
-
-              {/* Voucher / Resultado de Reserva */}
-              {resultadoReserva && (
-                <div
-                  className={`mt-5 border p-5 font-mono text-xs ${
-                    resultadoReserva.exito
-                      ? "border-emerald-400 bg-emerald-950/35 text-sand"
-                      : "border-terracotta bg-terracotta/15 text-sand"
+              {/* Barra Indicadora de los 3 Pasos del Checkout */}
+              <div className="mt-4 grid grid-cols-3 border border-sand/20 bg-obsidian font-mono text-[11px] uppercase">
+                <button
+                  type="button"
+                  onClick={() => setPasoCheckout(1)}
+                  className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
+                    pasoCheckout === 1
+                      ? "bg-terracotta text-sand"
+                      : "text-sand/65 hover:text-sand"
                   }`}
                 >
-                  {resultadoReserva.exito && resultadoReserva.reserva ? (
-                    <div>
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-400/30 pb-3">
-                        <span className="flex items-center gap-2 font-bold text-emerald-300 text-sm">
-                          <CheckCircle2 className="h-5 w-5" />
-                          RESERVA CONFIRMADA · CÓDIGO{" "}
-                          {resultadoReserva.reserva.codigoReserva}
-                        </span>
-                        <span className="bg-emerald-400/20 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
-                          ESTADO: {resultadoReserva.reserva.estadoReserva}
-                        </span>
-                      </div>
-                      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3 text-[11px] text-sand/85">
-                        <div>
-                          <span className="block text-sand/50">TITULAR:</span>
-                          <strong>
-                            {nombreViajero} ({documentoViajero})
-                          </strong>
-                        </div>
-                        <div>
-                          <span className="block text-sand/50">
-                            CUPOS ASEGURADOS:
-                          </span>
-                          <strong>
-                            {resultadoReserva.reserva.cantidadCupos}{" "}
-                            Expedicionarios
-                          </strong>
-                        </div>
-                        <div>
-                          <span className="block text-sand/50">
-                            MONTO TOTAL:
-                          </span>
-                          <strong>
-                            {formatearCop(
-                              resultadoReserva.reserva.montoTotalCop
-                            )}
-                          </strong>
-                        </div>
-                      </div>
-                      <p className="mt-3 text-[11px] text-emerald-300">
-                        Hemos enviado las coordenadas GPS de encuentro y tu
-                        póliza de ingreso a <strong>{emailViajero}</strong>.
-                      </p>
+                  <span>01 // EXPEDICIONARIO &amp; FECHA</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => avanzarAPaso2Wompi()}
+                  className={`flex items-center justify-center gap-1.5 border-x border-sand/20 py-3 px-2 font-bold transition-colors ${
+                    pasoCheckout === 2
+                      ? "bg-terracotta text-sand"
+                      : "text-sand/65 hover:text-sand"
+                  }`}
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span>02 // WOMPI SANDBOX PAY</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={!resultadoReserva?.exito}
+                  onClick={() => {
+                    if (resultadoReserva?.exito) setPasoCheckout(3);
+                  }}
+                  className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
+                    pasoCheckout === 3
+                      ? "bg-emerald-600 text-sand"
+                      : "text-sand/40 disabled:cursor-not-allowed"
+                  }`}
+                >
+                  <QrCode className="h-3.5 w-3.5" />
+                  <span>03 // PASAPORTE OFICIAL QR</span>
+                </button>
+              </div>
+
+              {/* ===============================================================
+                  PASO 1: DATOS DEL EXPEDICIONARIO Y FECHA/HORARIO
+              ================================================================ */}
+              {pasoCheckout === 1 && (
+                <div className="mt-6 space-y-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sand/15 pb-3">
+                    <span className="font-mono text-xs uppercase tracking-wider text-sand/85 font-bold">
+                      PASO 1 // SELECCIÓN DE SALIDA &amp; TITULAR DE PÓLIZA PNN
+                    </span>
+                    <button
+                      type="button"
+                      onClick={autocompletarDatosViajeroDemo}
+                      className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1 font-mono text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                    >
+                      <Zap className="h-3.5 w-3.5" />
+                      <span>Autocompletar datos de viajero</span>
+                    </button>
+                  </div>
+
+                  {sesionUsuario && (
+                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-950/25 px-3.5 py-2 font-mono text-[11px] text-emerald-300">
+                      <span>
+                        Datos sincronizados desde tu sesión activa JWT (
+                        <strong>{sesionUsuario.email}</strong>)
+                      </span>
+                      <span className="uppercase font-bold">
+                        {sesionUsuario.rol}
+                      </span>
                     </div>
-                  ) : (
+                  )}
+
+                  {/* Selección de Fecha y Horario */}
+                  <div>
+                    <label className="block font-mono text-xs uppercase tracking-wider text-sand/75">
+                      1. SELECCIONA FECHA DE SALIDA PROGRAMADA:
+                    </label>
+                    <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {horariosModal.map((h) => (
+                        <button
+                          key={h.id}
+                          type="button"
+                          onClick={() => {
+                            setHorarioSeleccionadoId(h.id);
+                            setResultadoReserva(null);
+                          }}
+                          className={`border p-3.5 text-left font-mono text-xs transition-colors ${
+                            horarioSeleccionadoId === h.id
+                              ? "border-terracotta bg-terracotta/15 text-sand"
+                              : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="h-3.5 w-3.5 text-terracotta" />
+                              {h.fecha}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3.5 w-3.5 text-terracotta" />
+                              {h.horaInicio.slice(0, 5)}
+                            </span>
+                          </div>
+                          <div className="mt-2 flex items-center justify-between text-[11px]">
+                            <span>
+                              CUPOS RESTANTES:{" "}
+                              <strong className="text-emerald-400">
+                                {h.cuposDisponibles}
+                              </strong>{" "}
+                              DE {h.capacidadTotal}
+                            </span>
+                            <span>{formatearCop(h.precioUnitarioCop)}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Campos del Expedicionario */}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <div className="flex items-center gap-2 font-bold text-terracotta">
-                        <XCircle className="h-4 w-4" />
-                        <span>CUPO COMPLETO EN LA FECHA SELECCIONADA</span>
+                      <label
+                        htmlFor="checkout-cupos"
+                        className="block font-mono text-[11px] uppercase text-sand/70"
+                      >
+                        VIAJEROS
+                      </label>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <Users className="h-4 w-4 text-terracotta" />
+                        <input
+                          id="checkout-cupos"
+                          type="number"
+                          min={1}
+                          max={16}
+                          value={cantidadCupos}
+                          onChange={(e) => {
+                            setCantidadCupos(
+                              Math.max(1, parseInt(e.target.value || "1", 10))
+                            );
+                            setErroresCheckout((prev) => ({
+                              ...prev,
+                              cupos: undefined,
+                            }));
+                          }}
+                          className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                            erroresCheckout.cupos
+                              ? "border-terracotta"
+                              : "border-sand/30 focus:border-terracotta"
+                          }`}
+                        />
                       </div>
-                      <p className="mt-1.5 text-sand/85">
+                      {erroresCheckout.cupos && (
+                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                          {erroresCheckout.cupos}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="checkout-nombre"
+                        className="block font-mono text-[11px] uppercase text-sand/70"
+                      >
+                        EXPEDICIONARIO TITULAR
+                      </label>
+                      <input
+                        id="checkout-nombre"
+                        type="text"
+                        value={nombreViajero}
+                        onChange={(e) => {
+                          setNombreViajero(e.target.value);
+                          setErroresCheckout((prev) => ({
+                            ...prev,
+                            nombre: undefined,
+                          }));
+                        }}
+                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                          erroresCheckout.nombre
+                            ? "border-terracotta"
+                            : "border-sand/30 focus:border-terracotta"
+                        }`}
+                      />
+                      {erroresCheckout.nombre && (
+                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                          {erroresCheckout.nombre}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="checkout-doc"
+                        className="block font-mono text-[11px] uppercase text-sand/70"
+                      >
+                        DOCUMENTO / PASAPORTE
+                      </label>
+                      <input
+                        id="checkout-doc"
+                        type="text"
+                        value={documentoViajero}
+                        onChange={(e) => {
+                          setDocumentoViajero(e.target.value);
+                          setErroresCheckout((prev) => ({
+                            ...prev,
+                            documento: undefined,
+                          }));
+                        }}
+                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                          erroresCheckout.documento
+                            ? "border-terracotta"
+                            : "border-sand/30 focus:border-terracotta"
+                        }`}
+                      />
+                      {erroresCheckout.documento && (
+                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                          {erroresCheckout.documento}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="checkout-email"
+                        className="block font-mono text-[11px] uppercase text-sand/70"
+                      >
+                        EMAIL DE CONFIRMACIÓN
+                      </label>
+                      <input
+                        id="checkout-email"
+                        type="email"
+                        value={emailViajero}
+                        onChange={(e) => {
+                          setEmailViajero(e.target.value);
+                          setErroresCheckout((prev) => ({
+                            ...prev,
+                            email: undefined,
+                          }));
+                        }}
+                        className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                          erroresCheckout.email
+                            ? "border-terracotta"
+                            : "border-sand/30 focus:border-terracotta"
+                        }`}
+                      />
+                      {erroresCheckout.email && (
+                        <span className="mt-1 block font-mono text-[10px] text-terracotta">
+                          {erroresCheckout.email}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Casilla de Consentimiento Habeas Data (Ley 1581 de 2012) */}
+                  <div>
+                    <label className="flex items-start gap-2.5 font-mono text-xs text-sand/80 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={aceptaHabeasData}
+                        onChange={(e) => {
+                          setAceptaHabeasData(e.target.checked);
+                          setErroresCheckout((prev) => ({
+                            ...prev,
+                            habeasData: undefined,
+                          }));
+                        }}
+                        className="mt-0.5 h-4 w-4 accent-terracotta"
+                      />
+                      <span>
+                        Autorizo el tratamiento de mis datos personales conforme
+                        a la{" "}
+                        <Link
+                          href="/privacidad"
+                          className="text-terracotta underline hover:text-sand"
+                        >
+                          Ley 1581 de 2012 (Política de Privacidad)
+                        </Link>{" "}
+                        y acepto los{" "}
+                        <Link
+                          href="/terminos"
+                          className="text-terracotta underline hover:text-sand"
+                        >
+                          Términos y Condiciones RNT
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                    {erroresCheckout.habeasData && (
+                      <span className="mt-1 block font-mono text-[11px] text-terracotta">
+                        {erroresCheckout.habeasData}
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={avanzarAPaso2Wompi}
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    <span>
+                      CONTINUAR A PASARELA DE PAGO WOMPI SANDBOX (
+                      {formatearCop(
+                        actividadSeleccionada.precioCop * cantidadCupos
+                      )}
+                      )
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              {/* ===============================================================
+                  PASO 2: PASARELA DE PAGO SEGURA (TYRONAWILDS PAY // WOMPI SANDBOX)
+              ================================================================ */}
+              {pasoCheckout === 2 && (
+                <div className="mt-6 space-y-5 font-mono text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border border-sand/20 bg-obsidian px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Lock className="h-4 w-4 text-emerald-400" />
+                      <span className="font-bold uppercase tracking-wider text-sand">
+                        TYRONAWILDS PAY // WOMPI SANDBOX GATEWAY
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPasoCheckout(1)}
+                      className="text-[11px] text-terracotta underline hover:text-sand"
+                    >
+                      EDITAR DATOS DEL VIAJERO ({nombreViajero})
+                    </button>
+                  </div>
+
+                  {/* Selector de los 3 Métodos de Pago */}
+                  <div>
+                    <label className="block text-[11px] uppercase text-sand/70">
+                      SELECCIONA INSTRUMENTO FINANCIERO COLOMBIA (MODO SANDBOX 1-CLIC):
+                    </label>
+                    <div className="mt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPagoWompi("NEQUI");
+                          setErrorPagoWompi(null);
+                        }}
+                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                          metodoPagoWompi === "NEQUI"
+                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Smartphone className="h-4 w-4 text-terracotta" />
+                          <span>NEQUI PUSH</span>
+                        </span>
+                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                          1.5s
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPagoWompi("PSE");
+                          setErrorPagoWompi(null);
+                        }}
+                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                          metodoPagoWompi === "PSE"
+                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Landmark className="h-4 w-4 text-terracotta" />
+                          <span>PSE BANCARIO</span>
+                        </span>
+                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                          ACH
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPagoWompi("TARJETA");
+                          setErrorPagoWompi(null);
+                        }}
+                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                          metodoPagoWompi === "TARJETA"
+                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <CreditCard className="h-4 w-4 text-terracotta" />
+                          <span>TARJETA CRÉDITO/DÉBITO</span>
+                        </span>
+                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                          4242
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Formulario Específico por Método con Botón Autocompletar 1-Clic */}
+                  <div className="border border-sand/20 bg-obsidian p-4">
+                    {metodoPagoWompi === "NEQUI" && (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-bold uppercase text-sand">
+                            PAGO RÁPIDO CON NOTIFICACIÓN PUSH NEQUI
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => autocompletarMetodoWompiDemo("NEQUI")}
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                          >
+                            <Zap className="h-3 w-3" />
+                            <span>Autocompletar datos de prueba</span>
+                          </button>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] uppercase text-sand/70">
+                            NÚMERO DE CELULAR VINCULADO A NEQUI (10 DÍGITOS)
+                          </label>
+                          <input
+                            type="tel"
+                            value={celularNequi}
+                            onChange={(e) => setCelularNequi(e.target.value)}
+                            placeholder="3005550199"
+                            className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                          />
+                        </div>
+
+                        {estadoPushNequi !== "IDLE" && (
+                          <div
+                            className={`border p-3 text-[11px] ${
+                              estadoPushNequi === "APROBADO"
+                                ? "border-emerald-400 bg-emerald-950/40 text-emerald-300"
+                                : "border-amber-400 bg-amber-950/35 text-amber-200 animate-pulse"
+                            }`}
+                          >
+                            {estadoPushNequi === "ENVIANDO"
+                              ? `📲 ENVIANDO NOTIFICACIÓN PUSH A NEQUI (${celularNequi})... ESPERANDO CONFIRMACIÓN BIOMÉTRICA (1.5s)...`
+                              : `✓ NOTIFICACIÓN PUSH APROBADA EN APP NEQUI (${celularNequi}) · TOKENIZACIÓN WOMPI OK`}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {metodoPagoWompi === "PSE" && (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-bold uppercase text-sand">
+                            DÉBITO INTERBANCARIO PSE (ACH COLOMBIA)
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => autocompletarMetodoWompiDemo("PSE")}
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                          >
+                            <Zap className="h-3 w-3" />
+                            <span>Autocompletar datos de prueba</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                          <div>
+                            <label className="block text-[11px] uppercase text-sand/70">
+                              ENTIDAD FINANCIERA
+                            </label>
+                            <select
+                              value={bancoPse}
+                              onChange={(e) => setBancoPse(e.target.value)}
+                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            >
+                              <option value="Nu Colombia">Nu Colombia</option>
+                              <option value="Bancolombia">Bancolombia</option>
+                              <option value="Davivienda">Davivienda</option>
+                              <option value="Banco de Bogotá">
+                                Banco de Bogotá
+                              </option>
+                              <option value="Lulo Bank">Lulo Bank</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] uppercase text-sand/70">
+                              TIPO DE PERSONA
+                            </label>
+                            <select
+                              value={tipoPersonaPse}
+                              onChange={(e) =>
+                                setTipoPersonaPse(
+                                  e.target.value as "NATURAL" | "JURIDICA"
+                                )
+                              }
+                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            >
+                              <option value="NATURAL">Persona Natural</option>
+                              <option value="JURIDICA">Persona Jurídica</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] uppercase text-sand/70">
+                              DOCUMENTO TITULAR
+                            </label>
+                            <input
+                              type="text"
+                              value={documentoPse}
+                              onChange={(e) => setDocumentoPse(e.target.value)}
+                              placeholder="1082940182"
+                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {metodoPagoWompi === "TARJETA" && (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-bold uppercase text-sand">
+                            TARJETA DE CRÉDITO / DÉBITO (WOMPI SANDBOX)
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              autocompletarMetodoWompiDemo("TARJETA")
+                            }
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                          >
+                            <Zap className="h-3 w-3" />
+                            <span>Autocompletar datos de prueba</span>
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+                          <div className="sm:col-span-2">
+                            <label className="block text-[11px] uppercase text-sand/70">
+                              NÚMERO DE TARJETA SANDBOX
+                            </label>
+                            <input
+                              type="text"
+                              value={numeroTarjeta}
+                              onChange={(e) => setNumeroTarjeta(e.target.value)}
+                              placeholder="4242 4242 4242 4242"
+                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] uppercase text-sand/70">
+                              EXPIRACIÓN
+                            </label>
+                            <input
+                              type="text"
+                              value={expiracionTarjeta}
+                              onChange={(e) =>
+                                setExpiracionTarjeta(e.target.value)
+                              }
+                              placeholder="12/28"
+                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[11px] uppercase text-sand/70">
+                                CVC
+                              </label>
+                              <input
+                                type="text"
+                                value={cvcTarjeta}
+                                onChange={(e) => setCvcTarjeta(e.target.value)}
+                                placeholder="842"
+                                className="mt-1.5 w-full border border-sand/30 bg-obsidian px-2.5 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] uppercase text-sand/70">
+                                CUOTAS
+                              </label>
+                              <select
+                                value={cuotasTarjeta}
+                                onChange={(e) =>
+                                  setCuotasTarjeta(e.target.value)
+                                }
+                                className="mt-1.5 w-full border border-sand/30 bg-obsidian px-2 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              >
+                                <option value="1">1</option>
+                                <option value="3">3</option>
+                                <option value="6">6</option>
+                                <option value="12">12</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {errorPagoWompi && (
+                    <div className="border border-terracotta bg-terracotta/15 p-3 text-terracotta">
+                      {errorPagoWompi}
+                    </div>
+                  )}
+
+                  {/* Desglose Transparente de Tarifas */}
+                  {(() => {
+                    const totalCop =
+                      actividadSeleccionada.precioCop * cantidadCupos;
+                    const tasaPnnCop = Math.round(totalCop * 0.12);
+                    const baseOperadorCop = totalCop - tasaPnnCop;
+                    return (
+                      <div className="border border-sand/20 bg-obsidian p-4">
+                        <div className="text-[10px] uppercase tracking-wider text-sand/55 mb-2">
+                          DESGLOSE FINANCIERO TRANSPARENTE (RNT &amp; PNN)
+                        </div>
+                        <div className="flex justify-between text-sand/80">
+                          <span>
+                            Tarifa Base Operador RNT ({cantidadCupos} PAX)
+                          </span>
+                          <span>{formatearCop(baseOperadorCop)}</span>
+                        </div>
+                        <div className="mt-1.5 flex justify-between text-emerald-400">
+                          <span>
+                            Tasa Ambiental PNN / Contribución Indígena (12%)
+                          </span>
+                          <span>{formatearCop(tasaPnnCop)}</span>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between border-t border-sand/15 pt-3 text-sm font-bold text-sand">
+                          <span>TOTAL TRANSACCIÓN WOMPI (COP)</span>
+                          <span className="text-lg text-terracotta">
+                            {formatearCop(totalCop)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Selector Discreto de Escenario de Demostración (201 vs 409) */}
+                  <div className="border border-sand/20 bg-sand/5 p-3.5">
+                    <label
+                      htmlFor="selector-escenario-wompi"
+                      className="block text-[10px] uppercase tracking-wider text-sand/65"
+                    >
+                      MODO DE DEMOSTRACIÓN EN VIVO (TRANSACCIONALIDAD ACID &amp;
+                      CONCURRENCIA):
+                    </label>
+                    <select
+                      id="selector-escenario-wompi"
+                      value={escenarioDemo}
+                      onChange={(e) => {
+                        setEscenarioDemo(
+                          e.target.value as EscenarioDemoCheckout
+                        );
+                        setResultadoReserva(null);
+                      }}
+                      className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 text-xs font-bold text-sand focus:border-terracotta focus:outline-none"
+                    >
+                      <option value="EXITO_201">
+                        ESCENARIO 1: PAGO APROBADO + RESERVA ACID (201 CREATED)
+                      </option>
+                      <option value="COLISION_409">
+                        ESCENARIO 2: SIMULAR COLISIÓN DE ÚLTIMO CUPO (409
+                        CONFLICT + REVERSO WOMPI)
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* Botón Principal de Pago */}
+                  <button
+                    type="button"
+                    disabled={procesandoReserva}
+                    onClick={manejarConfirmarCheckout}
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    <span>
+                      {procesandoReserva
+                        ? "PROCESANDO EN WOMPI SANDBOX & VERIFICANDO BLOQUEO PESIMISTA..."
+                        : `PAGAR CON ${metodoPagoWompi} Y EMITIR PASAPORTE QR`}
+                    </span>
+                  </button>
+
+                  {/* Resultado de Escenario 2: Colisión 409 + Reverso Automático Wompi + Rutas Alternativas */}
+                  {resultadoReserva && !resultadoReserva.exito && (
+                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-sand space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-3">
+                        <span className="flex items-center gap-2 font-bold text-terracotta text-sm">
+                          <ShieldAlert className="h-5 w-5" />
+                          HTTP 409 CONFLICT — COLISIÓN DE ÚLTIMO CUPO DETECTADA
+                        </span>
+                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-emerald-300 border border-emerald-400/40">
+                          ROLLBACK ACID + WOMPI REVERSADO
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-sand/90 leading-relaxed">
                         {resultadoReserva.errorMensaje}
                       </p>
-                      <p className="mt-2 text-amber-300">
-                        <strong>SALIDA ALTERNATIVA DISPONIBLE:</strong>{" "}
-                        {resultadoReserva.horariosAlternativos}
-                      </p>
+
+                      {resultadoReserva.referenciaWompiReversada && (
+                        <div className="flex items-center gap-2.5 border border-emerald-400/40 bg-emerald-950/40 p-3 text-emerald-200">
+                          <RotateCcw className="h-4 w-4 shrink-0 text-emerald-400" />
+                          <div>
+                            <strong className="block uppercase">
+                              COBRO REVERSADO AUTOMÁTICAMENTE EN WOMPI SANDBOX
+                            </strong>
+                            <span>
+                              La preautorización{" "}
+                              <code>
+                                {resultadoReserva.referenciaWompiReversada}
+                              </code>{" "}
+                              fue anulada de forma atómica ($0 COP debitados).
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {resultadoReserva.rutasAlternativasSostenibles &&
+                        resultadoReserva.rutasAlternativasSostenibles.length >
+                          0 && (
+                          <div className="space-y-2.5 pt-1">
+                            <span className="block text-[11px] font-bold uppercase text-amber-300">
+                              RUTAS ALTERNATIVAS DE DESCONCENTRACIÓN ECOLÓGICA EN
+                              SANTA MARTA:
+                            </span>
+                            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                              {resultadoReserva.rutasAlternativasSostenibles.map(
+                                (alt) => (
+                                  <div
+                                    key={alt.codigoServicio}
+                                    className="border border-sand/25 bg-obsidian p-3 flex flex-col justify-between"
+                                  >
+                                    <div>
+                                      <div className="flex items-center justify-between text-[10px] text-emerald-400 font-bold">
+                                        <span>
+                                          AFORO SERENO: {alt.ocupacionPorcentaje}%
+                                        </span>
+                                        <span>
+                                          {formatearCop(alt.precioCop)}
+                                        </span>
+                                      </div>
+                                      <strong className="mt-1 block text-xs text-sand">
+                                        {alt.nombre}
+                                      </strong>
+                                      <p className="mt-1 text-[11px] text-sand/70">
+                                        {alt.motivo}
+                                      </p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const encontrada = actividades.find(
+                                          (a) =>
+                                            a.codigoServicio ===
+                                            alt.codigoServicio
+                                        );
+                                        if (encontrada) {
+                                          abrirDrawerExpedicion(encontrada);
+                                        }
+                                      }}
+                                      className="mt-3 w-full bg-sand px-3 py-1.5 text-[10px] font-bold uppercase text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                                    >
+                                      CAMBIAR A ESTA RUTA DE BAJO IMPACTO
+                                    </button>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
               )}
+
+              {/* ===============================================================
+                  PASO 3: PASAPORTE OFICIAL DE EXPEDICIÓN CON CÓDIGO QR SVG
+              ================================================================ */}
+              {pasoCheckout === 3 &&
+                resultadoReserva?.exito &&
+                resultadoReserva.reserva && (
+                  <div className="mt-6 space-y-4">
+                    <PasaporteExpedicionQr
+                      reserva={resultadoReserva.reserva}
+                      mostrarEnlaceMisReservas={true}
+                    />
+                  </div>
+                )}
             </div>
           </div>
         </div>
@@ -1767,6 +2377,12 @@ export default function TyronaWildsCommercialStorefront() {
             MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
           </div>
           <div className="flex flex-wrap items-center gap-5">
+            <Link
+              href="/mis-reservas"
+              className="font-bold text-terracotta hover:text-sand transition-colors"
+            >
+              Mis Reservas &amp; Pasaportes QR
+            </Link>
             <Link
               href="/operadores"
               className="font-bold text-sand hover:text-terracotta transition-colors"

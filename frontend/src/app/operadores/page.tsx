@@ -1446,6 +1446,8 @@ export default function PortalOperadoresB2BPage() {
                   <thead className="border-b border-sand/20 text-[11px] uppercase text-sand/60">
                     <tr>
                       <th className="py-2.5 pr-4">CÓDIGO PASAPORTE</th>
+                      <th className="py-2.5 pr-4">TITULAR / EXPEDICIÓN</th>
+                      <th className="py-2.5 pr-4">REFERENCIA WOMPI</th>
                       <th className="py-2.5 pr-4">ESTADO</th>
                       <th className="py-2.5 pr-4">CUPOS</th>
                       <th className="py-2.5 pr-4">MONTO TOTAL</th>
@@ -1457,6 +1459,22 @@ export default function PortalOperadoresB2BPage() {
                       <tr key={r.id}>
                         <td className="py-3 pr-4 font-bold text-terracotta">
                           {r.codigoReserva}
+                        </td>
+                        <td className="py-3 pr-4 text-sand/85">
+                          <span className="font-bold text-sand block">
+                            {r.nombreViajero || "Expedicionario Titular"}
+                          </span>
+                          <span className="text-[10px] text-sand/55">
+                            {r.nombreActividad || "Expedición Santa Marta"}
+                          </span>
+                        </td>
+                        <td className="py-3 pr-4">
+                          <span className="text-sand font-bold">
+                            {r.referenciaPagoWompi || "WMP-2026-841920"}
+                          </span>
+                          <span className="block text-[10px] text-emerald-300">
+                            {r.metodoPago || "NEQUI"} · APROBADO
+                          </span>
                         </td>
                         <td className="py-3 pr-4">
                           <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300">

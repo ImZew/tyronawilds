@@ -107,6 +107,9 @@ export interface DisponibilidadHorario {
   version: number;
 }
 
+export type MetodoPagoWompi = "NEQUI" | "PSE" | "TARJETA";
+export type EscenarioDemoCheckout = "EXITO_201" | "COLISION_409";
+
 export interface ReservaConfirmadaDto {
   id: string;
   codigoReserva: string;
@@ -117,6 +120,21 @@ export interface ReservaConfirmadaDto {
   montoTotalCop: number;
   estadoReserva: "CONFIRMADA" | "PENDIENTE_PAGO" | "CANCELADA";
   fechaOperacion: string;
+  // Metadatos extendidos para Pasaporte Oficial QR y Pasarela Wompi Sandbox
+  nombreViajero?: string;
+  documentoViajero?: string;
+  emailViajero?: string;
+  nombreActividad?: string;
+  fechaSalida?: string;
+  horaSalida?: string;
+  coordenadasHud?: string;
+  altitudMsnm?: number;
+  puntoEncuentro?: string;
+  operadorLicenciaRnt?: string;
+  metodoPago?: MetodoPagoWompi;
+  referenciaPagoWompi?: string;
+  detalleMetodoPago?: string;
+  tasaAmbientalCop?: number;
 }
 
 export interface ContextoTerritorial {
@@ -1235,6 +1253,21 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
     montoTotalCop: 3700000,
     estadoReserva: "CONFIRMADA",
     fechaOperacion: new Date(Date.now() - 3600000).toISOString(),
+    nombreViajero: "Valeria Mejía",
+    documentoViajero: "CC 1082940182",
+    emailViajero: "valeria.mejia@expedicion.co",
+    nombreActividad: "PIERDE EL MAPA: CIUDAD PERDIDA (TEYUNA)",
+    fechaSalida: "2026-11-15",
+    horaSalida: "05:30",
+    coordenadasHud: "11°02'16\"N 73°55'31\"W",
+    altitudMsnm: 1200,
+    puntoEncuentro:
+      "05:30 AM · Casa Expedicionaria Centro Histórico -> El Mamey",
+    operadorLicenciaRnt: "RNT #48921 · Operador Autorizado ICANH",
+    metodoPago: "NEQUI",
+    referenciaPagoWompi: "WMP-2026-841920",
+    detalleMetodoPago: "Nequi Push Aprobado · 300 555 0199",
+    tasaAmbientalCop: 444000,
   },
   {
     id: "70000000-0000-0000-0000-000000000002",
@@ -1246,6 +1279,20 @@ const SEED_RESERVAS: ReservaConfirmadaDto[] = [
     montoTotalCop: 630000,
     estadoReserva: "CONFIRMADA",
     fechaOperacion: new Date(Date.now() - 1800000).toISOString(),
+    nombreViajero: "Sebastián Abaonza",
+    documentoViajero: "CC 1083019450",
+    emailViajero: "sebastian@tyronawilds.co",
+    nombreActividad: "EXPEDICIÓN BIOCLIMÁTICA & CASCADAS DE MARINKA",
+    fechaSalida: "2026-11-16",
+    horaSalida: "07:45",
+    coordenadasHud: "11°08'35\"N 74°06'58\"W",
+    altitudMsnm: 1150,
+    puntoEncuentro: "07:45 AM · Plaza de la Iglesia de Minca (650 msnm)",
+    operadorLicenciaRnt: "RNT #55210 · Sello Verde Sostenible",
+    metodoPago: "PSE",
+    referenciaPagoWompi: "WMP-2026-390512",
+    detalleMetodoPago: "PSE Débito · Nu Colombia (Persona Natural)",
+    tasaAmbientalCop: 75600,
   },
 ];
 
@@ -1431,6 +1478,16 @@ export async function obtenerDisponibilidades(
   );
 }
 
+export interface DatosCheckoutWompi {
+  nombreViajero: string;
+  documentoViajero: string;
+  emailViajero: string;
+  metodoPago: MetodoPagoWompi;
+  detalleMetodoPago: string;
+  escenarioDemo?: EscenarioDemoCheckout;
+  actividad?: ActividadTuristica;
+}
+
 export interface RespuestaCrearReserva {
   exito: boolean;
   httpStatus: number;
@@ -1439,14 +1496,104 @@ export interface RespuestaCrearReserva {
   errorCodigo?: string;
   errorMensaje?: string;
   horariosAlternativos?: string;
+  referenciaWompiReversada?: string;
+  rutasAlternativasSostenibles?: {
+    codigoServicio: number;
+    nombre: string;
+    ocupacionPorcentaje: number;
+    precioCop: number;
+    motivo: string;
+  }[];
+}
+
+function generarReferenciaWompi(): string {
+  const digitos = Math.floor(100000 + Math.random() * 900000);
+  return `WMP-2026-${digitos}`;
 }
 
 export async function crearReservaTransaccional(
   actor: ActorSesion,
   disponibilidad: DisponibilidadHorario,
-  cantidadCupos: number
+  cantidadCupos: number,
+  datosCheckout?: DatosCheckoutWompi
 ): Promise<RespuestaCrearReserva> {
   const inicio = performance.now();
+  const refWompi = generarReferenciaWompi();
+  const escenario = datosCheckout?.escenarioDemo || "EXITO_201";
+
+  // ESCENARIO 2: Simulación explícita de colisión de último cupo (409 CONFLICT) con reverso automático Wompi
+  if (escenario === "COLISION_409") {
+    const latenciaMs = Math.max(14, Math.round(performance.now() - inicio));
+    registrarEventoAuditoriaLocal({
+      id: crypto.randomUUID(),
+      usuarioId: actor.usuarioId,
+      rol: actor.rol,
+      accion: "COLISION_CUPO_409_WOMPI_REVERSADO",
+      recurso: `reservas-service:/api/v1/reservas/${disponibilidad.id}`,
+      resultado: "DENEGADA",
+      motivo: `HTTP 409 CONFLICT (SELECT ... FOR UPDATE): Último cupo agotado en '${disponibilidad.nombreActividad}'. Preautorización Wompi ${refWompi} reversada automáticamente ($0 cobrados).`,
+      ipOrigen: "127.0.0.1",
+      traceId: `tw-409-wompi-${Date.now().toString(36)}`,
+      fechaOperacion: new Date().toISOString(),
+    });
+
+    return {
+      exito: false,
+      httpStatus: 409,
+      latenciaMs,
+      errorCodigo: "CONFLICTO_ULTIMO_CUPO_AGOTADO",
+      errorMensaje: `Colisión concurrente detectada por bloqueo pesimista (SELECT ... FOR UPDATE) en '${disponibilidad.nombreActividad}' (${disponibilidad.fecha} · ${disponibilidad.horaInicio.slice(0, 5)}). Otro expedicionario tomó el último cupo milisegundos antes.`,
+      horariosAlternativos:
+        "Salida programada del día siguiente a las 06:00 AM (14 cupos disponibles)",
+      referenciaWompiReversada: refWompi,
+      rutasAlternativasSostenibles: [
+        {
+          codigoServicio: 103,
+          nombre: "EXPEDICIÓN BIOCLIMÁTICA & CASCADAS DE MARINKA (MINCA)",
+          ocupacionPorcentaje: 28,
+          precioCop: 210000,
+          motivo:
+            "Bosque de niebla a 1.150 msnm con flujo ecológico sereno (28% de aforo actual).",
+        },
+        {
+          codigoServicio: 105,
+          nombre: "DESCENSO FLUVIAL RÍO DON DIEGO & ARQUEOLOGÍA TAYRONAKA",
+          ocupacionPorcentaje: 31,
+          precioCop: 265000,
+          motivo:
+            "Ruta comunitaria con sabedores Arhuacos y cupos inmediatos verificados.",
+        },
+      ],
+    };
+  }
+
+  const actividadRef =
+    datosCheckout?.actividad ||
+    leerCatalogoLocal().find((a) => a.id === disponibilidad.actividadId) ||
+    SEED_ACTIVIDADES[0];
+  const fichaRef = obtenerFichaTecnicaExpedicion(actividadRef.codigoServicio);
+  const montoTotal = disponibilidad.precioUnitarioCop * cantidadCupos;
+  const tasaAmbiental = Math.round(montoTotal * 0.12);
+
+  const enriquecerReserva = (base: ReservaConfirmadaDto): ReservaConfirmadaDto => ({
+    ...base,
+    nombreViajero: datosCheckout?.nombreViajero || "Valeria Mejía",
+    documentoViajero: datosCheckout?.documentoViajero || "CC 1082940182",
+    emailViajero: datosCheckout?.emailViajero || actor.email,
+    nombreActividad: actividadRef.nombreEs || disponibilidad.nombreActividad,
+    fechaSalida: disponibilidad.fecha,
+    horaSalida: disponibilidad.horaInicio.slice(0, 5),
+    coordenadasHud: actividadRef.coordenadasHud,
+    altitudMsnm: actividadRef.altitudMsnm,
+    puntoEncuentro: fichaRef.puntoEncuentroEs,
+    operadorLicenciaRnt: fichaRef.operadorLicenciaRnt,
+    metodoPago: datosCheckout?.metodoPago || "NEQUI",
+    referenciaPagoWompi: refWompi,
+    detalleMetodoPago:
+      datosCheckout?.detalleMetodoPago || "Nequi Push Aprobado · 300 555 0199",
+    tasaAmbientalCop: tasaAmbiental,
+  });
+
   const urls = [
     "http://localhost:8083/api/v1/reservas",
     `${GATEWAY_URL}/api/v1/reservas`,
@@ -1475,14 +1622,16 @@ export async function crearReservaTransaccional(
           .replace(/^TW-(2026-)?/i, "")
           .slice(0, 4)
           .toUpperCase();
+        const reservaEnriquecida = enriquecerReserva({
+          ...data,
+          codigoReserva: `TW-2026-${sufijo.padEnd(4, "0")}`,
+        });
+        guardarReservasLocal([reservaEnriquecida, ...leerReservasLocal()]);
         return {
           exito: true,
           httpStatus: response.status,
           latenciaMs,
-          reserva: {
-            ...data,
-            codigoReserva: `TW-2026-${sufijo.padEnd(4, "0")}`,
-          },
+          reserva: reservaEnriquecida,
         };
       }
 
@@ -1499,6 +1648,17 @@ export async function crearReservaTransaccional(
           horariosAlternativos:
             err.detalles?.horariosAlternativosSugeridos ||
             "Salida del 2026-11-16 a las 06:00 AM (14 cupos disponibles)",
+          referenciaWompiReversada: refWompi,
+          rutasAlternativasSostenibles: [
+            {
+              codigoServicio: 103,
+              nombre: "EXPEDICIÓN BIOCLIMÁTICA & CASCADAS DE MARINKA (MINCA)",
+              ocupacionPorcentaje: 28,
+              precioCop: 210000,
+              motivo:
+                "Bosque de niebla a 1.150 msnm con flujo ecológico sereno (28% de aforo actual).",
+            },
+          ],
         };
       }
     } catch {
@@ -1516,23 +1676,42 @@ export async function crearReservaTransaccional(
       errorMensaje: `Los cupos para '${disponibilidad.nombreActividad}' (${disponibilidad.fecha} ${disponibilidad.horaInicio}) son insuficientes. Solicitados: ${cantidadCupos}, disponibles: ${disponibilidad.cuposDisponibles}.`,
       horariosAlternativos:
         "Salida del 2026-11-16 a las 06:00 AM (14 cupos disponibles)",
+      referenciaWompiReversada: refWompi,
+      rutasAlternativasSostenibles: [
+        {
+          codigoServicio: 103,
+          nombre: "EXPEDICIÓN BIOCLIMÁTICA & CASCADAS DE MARINKA (MINCA)",
+          ocupacionPorcentaje: 28,
+          precioCop: 210000,
+          motivo:
+            "Bosque de niebla a 1.150 msnm con flujo ecológico sereno (28% de aforo actual).",
+        },
+        {
+          codigoServicio: 105,
+          nombre: "DESCENSO FLUVIAL RÍO DON DIEGO & ARQUEOLOGÍA TAYRONAKA",
+          ocupacionPorcentaje: 31,
+          precioCop: 265000,
+          motivo:
+            "Ruta comunitaria con sabedores Arhuacos y cupos inmediatos verificados.",
+        },
+      ],
     };
   }
 
   const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-  const nuevaReserva: ReservaConfirmadaDto = {
+  const nuevaReserva = enriquecerReserva({
     id: crypto.randomUUID(),
     codigoReserva: `TW-2026-${randomCode}`,
     usuarioId: actor.usuarioId,
     disponibilidadId: disponibilidad.id,
     actividadId: disponibilidad.actividadId,
     cantidadCupos,
-    montoTotalCop: disponibilidad.precioUnitarioCop * cantidadCupos,
+    montoTotalCop: montoTotal,
     estadoReserva: "CONFIRMADA",
     fechaOperacion: new Date().toISOString(),
-  };
+  });
 
-  // Sincronizar con localStorage para que el Portal B2B (/operadores) refleje la reserva y el descuento de cupos
+  // Sincronizar con localStorage para que /mis-reservas y /operadores reflejen la reserva y el descuento de cupos
   const dispActuales = leerDisponibilidadesLocal().map((d) =>
     d.id === disponibilidad.id
       ? {
@@ -1547,10 +1726,10 @@ export async function crearReservaTransaccional(
     id: crypto.randomUUID(),
     usuarioId: actor.usuarioId,
     rol: actor.rol,
-    accion: "RESERVA_CONFIRMADA",
+    accion: "PAGO_WOMPI_Y_RESERVA_CONFIRMADA",
     recurso: `reservas-service:/api/v1/reservas/${nuevaReserva.codigoReserva}`,
     resultado: "EXITOSA",
-    motivo: `Pasaporte emitido (${nuevaReserva.codigoReserva}), cupos=${cantidadCupos}, actividad=${disponibilidad.nombreActividad}`,
+    motivo: `Pago Wompi aprobado (${nuevaReserva.referenciaPagoWompi} · ${nuevaReserva.metodoPago}) y Pasaporte QR emitido (${nuevaReserva.codigoReserva}) para ${nuevaReserva.nombreViajero}, cupos=${cantidadCupos}`,
     ipOrigen: "127.0.0.1",
     traceId: `tw-res-${Date.now().toString(36)}`,
     fechaOperacion: nuevaReserva.fechaOperacion,
@@ -1561,6 +1740,40 @@ export async function crearReservaTransaccional(
     httpStatus: 201,
     latenciaMs,
     reserva: nuevaReserva,
+  };
+}
+
+export async function consultarMisReservas(): Promise<
+  ApiCallResult<ReservaConfirmadaDto[]>
+> {
+  const actor = convertirSesionAActor(obtenerSesionActual());
+  const resultado = await fetchConRespaldo(
+    [
+      `${GATEWAY_URL}/api/v1/reservas`,
+      "http://localhost:8083/api/v1/reservas",
+    ],
+    {
+      method: "GET",
+      headers: construirHeadersSeguridad(actor),
+    },
+    () => leerReservasLocal()
+  );
+
+  // Asegurar que las reservas creadas en localStorage estén fusionadas con sus metadatos Wompi y QR
+  const locales = leerReservasLocal();
+  const mapaPorCodigo = new Map<string, ReservaConfirmadaDto>();
+  for (const r of locales) {
+    mapaPorCodigo.set(r.codigoReserva, r);
+  }
+  for (const r of resultado.data) {
+    if (!mapaPorCodigo.has(r.codigoReserva)) {
+      mapaPorCodigo.set(r.codigoReserva, r);
+    }
+  }
+
+  return {
+    ...resultado,
+    data: Array.from(mapaPorCodigo.values()),
   };
 }
 
@@ -2280,20 +2493,9 @@ export async function crearDisponibilidad(
 }
 
 export async function consultarReservasOperador(
-  actorParam?: ActorSesion
+  _actorParam?: ActorSesion
 ): Promise<ApiCallResult<ReservaConfirmadaDto[]>> {
-  const actor = actorParam ?? convertirSesionAActor(obtenerSesionActual());
-  return fetchConRespaldo(
-    [
-      `${GATEWAY_URL}/api/v1/reservas`,
-      "http://localhost:8083/api/v1/reservas",
-    ],
-    {
-      method: "GET",
-      headers: construirHeadersSeguridad(actor),
-    },
-    () => leerReservasLocal()
-  );
+  return consultarMisReservas();
 }
 
 export async function consultarIndicadoresCapacidad(): Promise<
