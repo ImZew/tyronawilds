@@ -1,7 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" fill="#0A0A0A" />
-  <rect x="2" y="2" width="60" height="60" fill="none" stroke="#E63000" stroke-width="2" />
-  <path d="M10 18H28V23H21.5V46H16.5V23H10V18Z" fill="#F4F0EA" />
-  <path d="M29 18H34L37.5 36L41 22H45L48.5 36L52 18H57L51 46H46.2L43 32L39.8 46H35L29 18Z" fill="#E63000" />
-  <circle cx="56" cy="12" r="2.5" fill="#E63000" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Fondo redondeado Verde Esmeralda Sierra (#065F46) con borde dorado sutil -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#065F46" stroke="#FBBF24" stroke-width="2" />
+  <!-- Sol Dorado del Caribe (#FBBF24) -->
+  <circle cx="46" cy="18" r="5" fill="#FBBF24" />
+  <!-- Cumbres de la Sierra Nevada de Santa Marta en Blanco (#FFFFFF) y Dorado (#FBBF24) -->
+  <path d="M10 42L24 18L35 34L43 23L54 42H10Z" fill="#FFFFFF" fill-opacity="0.16" />
+  <path d="M11 41L24 18L35 33L43 23L53 41" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M20 25L24 18L28 25" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Ola del Mar Caribe en Dorado (#FBBF24) y Blanco (#FFFFFF) -->
+  <path d="M10 46C16 43 22 49 28 46C34 43 40 49 46 46C50 44 52 45 54 46" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" />
+  <path d="M14 52C20 49.5 26 54.5 32 52C38 49.5 44 54.5 50 52" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.85" />
 </svg>

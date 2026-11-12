@@ -287,7 +287,7 @@ function LoginContenido() {
   };
 
   return (
-    <div className="min-h-screen bg-obsidian text-sand flex flex-col justify-between selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen bg-obsidian text-sand flex flex-col justify-between selection:bg-terracotta selection:text-white">
       {/* BARRA SUPERIOR */}
       <header className="border-b border-sand/15 bg-obsidian/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
@@ -342,7 +342,7 @@ function LoginContenido() {
 
               <div className="mt-6 space-y-3 border-t border-sand/15 pt-5 font-mono text-xs text-sand/75">
                 <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#065F46] mt-0.5" />
                   <div>
                     <strong className="block text-sand uppercase">
                       Verificación de Propiedad RNT (HTTP 403)
@@ -369,10 +369,10 @@ function LoginContenido() {
             {sesionActiva && (
               <div className="border border-emerald-500/40 bg-emerald-950/30 p-4 font-mono text-xs">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold uppercase text-emerald-300">
+                  <span className="font-bold uppercase text-[#065F46]">
                     SESIÓN JWT ACTIVA DETECTADA
                   </span>
-                  <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300">
+                  <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] text-[#065F46]">
                     {sesionActiva.rol}
                   </span>
                 </div>
@@ -437,7 +437,7 @@ function LoginContenido() {
                 }}
                 className={`flex items-center justify-center gap-2 py-3.5 px-4 font-bold tracking-wider transition-colors ${
                   pestana === "LOGIN"
-                    ? "bg-terracotta text-sand"
+                    ? "bg-terracotta text-white"
                     : "text-sand/65 hover:text-sand"
                 }`}
               >
@@ -452,7 +452,7 @@ function LoginContenido() {
                 }}
                 className={`flex items-center justify-center gap-2 py-3.5 px-4 font-bold tracking-wider transition-colors border-l border-sand/20 ${
                   pestana === "REGISTRO"
-                    ? "bg-terracotta text-sand"
+                    ? "bg-terracotta text-white"
                     : "text-sand/65 hover:text-sand"
                 }`}
               >
@@ -465,7 +465,7 @@ function LoginContenido() {
             {errorMensaje && (
               <div
                 role="alert"
-                className="mt-6 border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-sand"
+                className="mt-6 border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-white"
               >
                 <div className="flex items-center justify-between gap-2 font-bold text-terracotta">
                   <span className="flex items-center gap-2">
@@ -500,7 +500,7 @@ function LoginContenido() {
                       <span
                         className={
                           esEmailValido(emailLogin)
-                            ? "text-emerald-400"
+                            ? "text-[#065F46]"
                             : "text-terracotta"
                         }
                       >
@@ -573,7 +573,7 @@ function LoginContenido() {
                 </div>
 
                 {perfilAutocompletado && (
-                  <div className="flex items-center gap-2 border border-emerald-500/35 bg-emerald-950/25 px-3.5 py-2.5 font-mono text-[11px] text-emerald-300">
+                  <div className="flex items-center gap-2 border border-emerald-500/35 bg-emerald-50 px-3.5 py-2.5 font-mono text-[11px] text-[#065F46]">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>
                       Credenciales cargadas para{" "}
@@ -587,7 +587,7 @@ function LoginContenido() {
                 <button
                   type="submit"
                   disabled={procesando}
-                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors disabled:opacity-50"
                 >
                   <Lock className="h-4 w-4" />
                   <span>
@@ -732,7 +732,7 @@ function LoginContenido() {
                 <button
                   type="submit"
                   disabled={procesando}
-                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors disabled:opacity-50"
                 >
                   <UserPlus className="h-4 w-4" />
                   <span>
@@ -770,7 +770,7 @@ function LoginContenido() {
                 <div className="mt-3 space-y-5 border border-sand/15 bg-obsidian p-4">
                   {/* GRUPO 1: PERFILES DE VIAJEROS (B2C) */}
                   <div>
-                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-emerald-400">
+                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-[#065F46]">
                       <span>PERFILES DE VIAJEROS (B2C — /MIS-RESERVAS &amp; CHECKOUT)</span>
                       <span>AISLAMIENTO RLS POR TURISTA</span>
                     </div>
@@ -784,27 +784,27 @@ function LoginContenido() {
                         >
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-xs font-bold text-sand group-hover:text-emerald-300">
+                              <span className="text-xs font-bold text-sand group-hover:text-[#065F46]">
                                 {perfil.titulo}
                               </span>
                               <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
                                 {perfil.rnt}
                               </span>
-                              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-300">
+                              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-[#065F46]">
                                 {perfil.rolBadge}
                               </span>
                             </div>
                             <p className="mt-1 text-[11px] text-sand/65">
                               {perfil.subtitulo}
                             </p>
-                            <p className="mt-1 text-[11px] text-emerald-300">
+                            <p className="mt-1 text-[11px] text-[#065F46]">
                               {perfil.email}{" "}
                               <span className="text-sand/40">/</span>{" "}
                               {perfil.password}
                             </p>
                           </div>
 
-                          <span className="shrink-0 self-start sm:self-center border border-emerald-400/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300 group-hover:bg-emerald-500 group-hover:text-obsidian transition-colors">
+                          <span className="shrink-0 self-start sm:self-center border border-emerald-400/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#065F46] group-hover:bg-emerald-500 group-hover:text-obsidian transition-colors">
                             CARGAR VIAJERO
                           </span>
                         </button>
@@ -841,14 +841,14 @@ function LoginContenido() {
                             <p className="mt-1 text-[11px] text-sand/60">
                               {perfil.subtitulo}
                             </p>
-                            <p className="mt-1 text-[11px] text-emerald-300">
+                            <p className="mt-1 text-[11px] text-[#065F46]">
                               {perfil.email}{" "}
                               <span className="text-sand/40">/</span>{" "}
                               {perfil.password}
                             </p>
                           </div>
 
-                          <span className="shrink-0 self-start sm:self-center border border-sand/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sand group-hover:border-terracotta group-hover:bg-terracotta group-hover:text-sand transition-colors">
+                          <span className="shrink-0 self-start sm:self-center border border-sand/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sand group-hover:border-terracotta group-hover:bg-terracotta group-hover:text-white transition-colors">
                             CARGAR OPERADOR
                           </span>
                         </button>

@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   },
   description:
     "Explora el Parque Tayrona, Ciudad Perdida (Teyuna), Minca y la Sierra Nevada de Santa Marta con anfitriones locales certificados, cupos garantizados y asistencia inteligente.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   keywords: [
     "Santa Marta",
     "Ciudad Perdida",
@@ -59,7 +64,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={jakartaSans.variable}>
-      <body className="overflow-x-hidden bg-[#26211D] text-white font-sans antialiased selection:bg-[#C89D66] selection:text-[#1C1917]">
+      <body className="overflow-x-hidden bg-[#FAF8F5] text-[#0F172A] font-sans antialiased selection:bg-[#EA580C] selection:text-white">
         {children}
         <CookieConsentBanner />
       </body>

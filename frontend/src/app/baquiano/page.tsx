@@ -154,7 +154,7 @@ export default function BaquianoAiPage() {
     todas.length > 0 && dentroDePresupuesto.length === 0;
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
       <Navbar
         idioma={idioma}
         onCambiarIdioma={setIdioma}
@@ -406,7 +406,7 @@ export default function BaquianoAiPage() {
                 <div className="mt-3 rounded-2xl border border-white/10 bg-black/40 p-4 font-mono text-[11px] text-sand/70">
                   <div className="flex flex-wrap justify-between gap-2 border-b border-white/10 pb-2">
                     <span>Correlación: {resultadoIa.correlacionId}</span>
-                    <span className="text-emerald-400">
+                    <span className="text-[#065F46]">
                       {resultadoIa.contextoDegradado
                         ? "Contexto degradado (caché)"
                         : "Contexto en vivo"}
