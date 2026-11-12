@@ -9,16 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        obsidian: "#26211D",
-        terracotta: "#C89D66",
-        ember: "#DAB485",
-        sand: "#F5F2EB",
-        jungle: "#362F29",
-        espresso: "#26211D",
-        "stone-warm": "#362F29",
-        alabaster: "#F5F2EB",
-        charcoal: "#1C1917",
-        bronze: "#C89D66",
+        obsidian: "#FAF8F5",
+        jungle: "#F3EFE6",
+        sand: "#0F172A",
+        terracotta: "#EA580C",
+        ember: "#F59E0B",
+        ivory: "#FAF8F5",
+        "soft-sand": "#F3EFE6",
+        charcoal: "#0F172A",
+        sierra: "#065F46",
+        "sierra-light": "#0D9488",
+        caribe: "#0284C7",
+        coral: "#EA580C",
       },
       fontFamily: {
         display: ["var(--font-jakarta)", "sans-serif"],
