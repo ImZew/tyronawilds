@@ -936,17 +936,24 @@ function ExpedicionesCatalogoContenido() {
                     </span>
                   </div>
 
-                  <div className="relative mt-4 h-56 w-full overflow-hidden border border-sand/15 bg-jungle/30">
+                  <div className="relative mt-4 h-56 w-full overflow-hidden rounded-2xl border border-sand/15 bg-jungle/30">
                     <img
                       src={act.imagenUrl}
                       alt={idioma === "es" ? act.nombreEs : act.nombreEn}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-85"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        const fallback =
+                          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85";
+                        if (target.src !== fallback) {
+                          target.src = fallback;
+                        }
+                      }}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
 
-                    <div className="absolute bottom-2.5 left-2.5 bg-obsidian/85 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-sand border border-sand/20">
-                      {act.coordenadasHud}
+                    <div className="absolute bottom-2.5 left-2.5 rounded-full bg-obsidian/85 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-sand border border-sand/20 backdrop-blur-md">
+                      {act.ubicacion}
                     </div>
 
                     {altaCongestion ? (

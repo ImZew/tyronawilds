@@ -1,26 +1,12 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bebas",
-  display: "swap",
-});
-
 const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-jakarta",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -31,37 +17,38 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default:
-      "TYRONAWILDS™ | Pierde el Mapa — Expediciones Santa Marta, Sierra Nevada & Tayrona",
-    template: "%s | TYRONAWILDS™ — Expediciones Santa Marta",
+      "TYRONAWILDS™ | Experiencias & Naturaleza Viva — Santa Marta, Tayrona & Sierra Nevada",
+    template: "%s | TYRONAWILDS™ — Santa Marta & Caribe",
   },
   description:
-    "Expediciones certificadas de alta montaña y conservación en Santa Marta, Ciudad Perdida (Teyuna), Parque Nacional Natural Tayrona y Minca. Curaduría Baquiano AI y cupo garantizado en tiempo real.",
+    "Explora el Parque Tayrona, Ciudad Perdida (Teyuna), Minca y la Sierra Nevada de Santa Marta con anfitriones locales certificados, cupos garantizados y asistencia inteligente.",
   keywords: [
     "Santa Marta",
     "Ciudad Perdida",
     "Teyuna",
     "Parque Tayrona",
+    "Cabo San Juan",
     "Minca",
     "Sierra Nevada de Santa Marta",
     "Turismo Sostenible Colombia",
     "TyronaWilds",
   ],
-  authors: [{ name: "TYRONAWILDS™ Expedition Team" }],
+  authors: [{ name: "TYRONAWILDS™ Collection" }],
   openGraph: {
     type: "website",
     locale: "es_CO",
     url: siteUrl,
     siteName: "TYRONAWILDS™",
     title:
-      "TYRONAWILDS™ // PIERDE EL MAPA — Sierra Nevada, Parque Tayrona & Caribe",
+      "TYRONAWILDS™ — Experiencias Auténticas en Santa Marta, Tayrona & Sierra Nevada",
     description:
-      "Desde los arrecifes coralinos del Tayrona hasta las terrazas sagradas de Teyuna a 1.200 msnm. Reserva tu cupo garantizado junto a operadores locales certificados.",
+      "Desde Cabo San Juan en el Parque Tayrona hasta las terrazas ancestrales de Ciudad Perdida. Reserva tu experiencia en minutos con cupo garantizado.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TYRONAWILDS™ // PIERDE EL MAPA — Expediciones Santa Marta",
+    title: "TYRONAWILDS™ — Santa Marta, Parque Tayrona & Sierra Nevada",
     description:
-      "Travesías curadas en la Sierra Nevada de Santa Marta, Parque Tayrona y Minca con control de aforo ecológico en tiempo real.",
+      "Experiencias curadas en el Caribe colombiano y la Sierra Nevada de Santa Marta.",
   },
 };
 
@@ -71,11 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`${bebasNeue.variable} ${jakartaSans.variable} ${jetbrainsMono.variable}`}
-    >
-      <body className="overflow-x-hidden bg-obsidian text-sand font-sans antialiased selection:bg-terracotta selection:text-sand">
+    <html lang="es" className={jakartaSans.variable}>
+      <body className="overflow-x-hidden bg-[#26211D] text-white font-sans antialiased selection:bg-[#C89D66] selection:text-[#1C1917]">
         {children}
         <CookieConsentBanner />
       </body>
