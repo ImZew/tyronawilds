@@ -3,7 +3,7 @@ const cspHeader = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' blob: data: https://images.unsplash.com",
+  "img-src 'self' blob: data: https://images.unsplash.com https://upload.wikimedia.org https://*.wikimedia.org",
   "font-src 'self' data: https://fonts.gstatic.com",
   "connect-src 'self' http://localhost:8080 http://localhost:8081 http://localhost:8082 http://localhost:8083 http://localhost:8084 http://localhost:8085 http://localhost:8086 http://localhost:8087 https://*.tyronawilds.co",
   "frame-ancestors 'none'",
@@ -21,6 +21,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
     ],
   },

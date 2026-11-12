@@ -264,7 +264,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     nivelOcupacionActual: 42,
     esSostenible: true,
     imagenUrl:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
     descripcionEs:
       "Ascenso de 4 días al corazón sagrado de Teyuna junto a guías indígenas Kogui y Wiwa. Selva húmeda tropical, terrazas líticas milenarias y desconexión total.",
     descripcionEn:
@@ -289,7 +289,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     nivelOcupacionActual: 88,
     esSostenible: true,
     imagenUrl:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
     descripcionEs:
       "Travesía entre bloques graníticos gigantes donde la selva de la Sierra Nevada se funde con el oleaje del Caribe en Cabo San Juan del Guía.",
     descripcionEn:
@@ -313,7 +313,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     nivelOcupacionActual: 28,
     esSostenible: true,
     imagenUrl:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
     descripcionEs:
       "Ruta de bosque nublado y cafetales orgánicos de sombra diseñada para viajeros que buscan desconexión en pozos de agua glaciar y avistamiento de aves endémicas.",
     descripcionEn:
@@ -3005,8 +3005,8 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "05:30 AM · Casa Expedicionaria Centro Histórico -> El Mamey",
     puntoEncuentroEn: "05:30 AM · Historic Center Basecamp -> El Mamey Trailhead",
     galeriaImagenes: [
+      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
       "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
     ],
     incluyeEs: [
@@ -3046,9 +3046,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "06:30 AM · Sector El Zaino (Entrada Principal PNN Tayrona)",
     puntoEncuentroEn: "06:30 AM · El Zaino Main Gate (Tayrona National Park)",
     galeriaImagenes: [
+      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/a/aa/Cabo_San_Juan_de_Gu%C3%ADa_%284167793296%29.jpg",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
     ],
     incluyeEs: [
       "Brazalete oficial de ingreso a Parque Nacional Natural Tayrona",
@@ -3083,9 +3083,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "07:45 AM · Plaza de la Iglesia de Minca (650 msnm)",
     puntoEncuentroEn: "07:45 AM · Minca Town Square (650 masl)",
     galeriaImagenes: [
+      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/82/Tangara_cyanoptera%2C_Minca%2C_Santa_Marta%2C_Colombia_1.jpg",
       "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
     ],
     incluyeEs: [
       "Avistamiento matutino de tucanes y colibríes endémicos con binoculares profesionales",
