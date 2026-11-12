@@ -98,7 +98,7 @@ export default function PulsoTerritorioPage() {
   const lluvia = contexto ? Math.round(contexto.clima.probabilidadLluviaPorcentaje) : 18;
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
       <Navbar
         idioma={idioma}
         onCambiarIdioma={setIdioma}
@@ -111,7 +111,7 @@ export default function PulsoTerritorioPage() {
         <section className="flex flex-col justify-between gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-sand/85 backdrop-blur-md">
-              <Activity className="h-3.5 w-3.5 text-emerald-400" />
+              <Activity className="h-3.5 w-3.5 text-[#065F46]" />
               <span>Pulso del Territorio · Sostenibilidad ambiental</span>
             </div>
             <h1 className="mt-4 font-display text-5xl sm:text-6xl md:text-7xl uppercase leading-none tracking-tight text-white">
@@ -151,7 +151,7 @@ export default function PulsoTerritorioPage() {
         {/* RESUMEN TERRITORIAL */}
         <section className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-            <Leaf className="h-5 w-5 text-emerald-400" />
+            <Leaf className="h-5 w-5 text-[#065F46]" />
             <span className="mt-3 block font-display text-5xl text-white">
               {ocupacionPromedio}%
             </span>
@@ -169,7 +169,7 @@ export default function PulsoTerritorioPage() {
             </span>
           </div>
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-            <Thermometer className="h-5 w-5 text-amber-300" />
+            <Thermometer className="h-5 w-5 text-amber-800" />
             <span className="mt-3 block font-display text-5xl text-white">
               {temperatura}°
             </span>
@@ -252,7 +252,7 @@ export default function PulsoTerritorioPage() {
         {/* CLIMA IDEAM + ALERTA MARINA DIMAR */}
         <section className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-jungle/60 to-obsidian p-6">
-            <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-emerald-300">
+            <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-[#065F46]">
               <CloudSun className="h-4 w-4" />
               Boletín climático · IDEAM Sierra Nevada
             </div>
@@ -278,7 +278,7 @@ export default function PulsoTerritorioPage() {
                 "Condiciones óptimas en costa y bosque húmedo de Minca."}
             </p>
             {contexto?.degradado && (
-              <p className="mt-2 font-mono text-[10px] uppercase text-amber-300">
+              <p className="mt-2 font-mono text-[10px] uppercase text-amber-800">
                 Datos servidos desde caché de contingencia.
               </p>
             )}
@@ -305,7 +305,7 @@ export default function PulsoTerritorioPage() {
               </div>
               <div>
                 <span className="block text-[10px] uppercase text-sand/50">Bandera</span>
-                <strong className="text-amber-300">Amarilla</strong>
+                <strong className="text-amber-800">Amarilla</strong>
               </div>
             </div>
             <p className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-3 text-xs text-sand/80">

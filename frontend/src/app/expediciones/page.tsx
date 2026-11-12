@@ -775,7 +775,7 @@ function ExpedicionesCatalogoContenido() {
     : 78;
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
       <Navbar
         idioma={idioma}
         onCambiarIdioma={setIdioma}
@@ -837,7 +837,7 @@ function ExpedicionesCatalogoContenido() {
                 onClick={() => setFiltroCategoria(cat.id)}
                 className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
                   filtroCategoria === cat.id
-                    ? "border-terracotta bg-terracotta text-sand font-bold"
+                    ? "border-terracotta bg-terracotta text-white font-bold"
                     : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
                 }`}
               >
@@ -850,7 +850,7 @@ function ExpedicionesCatalogoContenido() {
               onClick={() => setSoloBajaCarga(!soloBajaCarga)}
               className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
                 soloBajaCarga
-                  ? "border-emerald-400 bg-emerald-950/60 text-emerald-300 font-bold"
+                  ? "border-emerald-400 bg-emerald-100 text-[#065F46] font-bold"
                   : "border-sand/20 bg-obsidian text-sand/75 hover:border-emerald-400/50"
               }`}
             >
@@ -952,19 +952,19 @@ function ExpedicionesCatalogoContenido() {
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
-                    <div className="absolute bottom-2.5 left-2.5 rounded-full bg-obsidian/85 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-sand border border-sand/20 backdrop-blur-md">
+                    <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/95 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-[#065F46] shadow-sm border border-sand/20 backdrop-blur-md">
                       {act.ubicacion}
                     </div>
 
                     {altaCongestion ? (
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-terracotta px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-sand shadow-lg">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-terracotta px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
                         <AlertTriangle className="h-3.5 w-3.5" />
                         <span>
                           AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}%
                         </span>
                       </div>
                     ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-emerald-950/90 border border-emerald-400/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
+                      <div className="absolute top-2.5 right-2.5 bg-[#065F46] border border-[#FBBF24]/40 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white rounded-full shadow-sm">
                         FLUJO ECOLÓGICO SERENO
                       </div>
                     )}
@@ -995,7 +995,7 @@ function ExpedicionesCatalogoContenido() {
                       className={
                         altaCongestion
                           ? "font-bold text-terracotta"
-                          : "text-emerald-400"
+                          : "text-[#065F46]"
                       }
                     >
                       {act.nivelOcupacionActual}% · GRUPOS DE MÁX{" "}
@@ -1012,7 +1012,7 @@ function ExpedicionesCatalogoContenido() {
                   </div>
 
                   {altaCongestion && (
-                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-sand/90">
+                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-white/90">
                       <span className="font-bold text-terracotta">
                         AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}% —
                         SUGERIMOS RUTA DE BAJO IMPACTO:
@@ -1041,7 +1041,7 @@ function ExpedicionesCatalogoContenido() {
                         e.stopPropagation();
                         abrirDrawerExpedicion(act);
                       }}
-                      className="inline-flex items-center gap-1.5 bg-sand px-3.5 py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-sand transition-colors"
+                      className="inline-flex items-center gap-1.5 bg-sand px-3.5 py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-white transition-colors"
                     >
                       <span>
                         {idioma === "es"
@@ -1174,7 +1174,7 @@ function ExpedicionesCatalogoContenido() {
                 <span className="block text-[10px] uppercase text-sand/55">
                   OPERADOR LOCAL
                 </span>
-                <strong className="mt-1 flex items-center gap-1 text-emerald-400">
+                <strong className="mt-1 flex items-center gap-1 text-[#065F46]">
                   <Award className="h-3.5 w-3.5" />
                   {fichaActiva.operadorLicenciaRnt.split("·")[0]}
                 </strong>
@@ -1214,7 +1214,7 @@ function ExpedicionesCatalogoContenido() {
               </div>
 
               <div className="border border-sand/15 bg-obsidian p-5">
-                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#065F46]">
                   // QUÉ INCLUYE TU EXPEDICIÓN
                 </h3>
                 <ul className="mt-3 space-y-2.5 font-mono text-xs text-sand/85">
@@ -1223,7 +1223,7 @@ function ExpedicionesCatalogoContenido() {
                     : fichaActiva.incluyeEn
                   ).map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <Check className="h-4 w-4 shrink-0 text-[#065F46]" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -1239,7 +1239,7 @@ function ExpedicionesCatalogoContenido() {
                     ? "CHECKOUT & PASARELA WOMPI SANDBOX"
                     : "EXPEDITION CHECKOUT & WOMPI SANDBOX GATEWAY"}
                 </h3>
-                <span className="flex items-center gap-1.5 font-mono text-xs text-emerald-400">
+                <span className="flex items-center gap-1.5 font-mono text-xs text-[#065F46]">
                   <ShieldCheck className="h-4 w-4" />
                   TRANSACCIÓN ACID · CUPO EN TIEMPO REAL
                 </span>
@@ -1260,7 +1260,7 @@ function ExpedicionesCatalogoContenido() {
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     <Link
                       href="/login"
-                      className="inline-flex items-center gap-2 bg-terracotta px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors"
+                      className="inline-flex items-center gap-2 bg-terracotta px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors"
                     >
                       <Lock className="h-4 w-4" />
                       <span>IR A /LOGIN E INICIAR SESIÓN COMO VIAJERO</span>
@@ -1279,7 +1279,7 @@ function ExpedicionesCatalogoContenido() {
                   onClick={() => setPasoCheckout(1)}
                   className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 1
-                      ? "bg-terracotta text-sand"
+                      ? "bg-terracotta text-white"
                       : "text-sand/65 hover:text-sand"
                   }`}
                 >
@@ -1290,7 +1290,7 @@ function ExpedicionesCatalogoContenido() {
                   onClick={() => avanzarAPaso2Wompi()}
                   className={`flex items-center justify-center gap-1.5 border-x border-sand/20 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 2
-                      ? "bg-terracotta text-sand"
+                      ? "bg-terracotta text-white"
                       : "text-sand/65 hover:text-sand"
                   }`}
                 >
@@ -1305,7 +1305,7 @@ function ExpedicionesCatalogoContenido() {
                   }}
                   className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 3
-                      ? "bg-emerald-600 text-sand"
+                      ? "bg-emerald-700 text-white"
                       : "text-sand/40 disabled:cursor-not-allowed"
                   }`}
                 >
@@ -1326,7 +1326,7 @@ function ExpedicionesCatalogoContenido() {
                     <button
                       type="button"
                       onClick={autocompletarDatosViajeroDemo}
-                      className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1 font-mono text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                      className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1 font-mono text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                     >
                       <Zap className="h-3.5 w-3.5" />
                       <span>Autocompletar datos de viajero</span>
@@ -1334,7 +1334,7 @@ function ExpedicionesCatalogoContenido() {
                   </div>
 
                   {sesionUsuario && (
-                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-950/25 px-3.5 py-2 font-mono text-[11px] text-emerald-300">
+                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-50 px-3.5 py-2 font-mono text-[11px] text-[#065F46]">
                       <span>
                         Datos sincronizados desde tu sesión activa JWT (
                         <strong>{sesionUsuario.email}</strong>)
@@ -1361,7 +1361,7 @@ function ExpedicionesCatalogoContenido() {
                           }}
                           className={`border p-3.5 text-left font-mono text-xs transition-colors ${
                             horarioSeleccionadoId === h.id
-                              ? "border-terracotta bg-terracotta/15 text-sand"
+                              ? "border-terracotta bg-terracotta/15 text-white"
                               : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                           }`}
                         >
@@ -1378,7 +1378,7 @@ function ExpedicionesCatalogoContenido() {
                           <div className="mt-2 flex items-center justify-between text-[11px]">
                             <span>
                               CUPOS RESTANTES:{" "}
-                              <strong className="text-emerald-400">
+                              <strong className="text-[#065F46]">
                                 {h.cuposDisponibles}
                               </strong>{" "}
                               DE {h.capacidadTotal}
@@ -1444,7 +1444,7 @@ function ExpedicionesCatalogoContenido() {
                         >
                           <span>VIAJERO #1 (TITULAR)</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               JWT VERIFICADO
                             </span>
@@ -1466,7 +1466,7 @@ function ExpedicionesCatalogoContenido() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.nombre
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -1486,7 +1486,7 @@ function ExpedicionesCatalogoContenido() {
                         >
                           <span>DOCUMENTO TITULAR #1</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               SOLO LECTURA
                             </span>
@@ -1512,7 +1512,7 @@ function ExpedicionesCatalogoContenido() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario?.documento
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.documento
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -1532,7 +1532,7 @@ function ExpedicionesCatalogoContenido() {
                         >
                           <span>EMAIL DE CONFIRMACIÓN</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               CUENTA ACTIVA
                             </span>
@@ -1553,7 +1553,7 @@ function ExpedicionesCatalogoContenido() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.email
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -1709,7 +1709,7 @@ function ExpedicionesCatalogoContenido() {
 
                     {/* Alerta Visual del Motor de Validación de Identidad Civil y Anti-Duplicidad */}
                     {erroresCheckout.integridadGrupo && (
-                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-sand">
+                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-white">
                         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-2">
                           <span className="flex items-center gap-2 font-bold text-terracotta">
                             <ShieldAlert className="h-4 w-4" />
@@ -1717,7 +1717,7 @@ function ExpedicionesCatalogoContenido() {
                             {erroresCheckout.integridadGrupo.codigo ||
                               "INTEGRIDAD_IDENTIDAD"}
                           </span>
-                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-300 border border-amber-400/40">
+                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-800 border border-amber-400/40">
                             BLOQUEO PREVENTIVO DE INTEGRIDAD PNN
                           </span>
                         </div>
@@ -1772,7 +1772,7 @@ function ExpedicionesCatalogoContenido() {
                   <button
                     type="button"
                     onClick={avanzarAPaso2Wompi}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -1793,7 +1793,7 @@ function ExpedicionesCatalogoContenido() {
                 <div className="mt-6 space-y-5 font-mono text-xs">
                   <div className="flex flex-wrap items-center justify-between gap-2 border border-sand/20 bg-obsidian px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Lock className="h-4 w-4 text-emerald-400" />
+                      <Lock className="h-4 w-4 text-[#065F46]" />
                       <span className="font-bold uppercase tracking-wider text-sand">
                         TYRONAWILDS PAY // WOMPI SANDBOX GATEWAY
                       </span>
@@ -1821,7 +1821,7 @@ function ExpedicionesCatalogoContenido() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "NEQUI"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -1842,7 +1842,7 @@ function ExpedicionesCatalogoContenido() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "PSE"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -1863,7 +1863,7 @@ function ExpedicionesCatalogoContenido() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "TARJETA"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -1889,7 +1889,7 @@ function ExpedicionesCatalogoContenido() {
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("NEQUI")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -1913,8 +1913,8 @@ function ExpedicionesCatalogoContenido() {
                           <div
                             className={`border p-3 text-[11px] ${
                               estadoPushNequi === "APROBADO"
-                                ? "border-emerald-400 bg-emerald-950/40 text-emerald-300"
-                                : "border-amber-400 bg-amber-950/35 text-amber-200 animate-pulse"
+                                ? "border-emerald-400 bg-emerald-50 text-[#065F46]"
+                                : "border-amber-400 bg-amber-50 text-amber-900 animate-pulse"
                             }`}
                           >
                             {estadoPushNequi === "ENVIANDO"
@@ -1934,7 +1934,7 @@ function ExpedicionesCatalogoContenido() {
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("PSE")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -2006,7 +2006,7 @@ function ExpedicionesCatalogoContenido() {
                             onClick={() =>
                               autocompletarMetodoWompiDemo("TARJETA")
                             }
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -2101,7 +2101,7 @@ function ExpedicionesCatalogoContenido() {
                           </span>
                           <span>{formatearCop(baseOperadorCop)}</span>
                         </div>
-                        <div className="mt-1.5 flex justify-between text-emerald-400">
+                        <div className="mt-1.5 flex justify-between text-[#065F46]">
                           <span>
                             Tasa Ambiental PNN / Contribución Indígena (12%)
                           </span>
@@ -2152,7 +2152,7 @@ function ExpedicionesCatalogoContenido() {
                     type="button"
                     disabled={procesandoReserva}
                     onClick={manejarConfirmarCheckout}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors disabled:opacity-50"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -2164,14 +2164,14 @@ function ExpedicionesCatalogoContenido() {
 
                   {/* Resultado de Error Transaccional o Integridad (409 / 422) + Reverso Automático Wompi */}
                   {resultadoReserva && !resultadoReserva.exito && (
-                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-sand space-y-4">
+                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-white space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-3">
                         <span className="flex items-center gap-2 font-bold text-terracotta text-sm">
                           <ShieldAlert className="h-5 w-5" />
                           HTTP {resultadoReserva.httpStatus}{" "}
                           {resultadoReserva.errorCodigo || "CONFLICT"}
                         </span>
-                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-emerald-300 border border-emerald-400/40">
+                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-[#065F46] border border-emerald-400/40">
                           ROLLBACK ACID + WOMPI REVERSADO
                         </span>
                       </div>
@@ -2182,7 +2182,7 @@ function ExpedicionesCatalogoContenido() {
 
                       {resultadoReserva.referenciaWompiReversada && (
                         <div className="flex items-center gap-2.5 border border-emerald-400/40 bg-emerald-950/40 p-3 text-emerald-200">
-                          <RotateCcw className="h-4 w-4 shrink-0 text-emerald-400" />
+                          <RotateCcw className="h-4 w-4 shrink-0 text-[#065F46]" />
                           <div>
                             <strong className="block uppercase">
                               COBRO REVERSADO AUTOMÁTICAMENTE EN WOMPI SANDBOX
@@ -2202,7 +2202,7 @@ function ExpedicionesCatalogoContenido() {
                         resultadoReserva.rutasAlternativasSostenibles.length >
                           0 && (
                           <div className="space-y-2.5 pt-1">
-                            <span className="block text-[11px] font-bold uppercase text-amber-300">
+                            <span className="block text-[11px] font-bold uppercase text-amber-800">
                               RUTAS ALTERNATIVAS DE DESCONCENTRACIÓN ECOLÓGICA EN
                               SANTA MARTA:
                             </span>
@@ -2214,7 +2214,7 @@ function ExpedicionesCatalogoContenido() {
                                     className="border border-sand/25 bg-obsidian p-3 flex flex-col justify-between"
                                   >
                                     <div>
-                                      <div className="flex items-center justify-between text-[10px] text-emerald-400 font-bold">
+                                      <div className="flex items-center justify-between text-[10px] text-[#065F46] font-bold">
                                         <span>
                                           AFORO SERENO: {alt.ocupacionPorcentaje}%
                                         </span>
@@ -2241,7 +2241,7 @@ function ExpedicionesCatalogoContenido() {
                                           abrirDrawerExpedicion(encontrada);
                                         }
                                       }}
-                                      className="mt-3 w-full bg-sand px-3 py-1.5 text-[10px] font-bold uppercase text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                                      className="mt-3 w-full bg-sand px-3 py-1.5 text-[10px] font-bold uppercase text-obsidian hover:bg-terracotta hover:text-white transition-colors"
                                     >
                                       CAMBIAR A ESTA RUTA DE BAJO IMPACTO
                                     </button>

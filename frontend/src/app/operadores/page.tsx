@@ -437,9 +437,9 @@ export default function PortalOperadoresB2BPage() {
 
   if (!sesionAutenticada || sesionAutenticada.rol === "TURISTA") {
     return (
-      <div className="min-h-screen bg-obsidian text-sand flex flex-col items-center justify-center p-6 selection:bg-terracotta selection:text-sand">
+      <div className="min-h-screen bg-obsidian text-sand flex flex-col items-center justify-center p-6 selection:bg-terracotta selection:text-white">
         <div className="w-full max-w-xl border-2 border-terracotta bg-obsidian p-8 shadow-2xl">
-          <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-sand">
+          <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-white">
             <ShieldAlert className="h-4 w-4" />
             <span>
               {sesionAutenticada?.rol === "TURISTA"
@@ -467,7 +467,7 @@ export default function PortalOperadoresB2BPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/login?redirect=/operadores"
-              className="inline-flex items-center gap-2 bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+              className="inline-flex items-center gap-2 bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-white hover:bg-ember transition-colors"
             >
               <Lock className="h-4 w-4" />
               <span>INICIAR SESIÓN RNT / AUTORIDAD AMBIENTAL</span>
@@ -487,7 +487,7 @@ export default function PortalOperadoresB2BPage() {
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
       {/* =====================================================================
           BARRA SUPERIOR DE SESIÓN AUTENTICADA JWT (SIN SELECTOR LIBRE)
       ====================================================================== */}
@@ -529,15 +529,15 @@ export default function PortalOperadoresB2BPage() {
 
             {/* Insignia Oficial de Sesión JWT */}
             <div className="flex flex-wrap items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-3 py-1.5 font-mono text-[11px]">
-              <KeyRound className="h-3.5 w-3.5 text-emerald-400" />
+              <KeyRound className="h-3.5 w-3.5 text-[#065F46]" />
               <span className="font-bold uppercase text-sand">
                 {sesionAutenticada.nombre}
               </span>
               <span className="text-sand/40">·</span>
-              <span className="text-emerald-300">
+              <span className="text-[#065F46]">
                 {sesionAutenticada.email}
               </span>
-              <span className="bg-terracotta px-1.5 py-0.5 text-[10px] font-bold uppercase text-sand">
+              <span className="bg-terracotta px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
                 {sesionAutenticada.rol}
               </span>
               {sesionAutenticada.rnt && (
@@ -545,7 +545,7 @@ export default function PortalOperadoresB2BPage() {
                   {sesionAutenticada.rnt}
                 </span>
               )}
-              <span className="hidden md:inline-flex items-center gap-1 bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-300">
+              <span className="hidden md:inline-flex items-center gap-1 bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-[#065F46]">
                 JWT ACTIVO
               </span>
             </div>
@@ -553,7 +553,7 @@ export default function PortalOperadoresB2BPage() {
             <button
               type="button"
               onClick={manejarCerrarSesionB2B}
-              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-terracotta transition-colors"
+              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-white hover:bg-terracotta transition-colors"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span>CERRAR SESIÓN</span>
@@ -577,7 +577,7 @@ export default function PortalOperadoresB2BPage() {
         <div className="border border-sand/20 bg-jungle/15 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand">
+              <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 <span>
                   SESIÓN AUTENTICADA: {sesionAutenticada.rnt || sesionAutenticada.rol} ·{" "}
@@ -608,7 +608,7 @@ export default function PortalOperadoresB2BPage() {
                   ? `· TITULAR PRESTADOR #${actorActivo.codigoPrestador} (${sesionAutenticada.rnt})`
                   : "· SUPERVISIÓN AMBIENTAL PNN"}
               </div>
-              <div className="mt-1 text-[10px] text-emerald-400">
+              <div className="mt-1 text-[10px] text-[#065F46]">
                 Bearer {sesionAutenticada.token.slice(0, 26)}...
               </div>
             </div>
@@ -621,7 +621,7 @@ export default function PortalOperadoresB2BPage() {
               onClick={() => setPestana("EXPEDICIONES")}
               className={`inline-flex items-center gap-2 border px-5 py-3 font-mono text-xs uppercase tracking-wider transition-colors ${
                 pestana === "EXPEDICIONES"
-                  ? "border-terracotta bg-terracotta text-sand font-bold"
+                  ? "border-terracotta bg-terracotta text-white font-bold"
                   : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
               }`}
             >
@@ -634,7 +634,7 @@ export default function PortalOperadoresB2BPage() {
               onClick={() => setPestana("CUPOS_RESERVAS")}
               className={`inline-flex items-center gap-2 border px-5 py-3 font-mono text-xs uppercase tracking-wider transition-colors ${
                 pestana === "CUPOS_RESERVAS"
-                  ? "border-terracotta bg-terracotta text-sand font-bold"
+                  ? "border-terracotta bg-terracotta text-white font-bold"
                   : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
               }`}
             >
@@ -647,7 +647,7 @@ export default function PortalOperadoresB2BPage() {
               onClick={() => setPestana("SOSTENIBILIDAD_AUDITORIA")}
               className={`inline-flex items-center gap-2 border px-5 py-3 font-mono text-xs uppercase tracking-wider transition-colors ${
                 pestana === "SOSTENIBILIDAD_AUDITORIA"
-                  ? "border-terracotta bg-terracotta text-sand font-bold"
+                  ? "border-terracotta bg-terracotta text-white font-bold"
                   : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
               }`}
             >
@@ -679,7 +679,7 @@ export default function PortalOperadoresB2BPage() {
                     setMostrarFormNuevaExp(!mostrarFormNuevaExp);
                     setResultadoCreacionExp(null);
                   }}
-                  className="inline-flex items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+                  className="inline-flex items-center gap-2 bg-terracotta px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-white hover:bg-ember transition-colors"
                 >
                   <PlusCircle className="h-4 w-4" />
                   <span>
@@ -875,7 +875,7 @@ export default function PortalOperadoresB2BPage() {
                       type="button"
                       disabled={creandoExpedicion}
                       onClick={manejarCrearExpedicion}
-                      className="mt-3 w-full bg-sand px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                      className="mt-3 w-full bg-sand px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-obsidian hover:bg-terracotta hover:text-white transition-colors"
                     >
                       {creandoExpedicion
                         ? "REGISTRANDO EN OFERTA-SERVICE..."
@@ -889,7 +889,7 @@ export default function PortalOperadoresB2BPage() {
                     className={`mt-4 border p-4 font-mono text-xs ${
                       resultadoCreacionExp.exito
                         ? "border-emerald-400 bg-emerald-950/30 text-emerald-200"
-                        : "border-terracotta bg-terracotta/15 text-sand"
+                        : "border-terracotta bg-terracotta/15 text-white"
                     }`}
                   >
                     <div className="font-bold">
@@ -917,7 +917,7 @@ export default function PortalOperadoresB2BPage() {
                         <span
                           className={`px-2.5 py-0.5 font-bold uppercase ${
                             esTitularDeEstaRuta
-                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40"
+                              ? "bg-emerald-500/20 text-[#065F46] border border-emerald-400/40"
                               : "bg-sand/10 text-sand/70 border border-sand/20"
                           }`}
                         >
@@ -964,7 +964,7 @@ export default function PortalOperadoresB2BPage() {
                           className={
                             act.nivelOcupacionActual >= 80
                               ? "text-terracotta font-bold"
-                              : "text-emerald-400"
+                              : "text-[#065F46]"
                           }
                         >
                           {act.nivelOcupacionActual}% · MÁX {act.capacidadMaxima}{" "}
@@ -981,8 +981,8 @@ export default function PortalOperadoresB2BPage() {
                         onClick={() => abrirEdicionExpedicion(act)}
                         className={`mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
                           esTitularDeEstaRuta
-                            ? "bg-sand text-obsidian hover:bg-terracotta hover:text-sand"
-                            : "border border-terracotta/60 bg-terracotta/15 text-sand hover:bg-terracotta"
+                            ? "bg-sand text-obsidian hover:bg-terracotta hover:text-white"
+                            : "border border-terracotta/60 bg-terracotta/15 text-white hover:bg-terracotta"
                         }`}
                       >
                         <Edit3 className="h-3.5 w-3.5" />
@@ -1170,7 +1170,7 @@ export default function PortalOperadoresB2BPage() {
                   type="button"
                   disabled={guardandoEdicion}
                   onClick={manejarGuardarEdicion}
-                  className="w-full bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                  className="w-full bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-white hover:bg-ember transition-colors disabled:opacity-50"
                 >
                   {guardandoEdicion
                     ? "VERIFICANDO CREDENCIALES Y PROPIEDAD RNT..."
@@ -1183,12 +1183,12 @@ export default function PortalOperadoresB2BPage() {
                     className={`mt-4 border p-4 font-mono text-xs ${
                       resultadoEdicion.exito
                         ? "border-emerald-400 bg-emerald-950/35 text-emerald-200"
-                        : "border-terracotta bg-terracotta/20 text-sand"
+                        : "border-terracotta bg-terracotta/20 text-white"
                     }`}
                   >
                     {resultadoEdicion.exito ? (
                       <div>
-                        <div className="flex items-center justify-between font-bold text-emerald-300">
+                        <div className="flex items-center justify-between font-bold text-[#065F46]">
                           <span className="flex items-center gap-2">
                             <CheckCircle2 className="h-4 w-4" />
                             HTTP 200 OK — OFERTA ACTUALIZADA EXITOSAMENTE
@@ -1346,7 +1346,7 @@ export default function PortalOperadoresB2BPage() {
                     type="button"
                     disabled={creandoSlot}
                     onClick={manejarCrearSlot}
-                    className="w-full bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+                    className="w-full bg-terracotta px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-white hover:bg-ember transition-colors"
                   >
                     {creandoSlot
                       ? "ABRIENDO CUPOS EN RESERVAS-SERVICE..."
@@ -1402,7 +1402,7 @@ export default function PortalOperadoresB2BPage() {
                         <div className="mt-2 flex items-center justify-between text-[11px] text-sand/75">
                           <span>
                             DISPONIBLES:{" "}
-                            <strong className="text-emerald-400">
+                            <strong className="text-[#065F46]">
                               {d.cuposDisponibles}
                             </strong>{" "}
                             · RESERVADOS: <strong>{reservados}</strong> /{" "}
@@ -1469,7 +1469,7 @@ export default function PortalOperadoresB2BPage() {
                             {r.nombreActividad || "Expedición Santa Marta"}
                           </span>
                           {Array.isArray(r.pasajeros) && r.pasajeros.length > 1 && (
-                            <span className="mt-1 block text-[10px] text-emerald-300">
+                            <span className="mt-1 block text-[10px] text-[#065F46]">
                               Acompañantes:{" "}
                               {r.pasajeros
                                 .filter((p) => !p.esTitular)
@@ -1482,12 +1482,12 @@ export default function PortalOperadoresB2BPage() {
                           <span className="text-sand font-bold">
                             {r.referenciaPagoWompi || "WMP-2026-841920"}
                           </span>
-                          <span className="block text-[10px] text-emerald-300">
+                          <span className="block text-[10px] text-[#065F46]">
                             {r.metodoPago || "NEQUI"} · APROBADO
                           </span>
                         </td>
                         <td className="py-3 pr-4">
-                          <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                          <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-[#065F46]">
                             {r.estadoReserva}
                           </span>
                         </td>
@@ -1535,10 +1535,10 @@ export default function PortalOperadoresB2BPage() {
                         <span
                           className={`px-2 py-0.5 font-bold ${
                             ind.estadoAlerta === "CRITICA"
-                              ? "bg-terracotta text-sand"
+                              ? "bg-terracotta text-white"
                               : ind.estadoAlerta === "MODERADA"
-                              ? "bg-amber-500/20 text-amber-300"
-                              : "bg-emerald-500/20 text-emerald-300"
+                              ? "bg-amber-500/20 text-amber-800"
+                              : "bg-emerald-500/20 text-[#065F46]"
                           }`}
                         >
                           {ind.estadoAlerta}
@@ -1618,8 +1618,8 @@ export default function PortalOperadoresB2BPage() {
                           <span
                             className={`px-2 py-0.5 text-[10px] font-bold ${
                               aud.resultado === "DENEGADA"
-                                ? "bg-terracotta text-sand"
-                                : "bg-emerald-500/20 text-emerald-300"
+                                ? "bg-terracotta text-white"
+                                : "bg-emerald-500/20 text-[#065F46]"
                             }`}
                           >
                             {aud.resultado}

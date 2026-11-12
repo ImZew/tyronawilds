@@ -162,18 +162,14 @@ interface DestinoHeroItem {
   codigoServicio: number;
   nombreSelectorEs: string;
   nombreSelectorEn: string;
-  subtituloEs: string;
-  subtituloEn: string;
-  titularIzquierdaEs: string;
-  titularIzquierdaEn: string;
-  titularDerechaEs: string;
-  titularDerechaEn: string;
-  bgAmbiente: string;
-  luzAmbiente: string;
+  ubicacionAltitudEs: string;
+  ubicacionAltitudEn: string;
+  tituloEditorialEs: string;
+  tituloEditorialEn: string;
   duracionEs: string;
   duracionEn: string;
-  nivelEs: string;
-  nivelEn: string;
+  climaNivelEs: string;
+  climaNivelEn: string;
   precioDesde: string;
   fraseEs: string;
   fraseEn: string;
@@ -187,23 +183,19 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     codigoServicio: 102,
     nombreSelectorEs: "Parque Tayrona",
     nombreSelectorEn: "Tayrona Park",
-    subtituloEs: "Cabo San Juan del Guía",
-    subtituloEn: "Cabo San Juan del Guia",
-    titularIzquierdaEs: "Somos movimiento",
-    titularIzquierdaEn: "We are movement",
-    titularDerechaEs: "Somos territorio",
-    titularDerechaEn: "We are territory",
-    bgAmbiente: "#2B241E",
-    luzAmbiente: "#38BDF8",
+    ubicacionAltitudEs: "CARIBE COLOMBIANO · SANTA MARTA · 0 - 150 MSNM",
+    ubicacionAltitudEn: "COLOMBIAN CARIBBEAN · SANTA MARTA · 0 - 150 MASL",
+    tituloEditorialEs: "Parque Nacional Tayrona",
+    tituloEditorialEn: "Tayrona National Park",
     duracionEs: "1 día completo",
     duracionEn: "1 full day",
-    nivelEs: "Caminata suave",
-    nivelEn: "Easy walk",
+    climaNivelEs: "29°C · Caminata suave",
+    climaNivelEn: "29°C · Easy walk",
     precioDesde: "Desde $290.000",
     fraseEs:
-      "Donde los senderos de piedra ancestral se encuentran con la brisa cálida y el azul cristalino de Cabo San Juan.",
+      "Donde los senderos de piedra ancestral y la selva húmeda tropical desembocan en el azul turquesa cristalino de Cabo San Juan del Guía.",
     fraseEn:
-      "Where ancient stone trails meet warm sea breezes and the crystal-clear waters of Cabo San Juan.",
+      "Where ancient stone trails and tropical rainforest meet the crystal-clear turquoise waters of Cabo San Juan del Guia.",
     imagen:
       "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
     fallbackImagen:
@@ -214,23 +206,19 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     codigoServicio: 9,
     nombreSelectorEs: "Ciudad Perdida",
     nombreSelectorEn: "Lost City",
-    subtituloEs: "Terrazas de Teyuna",
-    subtituloEn: "Teyuna Terraces",
-    titularIzquierdaEs: "Somos origen",
-    titularIzquierdaEn: "We are origin",
-    titularDerechaEs: "Somos memoria",
-    titularDerechaEn: "We are memory",
-    bgAmbiente: "#1F2821",
-    luzAmbiente: "#EAB308",
+    ubicacionAltitudEs: "SIERRA NEVADA DE SANTA MARTA · 1.200 MSNM",
+    ubicacionAltitudEn: "SIERRA NEVADA DE SANTA MARTA · 1,200 MASL",
+    tituloEditorialEs: "Teyuna: Ciudad Perdida",
+    tituloEditorialEn: "Teyuna: The Lost City",
     duracionEs: "4 días en selva",
     duracionEn: "4-day trek",
-    nivelEs: "Reto de montaña",
-    nivelEn: "Mountain trek",
+    climaNivelEs: "22°C · Reto de montaña",
+    climaNivelEn: "22°C · Mountain trek",
     precioDesde: "Desde $1.850.000",
     fraseEs:
-      "Camina junto a guías locales e indígenas hacia las terrazas sagradas construidas hace más de mil años.",
+      "Camina junto a baquianos locales y guías indígenas hacia las 169 terrazas sagradas construidas hace más de mil años en el corazón de la Sierra.",
     fraseEn:
-      "Walk alongside local and indigenous guides to the sacred stone terraces built over a thousand years ago.",
+      "Walk alongside local and indigenous guides to the 169 sacred stone terraces built over a thousand years ago in the heart of the Sierra.",
     imagen:
       "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
     fallbackImagen:
@@ -241,23 +229,19 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     codigoServicio: 103,
     nombreSelectorEs: "Minca",
     nombreSelectorEn: "Minca",
-    subtituloEs: "Cascadas y Bosque de Café",
-    subtituloEn: "Waterfalls & Coffee Forest",
-    titularIzquierdaEs: "Somos calma",
-    titularIzquierdaEn: "We are calm",
-    titularDerechaEs: "Somos bosque",
-    titularDerechaEn: "We are forest",
-    bgAmbiente: "#2D221C",
-    luzAmbiente: "#F59E0B",
+    ubicacionAltitudEs: "PIEDEMONTE DE SANTA MARTA · 650 MSNM",
+    ubicacionAltitudEn: "SANTA MARTA FOOTHILLS · 650 MASL",
+    tituloEditorialEs: "Minca: Bosque de Niebla",
+    tituloEditorialEn: "Minca: Cloud Forest",
     duracionEs: "8 horas",
     duracionEn: "8 hours",
-    nivelEs: "Para todos",
-    nivelEn: "All levels",
+    climaNivelEs: "23°C · Para todos",
+    climaNivelEn: "23°C · All levels",
     precioDesde: "Desde $210.000",
     fraseEs:
-      "Cascadas de agua pura, cafetales orgánicos de sombra y el canto de más de trescientas aves al amanecer.",
+      "Cascadas de agua pura entre montañas verdes, fincas de café orgánico de sombra y más de trescientas especies de aves al amanecer.",
     fraseEn:
-      "Pure mountain waterfalls, organic shade-grown coffee, and over three hundred bird species at dawn.",
+      "Pure mountain waterfalls among lush green hills, organic shade-grown coffee estates, and over three hundred bird species at dawn.",
     imagen:
       "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
     fallbackImagen:
@@ -268,23 +252,19 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
     codigoServicio: 105,
     nombreSelectorEs: "Sierra Nevada",
     nombreSelectorEn: "Sierra Nevada",
-    subtituloEs: "Cerro Kennedy & Cumbres",
-    subtituloEn: "Cerro Kennedy & Peaks",
-    titularIzquierdaEs: "Somos cumbre",
-    titularIzquierdaEn: "We are summit",
-    titularDerechaEs: "Somos altura",
-    titularDerechaEn: "We are altitude",
-    bgAmbiente: "#21272E",
-    luzAmbiente: "#7DD3FC",
+    ubicacionAltitudEs: "ALTA MONTAÑA DEL CARIBE · 3.100 MSNM",
+    ubicacionAltitudEn: "CARIBBEAN HIGH PEAKS · 3,100 MASL",
+    tituloEditorialEs: "Cumbres de la Sierra Nevada",
+    tituloEditorialEn: "Peaks of the Sierra Nevada",
     duracionEs: "1 a 2 días",
     duracionEn: "1 to 2 days",
-    nivelEs: "Caminata amigable",
-    nivelEn: "Friendly hike",
+    climaNivelEs: "12°C · Caminata amigable",
+    climaNivelEn: "12°C · Friendly hike",
     precioDesde: "Desde $245.000",
     fraseEs:
-      "Contempla el amanecer sobre un mar de nubes frente a las cumbres nevadas más altas del Caribe.",
+      "Contempla el amanecer sobre un mar de nubes desde Cerro Kennedy frente a los picos nevados Colón y Bolívar junto al mar Caribe.",
     fraseEn:
-      "Watch the sunrise above a sea of clouds facing the highest snowcapped peaks of the Caribbean.",
+      "Watch the sunrise above a sea of clouds from Cerro Kennedy facing the snowcapped Colón and Bolívar peaks right beside the Caribbean Sea.",
     imagen:
       "https://upload.wikimedia.org/wikipedia/commons/8/8e/Sierra_Nevada_de_Santa_Marta.jpg",
     fallbackImagen:
@@ -1099,13 +1079,11 @@ export default function TyronaWildsCommercialStorefront() {
     : null;
 
   const destActual = DESTINOS_HERO[destinoHeroIndex];
-  const portalScale = Math.min(1.09, 1 + scrollY * 0.00022);
-  const imgParallaxOffset = Math.min(28, scrollY * 0.06);
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#26211D] text-white selection:bg-[#C89D66] selection:text-[#1C1917] font-sans">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#FAF8F5] text-[#0F172A] selection:bg-[#EA580C] selection:text-white font-sans">
       {/* =====================================================================
-          BARRA SUPERIOR GLOBAL ULTRA-LIGERA
+          BARRA SUPERIOR GLOBAL (CRISTALINA SOBRE EL HERO / BLANCO MARFIL EN SCROLL)
       ====================================================================== */}
       <Navbar
         idioma={idioma}
@@ -1115,358 +1093,461 @@ export default function TyronaWildsCommercialStorefront() {
       />
 
       {/* =====================================================================
-          SECCIÓN 1: HERO "PORTAL INMERSIVO" (ORGANIC LUXURY // JESKO JETS STYLE)
-          Ventana Escultórica Central con Iluminación Ambiental por Destino
+          SECCIÓN 1: HERO 100% PANTALLA COMPLETA DE ALTO IMPACTO VISUAL
+          Inspirado en colombia.travel/es — Fotografía Real Full-Bleed + 4 Tarjetas Interactivas
       ====================================================================== */}
       <section
         id="hero"
-        aria-label="Portal Inmersivo de Destinos de Santa Marta"
-        className="relative mx-3 mt-3 sm:mx-5 sm:mt-4 overflow-hidden rounded-[2.5rem] border border-white/15 shadow-[0_30px_80px_rgba(0,0,0,0.45)] transition-colors duration-1000 ease-out"
-        style={{ backgroundColor: destActual.bgAmbiente }}
+        aria-label="Destinos Emblemáticos de Santa Marta y la Sierra Nevada"
+        className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between"
         onMouseEnter={() => setHeroEnPausa(true)}
         onMouseLeave={() => setHeroEnPausa(false)}
       >
-        {/* Iluminación Ambiental Suave Dinámica Según el Destino */}
-        <div
-          className="pointer-events-none absolute inset-0 transition-all duration-1000 ease-out"
-          style={{
-            background: `radial-gradient(circle at 50% 42%, ${destActual.luzAmbiente}28 0%, rgba(38, 33, 29, 0) 64%)`,
-          }}
-        />
-        <div
-          className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-96 w-[42rem] rounded-full blur-3xl opacity-30 transition-all duration-1000"
-          style={{ backgroundColor: destActual.luzAmbiente }}
-        />
+        {/* Fondo Fotográfico 100% Full-Bleed con Transición Suave (scale + opacity 700ms) */}
+        <div className="absolute inset-0 z-0 bg-[#065F46]">
+          {DESTINOS_HERO.map((dest, idx) => {
+            const activo = idx === destinoHeroIndex;
+            return (
+              <div
+                key={dest.id}
+                className={`absolute inset-0 transition-all duration-700 ease-out ${
+                  activo
+                    ? "opacity-100 scale-100"
+                    : "opacity-0 scale-105 pointer-events-none"
+                }`}
+              >
+                <img
+                  src={dest.imagen}
+                  alt={dest.tituloEditorialEs}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== dest.fallbackImagen) {
+                      target.src = dest.fallbackImagen;
+                    }
+                  }}
+                  className="h-full w-full object-cover object-center brightness-105 contrast-[1.03]"
+                />
+              </div>
+            );
+          })}
 
-        <div className="relative z-10 min-h-[85vh] lg:min-h-[88vh] w-full px-5 py-7 sm:px-8 sm:py-9 lg:px-12 lg:py-10 flex flex-col justify-between">
-          {/* Fila Superior Sutil: Subtítulo del Destino y Selector Rápido */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-md border border-white/15">
-              <span
-                className="h-2 w-2 rounded-full transition-colors duration-700"
-                style={{ backgroundColor: destActual.luzAmbiente }}
-              />
-              <span className="text-xs font-medium tracking-wide text-white/90">
-                {idioma === "es" ? destActual.subtituloEs : destActual.subtituloEn}
-              </span>
-            </div>
+          {/* Degradados Direccionales Suaves para Legibilidad Nítida sin Apagar la Foto */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+        </div>
 
-            {/* Píldoras Limpias de Destino en la Parte Superior Derecha */}
-            <div className="flex flex-wrap items-center gap-1.5 rounded-full bg-black/20 p-1.5 backdrop-blur-md border border-white/10">
-              {DESTINOS_HERO.map((item, idx) => {
-                const activo = idx === destinoHeroIndex;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setDestinoHeroIndex(idx)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-300 ${
-                      activo
-                        ? "bg-white text-[#1C1917] font-semibold shadow-sm"
-                        : "text-white/75 hover:text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {idioma === "es"
-                      ? item.nombreSelectorEs
-                      : item.nombreSelectorEn}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        {/* Contenido Principal del Hero (Izquierda Editorial + Derecha Carrusel de 4 Tarjetas Verticales) */}
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-4 pt-28 pb-10 sm:px-8 lg:pt-32 lg:pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-end gap-8 lg:gap-10">
+            {/* LADO IZQUIERDO DEL HERO */}
+            <div className="lg:col-span-7 space-y-5">
+              {/* Etiqueta Tipo Píldora Luminosa con Ubicación y Altitud Amigable */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 backdrop-blur-md border border-white/25 shadow-sm">
+                <MapPin className="h-3.5 w-3.5 text-[#FBBF24]" />
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-white">
+                  {idioma === "es"
+                    ? destActual.ubicacionAltitudEs
+                    : destActual.ubicacionAltitudEn}
+                </span>
+              </div>
 
-          {/* =================================================================
-              ZONA CENTRAL: TITULAR IZQUIERDA + PORTAL ESCULTÓRICO + TITULAR DERECHA
-          ================================================================== */}
-          <div className="my-8 lg:my-4 grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-4">
-            {/* Titular Izquierda */}
-            <div className="lg:col-span-4 text-center lg:text-left order-2 lg:order-1">
+              {/* Título Editorial Grande e Imponente del Destino Activo */}
               <h1
-                key={`left-${destActual.id}`}
-                className="text-4xl sm:text-5xl xl:text-6xl font-semibold tracking-tight text-white leading-[1.05] transition-all duration-700"
+                key={`hero-title-${destActual.id}`}
+                className="text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.02] drop-shadow-[0_6px_24px_rgba(0,0,0,0.45)] transition-all duration-500"
               >
                 {idioma === "es"
-                  ? destActual.titularIzquierdaEs
-                  : destActual.titularIzquierdaEn}
+                  ? destActual.tituloEditorialEs
+                  : destActual.tituloEditorialEn}
               </h1>
-            </div>
 
-            {/* Centro Exacto: VENTANA ESCULTÓRICA OVALADA ("PORTAL INMERSIVO") */}
-            <div className="lg:col-span-4 flex flex-col items-center justify-center order-1 lg:order-2">
-              <div
-                className="portal-sculptural-window relative w-64 h-80 sm:w-80 sm:h-[25rem] md:w-[22rem] md:h-[28rem] rounded-full p-2.5 sm:p-3.5 transition-transform duration-500 ease-out"
-                style={{
-                  transform: `scale(${portalScale})`,
-                  background:
-                    "linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(54,47,41,0.85) 55%, rgba(28,25,23,0.95) 100%)",
-                }}
-              >
-                {/* Marco interior biselado de piedra cálida */}
-                <div className="relative h-full w-full overflow-hidden rounded-full border border-white/25 bg-[#362F29] shadow-inner">
-                  {DESTINOS_HERO.map((dest, idx) => (
-                    <div
-                      key={dest.id}
-                      className={`absolute inset-0 transition-all duration-1000 ease-out ${
-                        idx === destinoHeroIndex
-                          ? "opacity-100 scale-100"
-                          : "opacity-0 scale-105 pointer-events-none"
-                      }`}
-                    >
-                      <img
-                        src={dest.imagen}
-                        alt={dest.nombreSelectorEs}
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (target.src !== dest.fallbackImagen) {
-                            target.src = dest.fallbackImagen;
-                          }
-                        }}
-                        style={{
-                          transform: `translateY(${imgParallaxOffset * -0.4}px) scale(1.06)`,
-                        }}
-                        className="h-full w-full object-cover object-center transition-transform duration-700 ease-out brightness-105 contrast-[1.02]"
-                      />
-                    </div>
-                  ))}
+              {/* Descripción Breve e Inspiradora de 2 Líneas */}
+              <p className="max-w-2xl text-base sm:text-lg text-white/95 leading-relaxed line-clamp-2 drop-shadow">
+                {idioma === "es" ? destActual.fraseEs : destActual.fraseEn}
+              </p>
 
-                  {/* Indicador sutil de invitación a explorar dentro del borde inferior de la ventana */}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 via-black/15 to-transparent flex items-end justify-center pb-4">
-                    <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/95 drop-shadow">
-                      {idioma === "es"
-                        ? "DESLIZA PARA INICIAR EL VIAJE"
-                        : "SCROLL TO BEGIN THE JOURNEY"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Titular Derecha */}
-            <div className="lg:col-span-4 text-center lg:text-right order-3">
-              <div
-                key={`right-${destActual.id}`}
-                className="text-4xl sm:text-5xl xl:text-6xl font-semibold tracking-tight text-white/95 leading-[1.05] transition-all duration-700"
-              >
-                {idioma === "es"
-                  ? destActual.titularDerechaEs
-                  : destActual.titularDerechaEn}
-              </div>
-            </div>
-          </div>
-
-          {/* =================================================================
-              ZONA INFERIOR: 3 PÍLDORAS AMIGABLES (IZQUIERDA) + CTA BLANCO PURO (CENTRO) + CONTROLES (DERECHA)
-          ================================================================== */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 items-end gap-6 pt-4 border-t border-white/10">
-            {/* Abajo a la Izquierda: 3 Píldoras Visuales + Frase Inspiradora de Máximo 2 Líneas */}
-            <div className="lg:col-span-5 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-md border border-white/15">
-                  <Clock className="h-3.5 w-3.5 text-[#DAB485]" />
+              {/* 3 Insignias Claras: Duración, Clima/Nivel y Precio Desde */}
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 px-4 py-2 text-xs sm:text-sm font-semibold text-white">
+                  <Clock className="h-4 w-4 text-[#FBBF24]" />
                   <span>
                     {idioma === "es"
                       ? destActual.duracionEs
                       : destActual.duracionEn}
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-md border border-white/15">
-                  <Compass className="h-3.5 w-3.5 text-[#DAB485]" />
+
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 px-4 py-2 text-xs sm:text-sm font-semibold text-white">
+                  <Sun className="h-4 w-4 text-[#38BDF8]" />
                   <span>
-                    {idioma === "es" ? destActual.nivelEs : destActual.nivelEn}
+                    {idioma === "es"
+                      ? destActual.climaNivelEs
+                      : destActual.climaNivelEn}
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold text-[#DAB485] backdrop-blur-md border border-white/15">
-                  <span>{destActual.precioDesde}</span>
+
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#065F46]/90 backdrop-blur-md border border-[#FBBF24]/50 px-4 py-2 text-xs sm:text-sm font-bold text-[#FBBF24]">
+                  <span>{destActual.precioDesde} COP</span>
                 </span>
               </div>
 
-              <p className="max-w-md text-sm text-white/80 leading-relaxed line-clamp-2">
-                {idioma === "es" ? destActual.fraseEs : destActual.fraseEn}
-              </p>
+              {/* Botón Principal Vibrante Coral/Ámbar (#EA580C) + Botón Secundario Glassmorphism Blanco */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+                <button
+                  type="button"
+                  onClick={manejarReservaHero}
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-[#EA580C] hover:bg-[#D97706] px-7 py-4 text-sm sm:text-base font-bold text-white shadow-[0_14px_34px_rgba(234,88,12,0.42)] transition-all duration-300"
+                >
+                  <span>
+                    {idioma === "es"
+                      ? "Reservar experiencia"
+                      : "Book experience"}
+                  </span>
+                  <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+
+                <Link
+                  href="/baquiano"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/35 backdrop-blur-md px-6 py-4 text-sm sm:text-base font-bold text-white transition-all"
+                >
+                  <Sparkles className="h-4 w-4 text-[#FBBF24]" />
+                  <span>
+                    {idioma === "es"
+                      ? "Consultar a Baquiano IA"
+                      : "Ask Baquiano AI"}
+                  </span>
+                </Link>
+              </div>
             </div>
 
-            {/* Abajo al Centro (Debajo del Portal): Botón Píldora Blanco Puro (#FFFFFF) */}
-            <div className="lg:col-span-4 flex flex-col items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={manejarReservaHero}
-                className="group inline-flex items-center gap-3 rounded-full bg-white pl-6 pr-2.5 py-2.5 text-sm font-semibold text-[#1C1917] shadow-[0_12px_30px_rgba(0,0,0,0.28)] hover:bg-[#F5F2EB] transition-all duration-300"
-              >
+            {/* LADO DERECHO INFERIOR DEL HERO (ESTILO COLOMBIA.TRAVEL):
+                Carrusel Horizontal de 4 Tarjetas Verticales Interactivas */}
+            <div className="lg:col-span-5">
+              <div className="mb-2.5 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-white/90">
                 <span>
-                  {idioma === "es" ? "Reservar experiencia" : "Book experience"}
+                  {idioma === "es"
+                    ? "Explora los 4 paisajes de Santa Marta"
+                    : "Explore Santa Marta's 4 landscapes"}
                 </span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#26211D] text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </button>
-            </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDestinoHeroIndex(
+                        (prev) =>
+                          (prev - 1 + DESTINOS_HERO.length) %
+                          DESTINOS_HERO.length
+                      )
+                    }
+                    className="rounded-full bg-white/15 hover:bg-white/30 border border-white/25 p-1.5 text-white backdrop-blur-md transition-colors"
+                    aria-label="Destino anterior"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDestinoHeroIndex(
+                        (prev) => (prev + 1) % DESTINOS_HERO.length
+                      )
+                    }
+                    className="rounded-full bg-white/15 hover:bg-white/30 border border-white/25 p-1.5 text-white backdrop-blur-md transition-colors"
+                    aria-label="Siguiente destino"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
 
-            {/* Abajo a la Derecha: Enlaces Rápidos y Controles Suaves del Portal */}
-            <div className="lg:col-span-3 flex items-center justify-between lg:justify-end gap-3">
-              <Link
-                href="/baquiano"
-                className="inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 px-4 py-2 text-xs font-medium text-white border border-white/15 backdrop-blur-md transition-colors"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-[#DAB485]" />
-                <span>{idioma === "es" ? "Asistente IA" : "AI Assistant"}</span>
-              </Link>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {DESTINOS_HERO.map((card, idx) => {
+                  const activa = idx === destinoHeroIndex;
+                  return (
+                    <button
+                      key={card.id}
+                      type="button"
+                      onClick={() => setDestinoHeroIndex(idx)}
+                      className={`group relative h-44 sm:h-52 w-full overflow-hidden rounded-2xl text-left transition-all duration-500 ${
+                        activa
+                          ? "ring-2 ring-[#FBBF24] border-2 border-white scale-[1.03] shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
+                          : "border border-white/25 opacity-80 hover:opacity-100 hover:scale-[1.01]"
+                      }`}
+                    >
+                      <img
+                        src={card.imagen}
+                        alt={card.nombreSelectorEs}
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src !== card.fallbackImagen) {
+                            target.src = card.fallbackImagen;
+                          }
+                        }}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDestinoHeroIndex(
-                      (prev) =>
-                        (prev - 1 + DESTINOS_HERO.length) % DESTINOS_HERO.length
-                    )
-                  }
-                  className="rounded-full border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                  aria-label="Destino anterior"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDestinoHeroIndex(
-                      (prev) => (prev + 1) % DESTINOS_HERO.length
-                    )
-                  }
-                  className="rounded-full border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                  aria-label="Siguiente destino"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+                      <div className="absolute top-2.5 left-2.5">
+                        <span
+                          className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+                            activa
+                              ? "bg-[#EA580C] text-white"
+                              : "bg-black/45 text-white/90 backdrop-blur-sm"
+                          }`}
+                        >
+                          {card.id}
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                        <div className="text-xs sm:text-sm font-bold text-white leading-tight drop-shadow">
+                          {idioma === "es"
+                            ? card.nombreSelectorEs
+                            : card.nombreSelectorEn}
+                        </div>
+                        <div className="mt-1 text-[11px] font-semibold text-[#FBBF24]">
+                          {card.precioDesde}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* =====================================================================
-          BARRA RÁPIDA E INTUITIVA DE RESERVA (DESTINO + FECHA + VIAJEROS)
-      ====================================================================== */}
-      <section
-        aria-label="Reserva rápida de experiencia"
-        className="mx-auto max-w-5xl px-4 -mt-6 relative z-20"
-      >
-        <div className="rounded-3xl bg-[#362F29] border border-white/15 p-4 sm:p-5 shadow-2xl backdrop-blur-xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-center">
-            {/* Selector de Destino */}
-            <div className="rounded-2xl bg-[#26211D]/90 px-4 py-2.5 border border-white/10">
-              <label
-                htmlFor="quick-destino"
-                className="block text-[11px] font-medium text-white/60"
-              >
-                {idioma === "es" ? "Destino" : "Destination"}
-              </label>
-              <select
-                id="quick-destino"
-                value={reservaRapidaCodigo}
-                onChange={(e) =>
-                  setReservaRapidaCodigo(Number(e.target.value))
-                }
-                className="mt-0.5 w-full bg-transparent text-sm font-semibold text-white focus:outline-none"
-              >
-                <option value={102} className="bg-[#26211D] text-white">
-                  Parque Tayrona · Cabo San Juan
-                </option>
-                <option value={9} className="bg-[#26211D] text-white">
-                  Ciudad Perdida · Teyuna (4 Días)
-                </option>
-                <option value={103} className="bg-[#26211D] text-white">
-                  Minca · Bosque de Niebla y Café
-                </option>
-                <option value={105} className="bg-[#26211D] text-white">
-                  Río Don Diego &amp; Sierra Nevada
-                </option>
-                <option value={104} className="bg-[#26211D] text-white">
-                  Bahía Concha &amp; Isla Aguja
-                </option>
-              </select>
-            </div>
-
-            {/* Selector de Fecha */}
-            <div className="rounded-2xl bg-[#26211D]/90 px-4 py-2.5 border border-white/10">
-              <label
-                htmlFor="quick-fecha"
-                className="block text-[11px] font-medium text-white/60"
-              >
-                {idioma === "es" ? "Fecha de salida" : "Departure date"}
-              </label>
-              <input
-                id="quick-fecha"
-                type="date"
-                value={reservaRapidaFecha}
-                onChange={(e) => setReservaRapidaFecha(e.target.value)}
-                className="mt-0.5 w-full bg-transparent text-sm font-semibold text-white focus:outline-none"
-              />
-            </div>
-
-            {/* Selector de Viajeros */}
-            <div className="rounded-2xl bg-[#26211D]/90 px-4 py-2.5 border border-white/10">
-              <label
-                htmlFor="quick-viajeros"
-                className="block text-[11px] font-medium text-white/60"
-              >
-                {idioma === "es" ? "Viajeros" : "Travelers"}
-              </label>
-              <div className="mt-0.5 flex items-center gap-2">
-                <Users className="h-4 w-4 text-[#C89D66]" />
-                <select
-                  id="quick-viajeros"
-                  value={reservaRapidaViajeros}
-                  onChange={(e) =>
-                    setReservaRapidaViajeros(Number(e.target.value))
-                  }
-                  className="w-full bg-transparent text-sm font-semibold text-white focus:outline-none"
+          {/* =================================================================
+              BASE DEL HERO: BARRA BUSCADORA / RESERVA RÁPIDA FLOTANTE EN BLANCO (#FFFFFF)
+          ================================================================== */}
+          <div className="mt-8 w-full rounded-3xl bg-white p-4 sm:p-5 text-[#0F172A] shadow-[0_24px_60px_rgba(15,23,42,0.28)] border border-[#0F172A]/10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-center">
+              {/* Destino */}
+              <div className="rounded-2xl bg-[#FAF8F5] px-4 py-2.5 border border-[#0F172A]/10">
+                <label
+                  htmlFor="quick-destino"
+                  className="block text-[11px] font-bold uppercase tracking-wider text-[#065F46]"
                 >
-                  {[1, 2, 3, 4, 5, 6, 8].map((n) => (
-                    <option key={n} value={n} className="bg-[#26211D] text-white">
-                      {n} {n === 1 ? "viajero" : "viajeros"}
-                    </option>
-                  ))}
+                  {idioma === "es" ? "Destino a explorar" : "Destination"}
+                </label>
+                <select
+                  id="quick-destino"
+                  value={reservaRapidaCodigo}
+                  onChange={(e) =>
+                    setReservaRapidaCodigo(Number(e.target.value))
+                  }
+                  className="mt-0.5 w-full bg-transparent text-sm font-bold text-[#0F172A] focus:outline-none"
+                >
+                  <option value={102}>Parque Tayrona · Cabo San Juan</option>
+                  <option value={9}>Ciudad Perdida · Teyuna (4 Días)</option>
+                  <option value={103}>Minca · Bosque de Niebla y Café</option>
+                  <option value={105}>Río Don Diego &amp; Sierra Nevada</option>
+                  <option value={104}>Bahía Concha &amp; Isla Aguja</option>
                 </select>
               </div>
-            </div>
 
-            {/* Botón Directo de Reserva */}
-            <button
-              type="button"
-              onClick={manejarReservaRapida}
-              className="h-full min-h-[3.25rem] w-full rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-[#1C1917] shadow-md hover:bg-[#F5F2EB] transition-all flex items-center justify-center gap-2"
-            >
-              <span>
-                {idioma === "es" ? "Iniciar reserva" : "Start booking"}
-              </span>
-              <ArrowUpRight className="h-4 w-4" />
-            </button>
+              {/* Fecha */}
+              <div className="rounded-2xl bg-[#FAF8F5] px-4 py-2.5 border border-[#0F172A]/10">
+                <label
+                  htmlFor="quick-fecha"
+                  className="block text-[11px] font-bold uppercase tracking-wider text-[#065F46]"
+                >
+                  {idioma === "es" ? "Fecha de salida" : "Departure date"}
+                </label>
+                <input
+                  id="quick-fecha"
+                  type="date"
+                  value={reservaRapidaFecha}
+                  onChange={(e) => setReservaRapidaFecha(e.target.value)}
+                  className="mt-0.5 w-full bg-transparent text-sm font-bold text-[#0F172A] focus:outline-none"
+                />
+              </div>
+
+              {/* Viajeros */}
+              <div className="rounded-2xl bg-[#FAF8F5] px-4 py-2.5 border border-[#0F172A]/10">
+                <label
+                  htmlFor="quick-viajeros"
+                  className="block text-[11px] font-bold uppercase tracking-wider text-[#065F46]"
+                >
+                  {idioma === "es" ? "Número de viajeros" : "Travelers"}
+                </label>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <Users className="h-4 w-4 text-[#0D9488]" />
+                  <select
+                    id="quick-viajeros"
+                    value={reservaRapidaViajeros}
+                    onChange={(e) =>
+                      setReservaRapidaViajeros(Number(e.target.value))
+                    }
+                    className="w-full bg-transparent text-sm font-bold text-[#0F172A] focus:outline-none"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 8].map((n) => (
+                      <option key={n} value={n}>
+                        {n} {n === 1 ? "viajero" : "viajeros"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Acción 1 Clic */}
+              <button
+                type="button"
+                onClick={manejarReservaRapida}
+                className="h-full min-h-[3.5rem] w-full rounded-2xl bg-[#EA580C] hover:bg-[#D97706] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#EA580C]/25 transition-all flex items-center justify-center gap-2"
+              >
+                <span>
+                  {idioma === "es"
+                    ? "Reservar en 1 clic"
+                    : "Book in 1 click"}
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* =====================================================================
-          SECCIÓN 2: SUPERFICIE LUMINOSA EN ARENA ALABASTRO (#F5F2EB) Y TEXTO CARBÓN (#1C1917)
-          Mapa Interactivo Simplificado + Fotografías Luminosas + Accesos Directos
+          SECCIÓN 2: TARJETAS EDITORIALES ESTILO REVISTA DE VIAJES (FONDO #FAF8F5)
+          Fotografías Reales Verificadas de Santa Marta, Precio Transparente y Reserva Directa
       ====================================================================== */}
-      <div className="mt-12 rounded-t-[3rem] bg-[#F5F2EB] text-[#1C1917] py-14 sm:py-20">
-        <section
-          id="cartografia"
-          aria-label="Mapa de Experiencias entre el Mar Caribe y la Sierra Nevada"
-          className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8"
-        >
-          {/* Cabecera Limpia con Alto Aire Visual */}
+      <section
+        aria-label="Colección Editorial de Destinos en Santa Marta"
+        className="mx-auto max-w-[1440px] px-4 py-16 sm:px-8 sm:py-20"
+      >
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#065F46]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#065F46]">
+              <Compass className="h-3.5 w-3.5" />
+              <span>
+                {idioma === "es"
+                  ? "Revista de Destinos · Caribe & Sierra Nevada"
+                  : "Destination Magazine · Caribbean & Sierra Nevada"}
+              </span>
+            </span>
+            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A]">
+              {idioma === "es"
+                ? "Experiencias reales entre el mar y las cumbres"
+                : "Authentic experiences between sea and summits"}
+            </h2>
+          </div>
+
+          <Link
+            href="/expediciones"
+            className="inline-flex items-center gap-2 rounded-full bg-[#065F46] hover:bg-[#0D9488] px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-sm transition-colors self-start md:self-auto"
+          >
+            <span>
+              {idioma === "es"
+                ? "Ver catálogo completo de expediciones"
+                : "View full expedition catalog"}
+            </span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {DESTINOS_HERO.map((dest) => {
+            const actAsociada =
+              actividades.find(
+                (a) => a.codigoServicio === dest.codigoServicio
+              ) || actividades[0];
+
+            return (
+              <article
+                key={`mag-${dest.id}`}
+                className="group flex flex-col justify-between overflow-hidden rounded-3xl bg-white border border-[#0F172A]/10 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)] transition-all duration-300"
+              >
+                <div>
+                  {/* Fotografía Real Verificada de Alta Luminosidad */}
+                  <div className="relative h-64 w-full overflow-hidden bg-[#F3EFE6]">
+                    <img
+                      src={dest.imagen}
+                      alt={dest.tituloEditorialEs}
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (target.src !== dest.fallbackImagen) {
+                          target.src = dest.fallbackImagen;
+                        }
+                      }}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 left-3 rounded-full bg-white/95 px-3.5 py-1 text-xs font-bold text-[#065F46] shadow-sm">
+                      {idioma === "es" ? dest.duracionEs : dest.duracionEn}
+                    </div>
+                    <div className="absolute bottom-3 right-3 rounded-full bg-[#0F172A]/85 px-3.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                      {idioma === "es" ? dest.climaNivelEs : dest.climaNivelEn}
+                    </div>
+                  </div>
+
+                  {/* Contenido Editorial */}
+                  <div className="p-6">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#0D9488]">
+                      {idioma === "es"
+                        ? dest.ubicacionAltitudEs
+                        : dest.ubicacionAltitudEn}
+                    </div>
+                    <h3 className="mt-1.5 text-2xl font-extrabold tracking-tight text-[#0F172A] group-hover:text-[#065F46] transition-colors">
+                      {idioma === "es"
+                        ? dest.tituloEditorialEs
+                        : dest.tituloEditorialEn}
+                    </h3>
+                    <p className="mt-2.5 text-sm text-[#0F172A]/75 leading-relaxed line-clamp-3">
+                      {idioma === "es" ? dest.fraseEs : dest.fraseEn}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pie de Tarjeta con Precio Transparente y Reserva Directa */}
+                <div className="px-6 pb-6 pt-4 border-t border-[#0F172A]/10 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#0F172A]/55">
+                      {idioma === "es" ? "Tarifa oficial" : "Official rate"}
+                    </span>
+                    <span className="text-lg font-extrabold text-[#065F46]">
+                      {dest.precioDesde}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (actAsociada) abrirDrawerExpedicion(actAsociada);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[#EA580C] hover:bg-[#D97706] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors"
+                  >
+                    <span>{idioma === "es" ? "Reservar" : "Book"}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* =====================================================================
+          SECCIÓN 3: MAPA INTERACTIVO DE LA REGIÓN EN ARENA SUAVE (#F3EFE6)
+          Rutas en Verde Esmeralda (#065F46 / #0D9488) y Azul Turquesa Caribe (#0284C7)
+      ====================================================================== */}
+      <section
+        id="cartografia"
+        aria-label="Mapa Interactivo de Santa Marta y la Sierra Nevada"
+        className="w-full bg-[#F3EFE6] py-16 sm:py-20 border-y border-[#0F172A]/10"
+      >
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8C6239]">
-                {idioma === "es"
-                  ? "Del Caribe a las cumbres"
-                  : "From the Caribbean to the peaks"}
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#0284C7]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#0284C7]">
+                <MapPin className="h-3.5 w-3.5" />
+                <span>
+                  {idioma === "es"
+                    ? "Geografía Viva en 3 Segundos"
+                    : "Interactive Regional Map"}
+                </span>
               </span>
-              <h2 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#1C1917]">
+              <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A]">
                 {idioma === "es"
-                  ? "Elige tu próximo paisaje"
-                  : "Choose your next landscape"}
+                  ? "Del Arrecife Coralino a las Cumbres Nevadas"
+                  : "From Coral Reefs to Snowcapped Summits"}
               </h2>
             </div>
 
@@ -1487,10 +1568,10 @@ export default function TyronaWildsCommercialStorefront() {
                         if (primero) setNodoActivoId(primero.id);
                       }
                     }}
-                    className={`rounded-full px-4 py-2 text-xs font-medium transition-all ${
+                    className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
                       activo
-                        ? "bg-[#26211D] text-white shadow-sm"
-                        : "bg-white text-[#1C1917]/75 hover:bg-[#26211D]/10 border border-[#1C1917]/10"
+                        ? "bg-[#065F46] text-white shadow-sm"
+                        : "bg-white text-[#0F172A]/80 hover:bg-[#065F46]/10 border border-[#0F172A]/10"
                     }`}
                   >
                     {idioma === "es" ? opc.labelEs : opc.labelEn}
@@ -1500,22 +1581,28 @@ export default function TyronaWildsCommercialStorefront() {
             </div>
           </div>
 
-          {/* Grilla Principal: Mapa Orgánico Cálido (Izquierda) + Tarjeta Visual del Destino (Derecha) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            {/* Mapa Interactivo en Tonos Piedra Cálida */}
-            <div className="lg:col-span-7 flex flex-col justify-between overflow-hidden rounded-[2rem] bg-[#362F29] p-5 sm:p-7 text-white shadow-xl">
-              <div className="flex items-center justify-between text-xs text-white/75 pb-4 border-b border-white/10">
-                <span className="font-medium">
+            {/* Mapa Luminoso en Arena Suave y Turquesa Caribe */}
+            <div className="lg:col-span-7 flex flex-col justify-between overflow-hidden rounded-3xl bg-white p-5 sm:p-7 text-[#0F172A] shadow-lg border border-[#0F172A]/10">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#0F172A]/75 pb-4 border-b border-[#0F172A]/10">
+                <span>
                   {idioma === "es"
-                    ? "Haz clic en un punto del mapa para ver la experiencia"
-                    : "Click any point on the map to preview the experience"}
+                    ? "Selecciona cualquier destino en el mapa para explorar sus detalles"
+                    : "Select any destination on the map to explore its details"}
                 </span>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] text-[#DAB485]">
-                  Santa Marta &amp; Sierra Nevada
-                </span>
+                <div className="flex items-center gap-3 text-[11px]">
+                  <span className="inline-flex items-center gap-1.5 text-[#0284C7] font-bold">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#0284C7]" />
+                    Costa Caribe
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[#065F46] font-bold">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#065F46]" />
+                    Bosque y Sierra
+                  </span>
+                </div>
               </div>
 
-              <div className="relative my-4 w-full aspect-[16/10]">
+              <div className="relative my-4 w-full aspect-[16/10] overflow-hidden rounded-2xl bg-[#FAF8F5] border border-[#0F172A]/10">
                 <svg
                   viewBox="0 0 1000 620"
                   className="w-full h-full select-none"
@@ -1523,34 +1610,34 @@ export default function TyronaWildsCommercialStorefront() {
                 >
                   <defs>
                     <linearGradient
-                      id="warmSeaGradient"
+                      id="caribeBrightSea"
                       x1="0%"
                       y1="0%"
-                      x2="100%"
+                      x2="0%"
                       y2="100%"
                     >
-                      <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.32" />
-                      <stop offset="70%" stopColor="#0284C7" stopOpacity="0.18" />
-                      <stop offset="100%" stopColor="#362F29" stopOpacity="0.05" />
+                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.28" />
+                      <stop offset="80%" stopColor="#38BDF8" stopOpacity="0.14" />
+                      <stop offset="100%" stopColor="#FAF8F5" stopOpacity="0.0" />
                     </linearGradient>
                     <radialGradient
-                      id="warmSierraRelief"
-                      cx="65%"
-                      cy="75%"
-                      r="65%"
+                      id="sierraEmeraldRelief"
+                      cx="60%"
+                      cy="70%"
+                      r="60%"
                     >
-                      <stop offset="0%" stopColor="#C89D66" stopOpacity="0.28" />
-                      <stop offset="55%" stopColor="#26211D" stopOpacity="0.65" />
-                      <stop offset="100%" stopColor="#362F29" stopOpacity="0.95" />
+                      <stop offset="0%" stopColor="#065F46" stopOpacity="0.18" />
+                      <stop offset="55%" stopColor="#0D9488" stopOpacity="0.09" />
+                      <stop offset="100%" stopColor="#F3EFE6" stopOpacity="0.4" />
                     </radialGradient>
                   </defs>
 
                   <style>{`
-                    @keyframes softTrail {
+                    @keyframes emeraldFlow {
                       to { stroke-dashoffset: -100; }
                     }
-                    .warm-trail {
-                      animation: softTrail 18s linear infinite;
+                    .emerald-route {
+                      animation: emeraldFlow 16s linear infinite;
                     }
                   `}</style>
 
@@ -1559,89 +1646,95 @@ export default function TyronaWildsCommercialStorefront() {
                     y="0"
                     width="1000"
                     height="620"
-                    rx="24"
-                    fill="url(#warmSierraRelief)"
+                    fill="url(#sierraEmeraldRelief)"
                   />
 
                   {/* Mar Caribe */}
                   <path
-                    d="M 0,0 L 1000,0 L 1000,165 Q 820,140 680,152 T 420,132 T 150,175 L 0,175 Z"
-                    fill="url(#warmSeaGradient)"
+                    d="M 0,0 L 1000,0 L 1000,170 Q 820,140 680,155 T 420,135 T 150,180 L 0,180 Z"
+                    fill="url(#caribeBrightSea)"
                   />
                   <text
-                    x="60"
+                    x="55"
                     y="75"
-                    fill="#BAE6FD"
-                    fillOpacity="0.7"
-                    fontSize="13"
-                    fontWeight="500"
+                    fill="#0284C7"
+                    fontSize="14"
+                    fontWeight="800"
                     letterSpacing="3"
                   >
-                    MAR CARIBE
+                    MAR CARIBE · SANTA MARTA
                   </text>
 
-                  {/* Curvas de nivel orgánicas suaves */}
+                  {/* Curvas de Nivel Topográficas Claras */}
                   <path
-                    d="M 0,175 Q 150,175 320,140 Q 500,120 680,150 T 850,155 T 1000,160"
+                    d="M 0,180 Q 150,180 320,142 Q 500,122 680,155 T 850,158 T 1000,165"
                     fill="none"
-                    stroke="#7DD3FC"
-                    strokeWidth="2"
+                    stroke="#0284C7"
+                    strokeWidth="2.5"
                     strokeOpacity="0.65"
                   />
                   <path
                     d="M 80,285 Q 260,250 440,240 Q 640,225 800,265 T 950,285"
                     fill="none"
-                    stroke="#F5F2EB"
-                    strokeWidth="1.2"
-                    strokeOpacity="0.25"
-                  />
-                  <path
-                    d="M 140,350 Q 300,310 500,300 Q 700,295 860,360"
-                    fill="none"
-                    stroke="#F5F2EB"
+                    stroke="#0D9488"
                     strokeWidth="1.5"
                     strokeOpacity="0.35"
                   />
                   <path
+                    d="M 140,355 Q 300,310 500,300 Q 700,295 860,360"
+                    fill="none"
+                    stroke="#065F46"
+                    strokeWidth="1.8"
+                    strokeOpacity="0.4"
+                  />
+                  <path
                     d="M 290,490 Q 430,440 590,435 Q 710,450 780,495"
                     fill="none"
-                    stroke="#DAB485"
-                    strokeWidth="1.8"
+                    stroke="#065F46"
+                    strokeWidth="2"
                     strokeOpacity="0.55"
+                    strokeDasharray="6 4"
                   />
 
-                  {/* Rutas suaves conectadas */}
+                  {/* Rutas Conectadas en Turquesa (#0284C7), Esmeralda (#065F46) y Coral (#EA580C) */}
                   <path
-                    d="M 160,200 Q 230,170 320,140 Q 550,135 780,160"
+                    d="M 160,200 Q 230,170 300,145 Q 550,135 750,165"
                     fill="none"
-                    stroke="#7DD3FC"
-                    strokeWidth="2"
-                    strokeDasharray="7 6"
-                    className="warm-trail"
+                    stroke="#0284C7"
+                    strokeWidth="3"
+                    strokeDasharray="8 6"
+                    className="emerald-route"
                   />
                   <path
-                    d="M 160,200 Q 210,270 290,320 Q 440,335 620,360"
+                    d="M 160,200 Q 210,270 280,310 Q 440,335 600,345"
                     fill="none"
-                    stroke="#6EE7B7"
-                    strokeWidth="2"
-                    strokeDasharray="7 6"
-                    className="warm-trail"
+                    stroke="#0D9488"
+                    strokeWidth="3"
+                    strokeDasharray="8 6"
+                    className="emerald-route"
                   />
                   <path
-                    d="M 290,320 Q 360,420 430,470 Q 560,510 710,535"
+                    d="M 280,310 Q 360,410 450,465 Q 580,505 710,535"
                     fill="none"
-                    stroke="#DAB485"
-                    strokeWidth="2.2"
-                    strokeDasharray="7 6"
-                    className="warm-trail"
+                    stroke="#065F46"
+                    strokeWidth="3"
+                    strokeDasharray="8 6"
+                    className="emerald-route"
                   />
 
-                  {/* Nodos Interactivos */}
+                  {/* Nodos Interactivos del Mapa */}
                   {NODOS_TOPOGRAFICOS.map((nodo) => {
                     const esActivo = nodoActivoId === nodo.id;
                     const visible =
                       pisoSeleccionado === "TODOS" ||
                       nodo.pisoTermico === pisoSeleccionado;
+
+                    const colorNodo =
+                      nodo.pisoTermico === "LITORAL"
+                        ? "#0284C7"
+                        : nodo.pisoTermico === "SELVA_HUMEDA"
+                        ? "#0D9488"
+                        : "#065F46";
 
                     return (
                       <g
@@ -1653,42 +1746,43 @@ export default function TyronaWildsCommercialStorefront() {
                       >
                         {esActivo && (
                           <circle
-                            r="22"
-                            fill="#DAB485"
-                            fillOpacity="0.28"
+                            r="24"
+                            fill="#EA580C"
+                            fillOpacity="0.25"
                             className="animate-ping"
                           />
                         )}
                         <circle
-                          r={esActivo ? 13 : 9}
-                          fill={esActivo ? "#FFFFFF" : "#26211D"}
-                          stroke="#DAB485"
-                          strokeWidth={esActivo ? 3 : 2}
+                          r={esActivo ? 14 : 10}
+                          fill={esActivo ? "#EA580C" : "#FFFFFF"}
+                          stroke={esActivo ? "#FFFFFF" : colorNodo}
+                          strokeWidth="3"
                         />
                         <circle
-                          r={esActivo ? 5 : 3.5}
-                          fill={esActivo ? "#26211D" : "#DAB485"}
+                          r={esActivo ? 5 : 4}
+                          fill={esActivo ? "#FFFFFF" : colorNodo}
                         />
                         <g
                           transform={`translate(${
-                            nodo.svgPos.x > 600 ? -135 : 18
-                          }, -12)`}
+                            nodo.svgPos.x > 580 ? -145 : 18
+                          }, -14)`}
                         >
                           <rect
                             x="0"
                             y="0"
-                            width="126"
-                            height="26"
-                            rx="13"
-                            fill={esActivo ? "#FFFFFF" : "#26211D"}
-                            fillOpacity={esActivo ? "0.98" : "0.85"}
+                            width="136"
+                            height="28"
+                            rx="14"
+                            fill={esActivo ? "#065F46" : "#FFFFFF"}
+                            stroke={esActivo ? "#065F46" : "#CBD5E1"}
+                            strokeWidth="1.5"
                           />
                           <text
                             x="12"
-                            y="17"
-                            fill={esActivo ? "#1C1917" : "#F5F2EB"}
+                            y="18"
+                            fill={esActivo ? "#FFFFFF" : "#0F172A"}
                             fontSize="11"
-                            fontWeight={esActivo ? "700" : "500"}
+                            fontWeight="700"
                           >
                             {nodo.nombre.split("·")[0].trim()}
                           </text>
@@ -1699,17 +1793,17 @@ export default function TyronaWildsCommercialStorefront() {
                 </svg>
               </div>
 
-              {/* Botones rápidos de selección debajo del mapa */}
-              <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/10">
+              {/* Píldoras Rápidas de Nodos */}
+              <div className="flex flex-wrap items-center gap-2 pt-3">
                 {NODOS_TOPOGRAFICOS.map((n) => (
                   <button
                     key={n.id}
                     type="button"
                     onClick={() => setNodoActivoId(n.id)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
                       nodoActivoId === n.id
-                        ? "bg-white text-[#1C1917] font-semibold"
-                        : "bg-white/10 text-white/80 hover:bg-white/20"
+                        ? "bg-[#EA580C] text-white shadow-sm"
+                        : "bg-[#F3EFE6] text-[#0F172A]/80 hover:bg-[#065F46]/15"
                     }`}
                   >
                     {n.nombre.split("·")[0].trim()}
@@ -1718,11 +1812,10 @@ export default function TyronaWildsCommercialStorefront() {
               </div>
             </div>
 
-            {/* Tarjeta Luminosa del Destino Seleccionado con Fotografía Natural (Sin overlays negros) */}
-            <div className="lg:col-span-5 flex flex-col justify-between overflow-hidden rounded-[2rem] bg-white p-6 sm:p-7 text-[#1C1917] shadow-xl border border-[#1C1917]/8">
+            {/* Panel Derecho del Mapa: Fotografía Luminosa y Reserva Directa */}
+            <div className="lg:col-span-5 flex flex-col justify-between overflow-hidden rounded-3xl bg-white p-6 sm:p-7 text-[#0F172A] shadow-lg border border-[#0F172A]/10">
               <div>
-                {/* Fotografía Real Luminosa */}
-                <div className="relative h-56 sm:h-64 w-full overflow-hidden rounded-2xl bg-[#E6E0D5]">
+                <div className="relative h-60 sm:h-64 w-full overflow-hidden rounded-2xl bg-[#F3EFE6]">
                   <img
                     src={nodoActivo.imagen}
                     alt={nodoActivo.nombre}
@@ -1734,57 +1827,54 @@ export default function TyronaWildsCommercialStorefront() {
                     }}
                     className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute top-3 left-3 rounded-full bg-white/90 px-3.5 py-1 text-xs font-semibold text-[#1C1917] backdrop-blur-md shadow-sm">
+                  <div className="absolute top-3 left-3 rounded-full bg-white/95 px-3.5 py-1 text-xs font-bold text-[#065F46] shadow-sm">
                     {idioma === "es"
                       ? nodoActivo.pisoLabelEs
                       : nodoActivo.pisoLabelEn}
                   </div>
-                  <div className="absolute top-3 right-3 rounded-full bg-[#26211D]/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
-                    {nodoActivo.tempCelsius}°C
+                  <div className="absolute top-3 right-3 rounded-full bg-[#0284C7] px-3 py-1 text-xs font-bold text-white shadow-sm">
+                    {nodoActivo.tempCelsius}°C · {nodoActivo.altitudMsnm} msnm
                   </div>
                 </div>
 
-                {/* Título y Descripción Breve */}
                 <div className="mt-5">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-[#8C6239]">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[#0D9488]">
                     {nodoActivo.region}
                   </div>
-                  <h3 className="mt-1 text-2xl sm:text-3xl font-semibold tracking-tight text-[#1C1917]">
+                  <h3 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                     {nodoActivo.nombre}
                   </h3>
-                  <p className="mt-2 text-sm text-[#1C1917]/75 leading-relaxed">
+                  <p className="mt-2 text-sm text-[#0F172A]/75 leading-relaxed">
                     {idioma === "es"
                       ? nodoActivo.descripcionEs
                       : nodoActivo.descripcionEn}
                   </p>
                 </div>
 
-                {/* 3 Píldoras Visuales Claras */}
                 <div className="mt-5 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#F5F2EB] px-3.5 py-1.5 text-xs font-medium text-[#1C1917]">
+                  <span className="rounded-full bg-[#F3EFE6] px-3.5 py-1.5 text-xs font-bold text-[#0F172A]">
                     {idioma === "es"
                       ? nodoActivo.duracionEs
                       : nodoActivo.duracionEn}
                   </span>
-                  <span className="rounded-full bg-[#F5F2EB] px-3.5 py-1.5 text-xs font-medium text-[#1C1917]">
+                  <span className="rounded-full bg-[#F3EFE6] px-3.5 py-1.5 text-xs font-bold text-[#0F172A]">
                     {idioma === "es" ? nodoActivo.nivelEs : nodoActivo.nivelEn}
                   </span>
-                  <span className="rounded-full bg-[#F5F2EB] px-3.5 py-1.5 text-xs font-semibold text-[#8C6239]">
-                    {nodoActivo.precioDesde}
+                  <span className="rounded-full bg-[#065F46]/10 px-3.5 py-1.5 text-xs font-extrabold text-[#065F46]">
+                    {idioma === "es" ? "Desde" : "From"} {nodoActivo.precioDesde}
                   </span>
-                  <span className="rounded-full bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-800">
+                  <span className="rounded-full bg-emerald-100 px-3.5 py-1.5 text-xs font-bold text-[#065F46]">
                     {nodoActivo.cuposDisponibles}{" "}
-                    {idioma === "es" ? "cupos hoy" : "spots today"}
+                    {idioma === "es" ? "cupos disponibles" : "spots available"}
                   </span>
                 </div>
               </div>
 
-              {/* Botón de Reserva y Enlace al Catálogo */}
-              <div className="mt-6 pt-5 border-t border-[#1C1917]/10 flex flex-wrap items-center gap-3">
+              <div className="mt-6 pt-5 border-t border-[#0F172A]/10 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => manejarReservaNodo(nodoActivo)}
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#26211D] px-6 py-3.5 text-sm font-semibold text-white hover:bg-[#362F29] transition-all shadow-md"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#EA580C] hover:bg-[#D97706] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all"
                 >
                   <span>
                     {idioma === "es"
@@ -1796,7 +1886,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                 <Link
                   href="/expediciones"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#1C1917]/15 bg-[#F5F2EB] px-4 py-3.5 text-xs font-semibold text-[#1C1917] hover:bg-[#E6E0D5] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#0F172A]/15 bg-[#FAF8F5] px-4 py-3.5 text-xs font-bold text-[#0F172A] hover:bg-[#F3EFE6] transition-colors"
                 >
                   <span>{idioma === "es" ? "Ver todos" : "See all"}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -1804,98 +1894,92 @@ export default function TyronaWildsCommercialStorefront() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ===================================================================
-            SECCIÓN 3: 3 TARJETAS SIMPLIFICADAS DE ACCESO RÁPIDO
-        ==================================================================== */}
-        <section
-          aria-label="Explora más de TyronaWilds"
-          className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8 mt-14"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link
-              href="/expediciones"
-              className="group flex flex-col justify-between rounded-[2rem] bg-white p-7 shadow-md border border-[#1C1917]/8 hover:shadow-xl transition-all"
-            >
-              <div>
-                <span className="inline-block rounded-full bg-[#F5F2EB] px-3 py-1 text-xs font-semibold text-[#8C6239]">
-                  {idioma === "es" ? "Catálogo Completo" : "Full Catalog"}
-                </span>
-                <h3 className="mt-4 text-2xl font-semibold text-[#1C1917] group-hover:text-[#8C6239] transition-colors">
-                  {idioma === "es"
-                    ? "Destinos y Experiencias"
-                    : "Destinations & Experiences"}
-                </h3>
-                <p className="mt-2 text-sm text-[#1C1917]/70 leading-relaxed">
-                  {idioma === "es"
-                    ? "Explora nuestras travesías guiadas por el Parque Tayrona, Ciudad Perdida, Minca y arrecifes del Caribe."
-                    : "Explore our guided journeys through Tayrona Park, Lost City, Minca, and Caribbean coral reefs."}
-                </p>
-              </div>
-              <div className="mt-6 flex items-center justify-between text-xs font-semibold text-[#1C1917]">
+      {/* =====================================================================
+          SECCIÓN 4: BLOQUE VISUAL DE ACCESO DIRECTO A BAQUIANO AI Y PULSO DEL TERRITORIO
+      ====================================================================== */}
+      <section
+        aria-label="Herramientas Inteligentes para Viajeros"
+        className="mx-auto max-w-[1440px] px-4 py-16 sm:px-8 sm:py-20"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Bloque 1: Baquiano AI */}
+          <div className="relative overflow-hidden rounded-3xl bg-[#065F46] p-8 sm:p-10 text-white shadow-xl flex flex-col justify-between">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#FBBF24]">
+                <Sparkles className="h-3.5 w-3.5" />
                 <span>
-                  {idioma === "es" ? "Ver destinos" : "Explore destinations"}
-                </span>
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </Link>
-
-            <Link
-              href="/baquiano"
-              className="group flex flex-col justify-between rounded-[2rem] bg-white p-7 shadow-md border border-[#1C1917]/8 hover:shadow-xl transition-all"
-            >
-              <div>
-                <span className="inline-block rounded-full bg-[#F5F2EB] px-3 py-1 text-xs font-semibold text-[#8C6239]">
-                  {idioma === "es" ? "Recomendación Personal" : "Personal Match"}
-                </span>
-                <h3 className="mt-4 text-2xl font-semibold text-[#1C1917] group-hover:text-[#8C6239] transition-colors">
                   {idioma === "es"
-                    ? "Asistente Baquiano IA"
-                    : "Baquiano AI Assistant"}
-                </h3>
-                <p className="mt-2 text-sm text-[#1C1917]/70 leading-relaxed">
-                  {idioma === "es"
-                    ? "Cuéntanos tu ritmo de viaje y presupuesto para descubrir la ruta ideal para ti y tus acompañantes."
-                    : "Share your travel pace and budget to discover the ideal route for you and your companions."}
-                </p>
-              </div>
-              <div className="mt-6 flex items-center justify-between text-xs font-semibold text-[#1C1917]">
+                    ? "Concierge Inteligente de Viaje"
+                    : "Intelligent Travel Concierge"}
+                </span>
+              </span>
+              <h3 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                {idioma === "es"
+                  ? "¿No sabes qué ruta elegir? Pregúntale a Baquiano IA"
+                  : "Not sure which trail to pick? Ask Baquiano AI"}
+              </h3>
+              <p className="mt-3 max-w-xl text-sm sm:text-base text-white/85 leading-relaxed">
+                {idioma === "es"
+                  ? "Nuestro recomendador analiza el clima del día, el nivel de caminata que prefieres y tu presupuesto para sugerirte la mejor experiencia en Santa Marta."
+                  : "Our recommender analyzes today's weather, your preferred hiking pace, and your budget to suggest the ideal experience in Santa Marta."}
+              </p>
+            </div>
+            <div className="mt-8">
+              <Link
+                href="/baquiano"
+                className="inline-flex items-center gap-2.5 rounded-full bg-[#EA580C] hover:bg-[#D97706] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all"
+              >
                 <span>
-                  {idioma === "es" ? "Hablar con el asistente" : "Ask assistant"}
-                </span>
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </Link>
-
-            <Link
-              href="/pulso"
-              className="group flex flex-col justify-between rounded-[2rem] bg-white p-7 shadow-md border border-[#1C1917]/8 hover:shadow-xl transition-all"
-            >
-              <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-                  <span className="h-2 w-2 rounded-full bg-emerald-600" />
-                  <span>{idioma === "es" ? "En tiempo real" : "Live Status"}</span>
-                </span>
-                <h3 className="mt-4 text-2xl font-semibold text-[#1C1917] group-hover:text-emerald-800 transition-colors">
-                  {idioma === "es" ? "Estado del Parque" : "Park Status"}
-                </h3>
-                <p className="mt-2 text-sm text-[#1C1917]/70 leading-relaxed">
                   {idioma === "es"
-                    ? "Consulta el clima actual en Santa Marta, cupos disponibles hoy y recomendaciones para tu visita."
-                    : "Check current weather in Santa Marta, available spots today, and tips for your visit."}
-                </p>
-              </div>
-              <div className="mt-6 flex items-center justify-between text-xs font-semibold text-emerald-800">
-                <span>
-                  {idioma === "es" ? "Ver estado hoy" : "View status today"}
+                    ? "Personalizar mi viaje con IA"
+                    : "Customize my trip with AI"}
                 </span>
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </div>
-            </Link>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
-        </section>
-      </div>
+
+          {/* Bloque 2: Pulso del Territorio */}
+          <div className="relative overflow-hidden rounded-3xl bg-[#0284C7] p-8 sm:p-10 text-white shadow-xl flex flex-col justify-between">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                <Radio className="h-3.5 w-3.5 animate-pulse text-[#FBBF24]" />
+                <span>
+                  {idioma === "es"
+                    ? "Estado Ambiental en Vivo"
+                    : "Live Environmental Status"}
+                </span>
+              </span>
+              <h3 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                {idioma === "es"
+                  ? "Pulso del Territorio: Clima, Oleaje y Cupos Hoy"
+                  : "Territory Pulse: Weather, Surf & Daily Quotas"}
+              </h3>
+              <p className="mt-3 max-w-xl text-sm sm:text-base text-white/90 leading-relaxed">
+                {idioma === "es"
+                  ? "Consulta en tiempo real el estado de los senderos del Parque Tayrona, las condiciones marítimas del Caribe y las rutas más tranquilas del día."
+                  : "Check real-time trail conditions in Tayrona Park, Caribbean maritime alerts, and the quietest trails of the day."}
+              </p>
+            </div>
+            <div className="mt-8">
+              <Link
+                href="/pulso"
+                className="inline-flex items-center gap-2.5 rounded-full bg-white hover:bg-[#FAF8F5] px-6 py-3.5 text-sm font-bold text-[#0F172A] shadow-lg transition-all"
+              >
+                <span>
+                  {idioma === "es"
+                    ? "Consultar estado del parque"
+                    : "Check park status"}
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* =====================================================================
           DRAWER / MODAL DE PRODUCTO COMPLETO (GALERÍA, FICHA TÉCNICA Y CHECKOUT)
@@ -1905,22 +1989,22 @@ export default function TyronaWildsCommercialStorefront() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="titulo-drawer-expedicion"
-          className="fixed inset-0 z-50 flex justify-end bg-[#26211D]/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex justify-end bg-[#0F172A]/60 backdrop-blur-sm"
           onClick={() => setActividadSeleccionada(null)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative h-full w-full max-w-4xl overflow-y-auto border-l border-white/15 bg-[#26211D] p-4 sm:p-6 md:p-10 shadow-2xl"
+            className="relative h-full w-full max-w-4xl overflow-y-auto border-l border-[#0F172A]/15 bg-[#FAF8F5] text-[#0F172A] p-4 sm:p-6 md:p-10 shadow-2xl"
           >
             {/* Barra Superior del Drawer */}
-            <div className="flex items-start justify-between gap-4 border-b border-white/15 pb-5">
+            <div className="flex items-start justify-between gap-4 border-b border-[#0F172A]/15 pb-5">
               <div>
-                <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#DAB485]">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#065F46]">
                   <span>{actividadSeleccionada.ubicacion}</span>
                 </div>
                 <h2
                   id="titulo-drawer-expedicion"
-                  className="mt-1 font-display text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight text-white"
+                  className="mt-1 font-display text-2xl sm:text-3xl md:text-4xl font-extrabold leading-tight text-[#0F172A]"
                 >
                   {idioma === "es"
                     ? actividadSeleccionada.nombreEs
@@ -1931,7 +2015,7 @@ export default function TyronaWildsCommercialStorefront() {
               <button
                 type="button"
                 onClick={() => setActividadSeleccionada(null)}
-                className="shrink-0 rounded-full border border-white/25 px-4 py-2 text-xs font-semibold text-white hover:bg-white/10 transition-colors"
+                className="shrink-0 rounded-full border border-[#0F172A]/20 bg-white px-4 py-2 text-xs font-bold text-[#0F172A] hover:bg-[#F3EFE6] transition-colors"
               >
                 {idioma === "es" ? "Cerrar" : "Close"}
               </button>
@@ -1939,7 +2023,7 @@ export default function TyronaWildsCommercialStorefront() {
 
             {/* Galería Visual Interactiva Luminosa */}
             <div className="mt-6">
-              <div className="relative h-60 sm:h-72 md:h-96 w-full overflow-hidden rounded-2xl border border-white/15 bg-[#362F29]">
+              <div className="relative h-60 sm:h-72 md:h-96 w-full overflow-hidden rounded-2xl border border-[#0F172A]/15 bg-[#F3EFE6]">
                 <img
                   src={
                     fichaActiva.galeriaImagenes[indiceFotoActiva] ||
@@ -1956,7 +2040,7 @@ export default function TyronaWildsCommercialStorefront() {
                   }}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute bottom-3 left-3 right-3 sm:right-auto rounded-full bg-[#26211D]/85 border border-white/15 px-3.5 py-1 text-xs text-white truncate backdrop-blur-md">
+                <div className="absolute bottom-3 left-3 right-3 sm:right-auto rounded-full bg-white/95 border border-[#0F172A]/15 px-3.5 py-1 text-xs font-bold text-[#065F46] truncate shadow-sm">
                   {fichaActiva.operadorNombre} ·{" "}
                   {fichaActiva.operadorLicenciaRnt}
                 </div>
@@ -1970,8 +2054,8 @@ export default function TyronaWildsCommercialStorefront() {
                     onClick={() => setIndiceFotoActiva(idx)}
                     className={`relative h-16 sm:h-20 overflow-hidden rounded-xl border transition-all ${
                       indiceFotoActiva === idx
-                        ? "border-[#DAB485] ring-2 ring-[#DAB485]"
-                        : "border-white/15 opacity-70 hover:opacity-100"
+                        ? "border-[#EA580C] ring-2 ring-[#EA580C]"
+                        : "border-[#0F172A]/15 opacity-75 hover:opacity-100"
                     }`}
                   >
                     <img
@@ -2027,7 +2111,7 @@ export default function TyronaWildsCommercialStorefront() {
                 <span className="block text-[10px] uppercase text-sand/55">
                   OPERADOR LOCAL
                 </span>
-                <strong className="mt-1 flex items-center gap-1 text-emerald-400">
+                <strong className="mt-1 flex items-center gap-1 text-[#065F46]">
                   <Award className="h-3.5 w-3.5" />
                   {fichaActiva.operadorLicenciaRnt.split("·")[0]}
                 </strong>
@@ -2067,7 +2151,7 @@ export default function TyronaWildsCommercialStorefront() {
               </div>
 
               <div className="border border-sand/15 bg-obsidian p-5">
-                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-400">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#065F46]">
                   // QUÉ INCLUYE TU EXPEDICIÓN
                 </h3>
                 <ul className="mt-3 space-y-2.5 font-mono text-xs text-sand/85">
@@ -2076,7 +2160,7 @@ export default function TyronaWildsCommercialStorefront() {
                     : fichaActiva.incluyeEn
                   ).map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <Check className="h-4 w-4 shrink-0 text-[#065F46]" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -2092,7 +2176,7 @@ export default function TyronaWildsCommercialStorefront() {
                     ? "CHECKOUT & PASARELA WOMPI SANDBOX"
                     : "EXPEDITION CHECKOUT & WOMPI SANDBOX GATEWAY"}
                 </h3>
-                <span className="flex items-center gap-1.5 font-mono text-xs text-emerald-400">
+                <span className="flex items-center gap-1.5 font-mono text-xs text-[#065F46]">
                   <ShieldCheck className="h-4 w-4" />
                   TRANSACCIÓN ACID · CUPO EN TIEMPO REAL
                 </span>
@@ -2113,7 +2197,7 @@ export default function TyronaWildsCommercialStorefront() {
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     <Link
                       href="/login"
-                      className="inline-flex items-center gap-2 bg-terracotta px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors"
+                      className="inline-flex items-center gap-2 bg-terracotta px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors"
                     >
                       <Lock className="h-4 w-4" />
                       <span>IR A /LOGIN E INICIAR SESIÓN COMO VIAJERO</span>
@@ -2132,7 +2216,7 @@ export default function TyronaWildsCommercialStorefront() {
                   onClick={() => setPasoCheckout(1)}
                   className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 1
-                      ? "bg-terracotta text-sand"
+                      ? "bg-terracotta text-white"
                       : "text-sand/65 hover:text-sand"
                   }`}
                 >
@@ -2143,7 +2227,7 @@ export default function TyronaWildsCommercialStorefront() {
                   onClick={() => avanzarAPaso2Wompi()}
                   className={`flex items-center justify-center gap-1.5 border-x border-sand/20 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 2
-                      ? "bg-terracotta text-sand"
+                      ? "bg-terracotta text-white"
                       : "text-sand/65 hover:text-sand"
                   }`}
                 >
@@ -2158,7 +2242,7 @@ export default function TyronaWildsCommercialStorefront() {
                   }}
                   className={`flex items-center justify-center gap-1.5 py-3 px-2 font-bold transition-colors ${
                     pasoCheckout === 3
-                      ? "bg-emerald-600 text-sand"
+                      ? "bg-emerald-700 text-white"
                       : "text-sand/40 disabled:cursor-not-allowed"
                   }`}
                 >
@@ -2179,7 +2263,7 @@ export default function TyronaWildsCommercialStorefront() {
                     <button
                       type="button"
                       onClick={autocompletarDatosViajeroDemo}
-                      className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1 font-mono text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                      className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1 font-mono text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                     >
                       <Zap className="h-3.5 w-3.5" />
                       <span>Autocompletar datos de viajero</span>
@@ -2187,7 +2271,7 @@ export default function TyronaWildsCommercialStorefront() {
                   </div>
 
                   {sesionUsuario && (
-                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-950/25 px-3.5 py-2 font-mono text-[11px] text-emerald-300">
+                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-50 px-3.5 py-2 font-mono text-[11px] text-[#065F46]">
                       <span>
                         Datos sincronizados desde tu sesión activa JWT (
                         <strong>{sesionUsuario.email}</strong>)
@@ -2214,7 +2298,7 @@ export default function TyronaWildsCommercialStorefront() {
                           }}
                           className={`border p-3.5 text-left font-mono text-xs transition-colors ${
                             horarioSeleccionadoId === h.id
-                              ? "border-terracotta bg-terracotta/15 text-sand"
+                              ? "border-terracotta bg-terracotta/15 text-white"
                               : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                           }`}
                         >
@@ -2231,7 +2315,7 @@ export default function TyronaWildsCommercialStorefront() {
                           <div className="mt-2 flex items-center justify-between text-[11px]">
                             <span>
                               CUPOS RESTANTES:{" "}
-                              <strong className="text-emerald-400">
+                              <strong className="text-[#065F46]">
                                 {h.cuposDisponibles}
                               </strong>{" "}
                               DE {h.capacidadTotal}
@@ -2297,7 +2381,7 @@ export default function TyronaWildsCommercialStorefront() {
                         >
                           <span>VIAJERO #1 (TITULAR)</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               JWT VERIFICADO
                             </span>
@@ -2319,7 +2403,7 @@ export default function TyronaWildsCommercialStorefront() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.nombre
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -2339,7 +2423,7 @@ export default function TyronaWildsCommercialStorefront() {
                         >
                           <span>DOCUMENTO TITULAR #1</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               SOLO LECTURA
                             </span>
@@ -2365,7 +2449,7 @@ export default function TyronaWildsCommercialStorefront() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario?.documento
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.documento
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -2385,7 +2469,7 @@ export default function TyronaWildsCommercialStorefront() {
                         >
                           <span>EMAIL DE CONFIRMACIÓN</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-emerald-400">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
                               <Lock className="h-2.5 w-2.5" />
                               CUENTA ACTIVA
                             </span>
@@ -2406,7 +2490,7 @@ export default function TyronaWildsCommercialStorefront() {
                           }}
                           className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-200 cursor-not-allowed"
+                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
                               : erroresCheckout.email
                               ? "border-terracotta bg-obsidian text-sand"
                               : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
@@ -2562,7 +2646,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                     {/* Alerta Visual del Motor de Validación de Identidad Civil y Anti-Duplicidad */}
                     {erroresCheckout.integridadGrupo && (
-                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-sand">
+                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-white">
                         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-2">
                           <span className="flex items-center gap-2 font-bold text-terracotta">
                             <ShieldAlert className="h-4 w-4" />
@@ -2570,7 +2654,7 @@ export default function TyronaWildsCommercialStorefront() {
                             {erroresCheckout.integridadGrupo.codigo ||
                               "INTEGRIDAD_IDENTIDAD"}
                           </span>
-                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-300 border border-amber-400/40">
+                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-800 border border-amber-400/40">
                             BLOQUEO PREVENTIVO DE INTEGRIDAD PNN
                           </span>
                         </div>
@@ -2625,7 +2709,7 @@ export default function TyronaWildsCommercialStorefront() {
                   <button
                     type="button"
                     onClick={avanzarAPaso2Wompi}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -2646,7 +2730,7 @@ export default function TyronaWildsCommercialStorefront() {
                 <div className="mt-6 space-y-5 font-mono text-xs">
                   <div className="flex flex-wrap items-center justify-between gap-2 border border-sand/20 bg-obsidian px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Lock className="h-4 w-4 text-emerald-400" />
+                      <Lock className="h-4 w-4 text-[#065F46]" />
                       <span className="font-bold uppercase tracking-wider text-sand">
                         TYRONAWILDS PAY // WOMPI SANDBOX GATEWAY
                       </span>
@@ -2674,7 +2758,7 @@ export default function TyronaWildsCommercialStorefront() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "NEQUI"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -2695,7 +2779,7 @@ export default function TyronaWildsCommercialStorefront() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "PSE"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -2716,7 +2800,7 @@ export default function TyronaWildsCommercialStorefront() {
                         }}
                         className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
                           metodoPagoWompi === "TARJETA"
-                            ? "border-terracotta bg-terracotta/15 text-sand font-bold"
+                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
                             : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
                         }`}
                       >
@@ -2742,7 +2826,7 @@ export default function TyronaWildsCommercialStorefront() {
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("NEQUI")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -2766,8 +2850,8 @@ export default function TyronaWildsCommercialStorefront() {
                           <div
                             className={`border p-3 text-[11px] ${
                               estadoPushNequi === "APROBADO"
-                                ? "border-emerald-400 bg-emerald-950/40 text-emerald-300"
-                                : "border-amber-400 bg-amber-950/35 text-amber-200 animate-pulse"
+                                ? "border-emerald-400 bg-emerald-50 text-[#065F46]"
+                                : "border-amber-400 bg-amber-50 text-amber-900 animate-pulse"
                             }`}
                           >
                             {estadoPushNequi === "ENVIANDO"
@@ -2787,7 +2871,7 @@ export default function TyronaWildsCommercialStorefront() {
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("PSE")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -2859,7 +2943,7 @@ export default function TyronaWildsCommercialStorefront() {
                             onClick={() =>
                               autocompletarMetodoWompiDemo("TARJETA")
                             }
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -2954,7 +3038,7 @@ export default function TyronaWildsCommercialStorefront() {
                           </span>
                           <span>{formatearCop(baseOperadorCop)}</span>
                         </div>
-                        <div className="mt-1.5 flex justify-between text-emerald-400">
+                        <div className="mt-1.5 flex justify-between text-[#065F46]">
                           <span>
                             Tasa Ambiental PNN / Contribución Indígena (12%)
                           </span>
@@ -3005,7 +3089,7 @@ export default function TyronaWildsCommercialStorefront() {
                     type="button"
                     disabled={procesandoReserva}
                     onClick={manejarConfirmarCheckout}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-sand hover:bg-ember transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors disabled:opacity-50"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -3017,14 +3101,14 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Resultado de Error Transaccional o Integridad (409 / 422) + Reverso Automático Wompi */}
                   {resultadoReserva && !resultadoReserva.exito && (
-                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-sand space-y-4">
+                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-white space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-3">
                         <span className="flex items-center gap-2 font-bold text-terracotta text-sm">
                           <ShieldAlert className="h-5 w-5" />
                           HTTP {resultadoReserva.httpStatus}{" "}
                           {resultadoReserva.errorCodigo || "CONFLICT"}
                         </span>
-                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-emerald-300 border border-emerald-400/40">
+                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-[#065F46] border border-emerald-400/40">
                           ROLLBACK ACID + WOMPI REVERSADO
                         </span>
                       </div>
@@ -3035,7 +3119,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                       {resultadoReserva.referenciaWompiReversada && (
                         <div className="flex items-center gap-2.5 border border-emerald-400/40 bg-emerald-950/40 p-3 text-emerald-200">
-                          <RotateCcw className="h-4 w-4 shrink-0 text-emerald-400" />
+                          <RotateCcw className="h-4 w-4 shrink-0 text-[#065F46]" />
                           <div>
                             <strong className="block uppercase">
                               COBRO REVERSADO AUTOMÁTICAMENTE EN WOMPI SANDBOX
@@ -3055,7 +3139,7 @@ export default function TyronaWildsCommercialStorefront() {
                         resultadoReserva.rutasAlternativasSostenibles.length >
                           0 && (
                           <div className="space-y-2.5 pt-1">
-                            <span className="block text-[11px] font-bold uppercase text-amber-300">
+                            <span className="block text-[11px] font-bold uppercase text-amber-800">
                               RUTAS ALTERNATIVAS DE DESCONCENTRACIÓN ECOLÓGICA EN
                               SANTA MARTA:
                             </span>
@@ -3067,7 +3151,7 @@ export default function TyronaWildsCommercialStorefront() {
                                     className="border border-sand/25 bg-obsidian p-3 flex flex-col justify-between"
                                   >
                                     <div>
-                                      <div className="flex items-center justify-between text-[10px] text-emerald-400 font-bold">
+                                      <div className="flex items-center justify-between text-[10px] text-[#065F46] font-bold">
                                         <span>
                                           AFORO SERENO: {alt.ocupacionPorcentaje}%
                                         </span>
@@ -3094,7 +3178,7 @@ export default function TyronaWildsCommercialStorefront() {
                                           abrirDrawerExpedicion(encontrada);
                                         }
                                       }}
-                                      className="mt-3 w-full bg-sand px-3 py-1.5 text-[10px] font-bold uppercase text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                                      className="mt-3 w-full bg-sand px-3 py-1.5 text-[10px] font-bold uppercase text-obsidian hover:bg-terracotta hover:text-white transition-colors"
                                     >
                                       CAMBIAR A ESTA RUTA DE BAJO IMPACTO
                                     </button>

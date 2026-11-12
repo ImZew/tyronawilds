@@ -3,12 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --bg-espresso: #26211d;
-  --bg-stone-warm: #362f29;
-  --bg-alabaster: #f5f2eb;
-  --text-charcoal: #1c1917;
-  --text-pure: #ffffff;
-  --accent-bronze: #c89d66;
+  --bg-ivory: #faf8f5;
+  --bg-soft-sand: #f3efe6;
+  --text-charcoal: #0f172a;
+  --sierra-emerald: #065f46;
+  --sierra-teal: #0d9488;
+  --caribe-blue: #0284c7;
+  --coral-sun: #ea580c;
+  --amber-sun: #f59e0b;
 }
 
 html {
@@ -17,8 +19,8 @@ html {
 }
 
 body {
-  background-color: #26211d;
-  color: #ffffff;
+  background-color: #faf8f5;
+  color: #0f172a;
 }
 
 /* Modo Alto Contraste Accesible (WCAG 2.1 AA) */
@@ -27,19 +29,11 @@ body {
   filter: contrast(1.18) saturate(1.08);
 }
 
-/* Iluminación orgánica suave para el Portal Escultórico */
-.portal-sculptural-window {
-  box-shadow:
-    0 30px 90px -15px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.28),
-    inset 0 12px 32px rgba(255, 255, 255, 0.14);
-}
-
 /* Impresión oficial de Pasaporte Digital QR (PDF) */
 @media print {
   body {
-    background: #f5f2eb !important;
-    color: #1c1917 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -47,7 +41,7 @@ body {
     display: none !important;
   }
   .pasaporte-oficial-imprimible {
-    border: 2px solid #c89d66 !important;
+    border: 2px solid #065f46 !important;
     box-shadow: none !important;
     page-break-inside: avoid;
   }

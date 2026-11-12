@@ -115,7 +115,7 @@ export default function MisReservasWalletPage() {
   });
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-sand">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
       {/* BARRA SUPERIOR CON IDENTIDAD DEL VIAJERO AUTENTICADO */}
       <header className="no-print sticky top-0 z-40 border-b border-sand/15 bg-obsidian/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
@@ -154,13 +154,13 @@ export default function MisReservasWalletPage() {
 
             {/* Insignia Oficial del Viajero Autenticado */}
             <div className="flex flex-wrap items-center gap-2 border border-emerald-500/45 bg-emerald-950/30 px-3 py-1.5 text-[11px]">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <ShieldCheck className="h-3.5 w-3.5 text-[#065F46]" />
               <span className="font-bold uppercase text-sand">
                 {sesionActiva.nombre}
               </span>
               <span className="text-sand/40">·</span>
-              <span className="text-emerald-300">{sesionActiva.email}</span>
-              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-emerald-300">
+              <span className="text-[#065F46]">{sesionActiva.email}</span>
+              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-[#065F46]">
                 {sesionActiva.rol}
               </span>
             </div>
@@ -168,7 +168,7 @@ export default function MisReservasWalletPage() {
             {esRolCorporativo && (
               <Link
                 href="/operadores"
-                className="border border-terracotta/50 bg-terracotta/10 px-3 py-1.5 text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-sand transition-colors"
+                className="border border-terracotta/50 bg-terracotta/10 px-3 py-1.5 text-[11px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
               >
                 PORTAL OPERADORES
               </Link>
@@ -177,7 +177,7 @@ export default function MisReservasWalletPage() {
             <button
               type="button"
               onClick={manejarCerrarSesionViajero}
-              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-sand hover:bg-terracotta transition-colors"
+              className="inline-flex items-center gap-1.5 border border-terracotta/60 bg-terracotta/15 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white hover:bg-terracotta transition-colors"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span>CERRAR SESIÓN</span>
@@ -192,7 +192,7 @@ export default function MisReservasWalletPage() {
         <section className="no-print border border-sand/20 bg-jungle/15 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand">
+              <div className="inline-flex items-center gap-2 bg-terracotta px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white">
                 <QrCode className="h-3.5 w-3.5" />
                 <span>
                   BILLETERA PERSONAL ({reservas.length}{" "}
@@ -210,7 +210,7 @@ export default function MisReservasWalletPage() {
               <p className="mt-2 max-w-3xl font-mono text-xs text-sand/75 leading-relaxed">
                 Estás consultando la billetera privada asociada exclusivamente a{" "}
                 <strong className="text-sand">{sesionActiva.nombre}</strong> (
-                <code className="text-emerald-300">{sesionActiva.email}</code>).
+                <code className="text-[#065F46]">{sesionActiva.email}</code>).
                 Cada pasaporte digital (<code>TW-2026-XXXX</code>) incluye su
                 código QR vectorial de verificación para puestos de control PNN
                 Tayrona / ICANH Teyuna y el comprobante transaccional de{" "}
@@ -241,7 +241,7 @@ export default function MisReservasWalletPage() {
               </button>
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 bg-sand px-5 py-3 font-bold uppercase text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+                className="inline-flex items-center gap-2 bg-sand px-5 py-3 font-bold uppercase text-obsidian hover:bg-terracotta hover:text-white transition-colors"
               >
                 <span>EXPLORAR EXPEDICIONES Y RESERVAR</span>
               </Link>
@@ -338,7 +338,7 @@ export default function MisReservasWalletPage() {
 
               <p className="mx-auto mt-3 max-w-xl font-mono text-xs text-sand/70 leading-relaxed">
                 No tienes reservas activas vinculadas a{" "}
-                <code className="text-emerald-300">{sesionActiva.email}</code>{" "}
+                <code className="text-[#065F46]">{sesionActiva.email}</code>{" "}
                 (ID <code>#{sesionActiva.userId}</code>). Selecciona cualquier
                 travesía en la Sierra Nevada o el Parque Tayrona, completa el
                 pago en <strong>Wompi Sandbox</strong> y tu pasaporte oficial QR
@@ -348,7 +348,7 @@ export default function MisReservasWalletPage() {
               <div className="mt-6">
                 <Link
                   href="/#expediciones"
-                  className="inline-flex items-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-sand hover:bg-ember transition-colors"
+                  className="inline-flex items-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors"
                 >
                   <Compass className="h-4 w-4" />
                   <span>EXPLORAR EXPEDICIONES Y RESERVAR</span>
@@ -389,7 +389,7 @@ export default function MisReservasWalletPage() {
                           <QrCode className="h-4 w-4" />
                           {res.codigoReserva}
                         </span>
-                        <span className="inline-flex items-center gap-1 bg-emerald-500/20 border border-emerald-400/40 px-2.5 py-0.5 text-[10px] font-bold uppercase text-emerald-300">
+                        <span className="inline-flex items-center gap-1 bg-emerald-500/20 border border-emerald-400/40 px-2.5 py-0.5 text-[10px] font-bold uppercase text-[#065F46]">
                           <CheckCircle2 className="h-3 w-3" />
                           {res.estadoReserva} // PAGO VERIFICADO
                         </span>
@@ -424,7 +424,7 @@ export default function MisReservasWalletPage() {
                             <Calendar className="h-3 w-3 text-terracotta" />
                             {fechaSalida}
                           </strong>
-                          <span className="flex items-center gap-1 text-[10px] text-emerald-300">
+                          <span className="flex items-center gap-1 text-[10px] text-[#065F46]">
                             <Clock className="h-3 w-3" />
                             {horaSalida} HRS
                           </span>
@@ -438,7 +438,7 @@ export default function MisReservasWalletPage() {
                             <Users className="h-3 w-3 text-terracotta" />
                             {res.cantidadCupos} PAX
                           </strong>
-                          <span className="block text-[10px] text-emerald-300">
+                          <span className="block text-[10px] text-[#065F46]">
                             CUPO BLOQUEADO ACID
                           </span>
                         </div>
@@ -447,7 +447,7 @@ export default function MisReservasWalletPage() {
                       {/* NÓMINA DE PASAJEROS DE LA RESERVA */}
                       {Array.isArray(res.pasajeros) && res.pasajeros.length > 0 && (
                         <div className="mt-3 border border-sand/15 bg-obsidian p-3 font-mono text-[11px]">
-                          <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                          <span className="block text-[10px] font-bold uppercase tracking-wider text-[#065F46]">
                             // EXPEDICIONARIOS REGISTRADOS EN PÓLIZA PNN ({res.pasajeros.length})
                           </span>
                           <div className="mt-1.5 space-y-1">
@@ -466,7 +466,7 @@ export default function MisReservasWalletPage() {
                                   className={`text-[9px] font-bold uppercase px-1.5 py-0.5 ${
                                     pax.esTitular
                                       ? "bg-terracotta/20 text-terracotta"
-                                      : "bg-emerald-500/20 text-emerald-300"
+                                      : "bg-emerald-500/20 text-[#065F46]"
                                   }`}
                                 >
                                   {pax.esTitular
@@ -517,7 +517,7 @@ export default function MisReservasWalletPage() {
                         <button
                           type="button"
                           onClick={() => setPasaporteAbierto(res)}
-                          className="flex-1 inline-flex items-center justify-center gap-2 bg-terracotta px-4 py-3 font-bold uppercase tracking-wider text-sand hover:bg-ember transition-colors"
+                          className="flex-1 inline-flex items-center justify-center gap-2 bg-terracotta px-4 py-3 font-bold uppercase tracking-wider text-white hover:bg-ember transition-colors"
                         >
                           <QrCode className="h-4 w-4" />
                           <span>ABRIR BOARDING PASS QR / IMPRIMIR PDF</span>
