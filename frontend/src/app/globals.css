@@ -11,6 +11,19 @@
   --caribe-blue: #0284c7;
   --coral-sun: #ea580c;
   --amber-sun: #f59e0b;
+  --tw-obsidian: 250 248 245;
+  --tw-jungle: 243 239 230;
+  --tw-sand: 15 23 42;
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg-ivory: #0b1120;
+  --bg-soft-sand: #131c22;
+  --text-charcoal: #f8fafc;
+  --tw-obsidian: 11 17 32;
+  --tw-jungle: 19 28 34;
+  --tw-sand: 248 250 252;
 }
 
 html {

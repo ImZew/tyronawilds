@@ -3,21 +3,21 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Navbar from "@/components/Navbar";
 import {
   AlertTriangle,
-  ArrowLeft,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
+  Compass,
   Eye,
   EyeOff,
   KeyRound,
   Lock,
   LogOut,
   Mail,
-  Shield,
   ShieldCheck,
-  Terminal,
+  Sparkles,
   UserCheck,
   UserPlus,
 } from "lucide-react";
@@ -287,99 +287,74 @@ function LoginContenido() {
   };
 
   return (
-    <div className="min-h-screen bg-obsidian text-sand flex flex-col justify-between selection:bg-terracotta selection:text-white">
-      {/* BARRA SUPERIOR */}
-      <header className="border-b border-sand/15 bg-obsidian/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 border border-sand/20 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-sand/75 hover:border-terracotta hover:text-terracotta transition-colors"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>VOLVER A EXPEDICIONES</span>
-            </Link>
-            <span className="font-display text-xl tracking-[0.14em] text-sand">
-              TYRONAWILDS<span className="text-terracotta">™</span>
-            </span>
-          </div>
+    <div className="min-h-screen bg-[#FAF8F5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-[#EA580C] selection:text-white transition-colors">
+      {/* NAVBAR PRINCIPAL UNIFICADO */}
+      <Navbar />
 
-          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-wider text-sand/70">
-            <Shield className="h-3.5 w-3.5 text-terracotta" />
-            <span>IDENTIDAD-SERVICE // JWT HS256 &amp; BCrypt</span>
-          </div>
-        </div>
-      </header>
-
-      {/* CUERPO CENTRAL */}
-      <main className="mx-auto my-auto w-full max-w-[1280px] px-4 py-10 sm:px-6">
+      {/* CUERPO CENTRAL AMIGABLE Y CÁLIDO */}
+      <main className="mx-auto my-auto w-full max-w-[1280px] px-4 py-10 sm:px-6 sm:py-14">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
-          {/* COLUMNA IZQUIERDA: CONTEXTO CORPORATIVO & SEGURIDAD */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6 border border-sand/15 bg-jungle/15 p-6 sm:p-8">
+          {/* COLUMNA IZQUIERDA: BIENVENIDA CÁLIDA PARA VIAJEROS Y ANFITRIONES */}
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131C22] p-6 sm:p-8 shadow-lg">
             <div>
-              <div className="inline-flex items-center gap-2 border border-terracotta/40 bg-terracotta/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-terracotta">
-                <Lock className="h-3.5 w-3.5" />
-                <span>AUTENTICACIÓN BASADA EN CREDENCIALES &amp; JWT</span>
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#065F46]/10 dark:bg-emerald-500/15 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[#065F46] dark:text-emerald-400">
+                <Compass className="h-3.5 w-3.5" />
+                <span>Pasaporte de Viajero &amp; Portal de Anfitriones</span>
               </div>
 
-              <h1 className="mt-4 font-display text-4xl sm:text-5xl uppercase leading-[0.92] tracking-wide text-sand">
-                TYRONAWILDS™ // CONTROL DE ACCESO &amp; IDENTIDAD RNT
+              <h1 className="mt-4 font-display text-3xl sm:text-4xl md:text-5xl uppercase leading-tight tracking-tight text-slate-900 dark:text-white">
+                Bienvenido a Tyrona Wilds · Santa Marta
               </h1>
 
-              <p className="mt-4 text-sm text-sand/80 leading-relaxed">
-                Pasarela de autenticación conectada a{" "}
-                <code className="font-mono text-xs text-terracotta">
-                  identidad-service
-                </code>{" "}
-                mediante{" "}
-                <code className="font-mono text-xs text-sand">
-                  POST /api/v1/auth/login
-                </code>
-                . Cada sesión emite un token JWT firmado con los permisos de
-                titularidad del Registro Nacional de Turismo (RNT) o de la
-                Autoridad Ambiental.
+              <p className="mt-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Accede a tus reservas confirmadas, descarga tu pasaporte QR de
+                ingreso a senderos del Parque Tayrona y la Sierra Nevada, o
+                gestiona tus cupos si eres guía u operador certificado con
+                Registro Nacional de Turismo (RNT).
               </p>
 
-              <div className="mt-6 space-y-3 border-t border-sand/15 pt-5 font-mono text-xs text-sand/75">
-                <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#065F46] mt-0.5" />
+              <div className="mt-6 space-y-4 border-t border-slate-200 dark:border-slate-800 pt-5 text-xs text-slate-600 dark:text-slate-300">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#065F46]/10 dark:bg-emerald-500/20 text-[#065F46] dark:text-emerald-400">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
                   <div>
-                    <strong className="block text-sand uppercase">
-                      Verificación de Propiedad RNT (HTTP 403)
+                    <strong className="block text-sm font-bold text-slate-900 dark:text-white">
+                      Pasaporte QR y Reservas Protegidas
                     </strong>
-                    Solo el operador titular autenticado en el JWT puede editar
-                    tarifas o cupos de sus expediciones registradas.
+                    Consulta tus itinerarios hacia Ciudad Perdida, Cabo San Juan
+                    o Minca con verificación directa de guías locales.
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <KeyRound className="h-4 w-4 shrink-0 text-terracotta mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EA580C]/10 dark:bg-amber-500/20 text-[#EA580C] dark:text-amber-400">
+                    <KeyRound className="h-4 w-4" />
+                  </div>
                   <div>
-                    <strong className="block text-sand uppercase">
-                      Cabecera Authorization Bearer Automática
+                    <strong className="block text-sm font-bold text-slate-900 dark:text-white">
+                      Operadores RNT y Autoridad Ambiental
                     </strong>
-                    Todas las peticiones hacia{" "}
-                    <code className="text-sand">api-gateway</code> inyectan el
-                    token firmado y registran trazabilidad en{" "}
-                    <code className="text-sand">auditoria-service</code>.
+                    Administración verificada de cupos diarios, tarifas y
+                    monitoreo de capacidad de carga ecosistémica.
                   </div>
                 </div>
               </div>
             </div>
 
             {sesionActiva && (
-              <div className="border border-emerald-500/40 bg-emerald-950/30 p-4 font-mono text-xs">
+              <div className="rounded-2xl border border-emerald-300 dark:border-emerald-700/60 bg-emerald-50 dark:bg-emerald-950/40 p-4 text-xs">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold uppercase text-[#065F46]">
-                    SESIÓN JWT ACTIVA DETECTADA
+                  <span className="font-extrabold uppercase text-[#065F46] dark:text-emerald-300">
+                    Sesión activa en este dispositivo
                   </span>
-                  <span className="bg-emerald-500/20 px-2 py-0.5 text-[10px] text-[#065F46]">
+                  <span className="rounded-full bg-[#065F46] px-2.5 py-0.5 text-[10px] font-bold text-white">
                     {sesionActiva.rol}
                   </span>
                 </div>
-                <p className="mt-1.5 text-sand font-bold">
+                <p className="mt-1.5 text-sm font-bold text-slate-900 dark:text-white">
                   {sesionActiva.nombre}
                 </p>
-                <p className="text-sand/70">
+                <p className="text-slate-600 dark:text-slate-300">
                   {sesionActiva.email}{" "}
                   {sesionActiva.rnt ? `· ${sesionActiva.rnt}` : ""}
                 </p>
@@ -390,11 +365,11 @@ function LoginContenido() {
                         ? "/mis-reservas"
                         : "/operadores"
                     }
-                    className="bg-emerald-500 px-3 py-1.5 text-[11px] font-bold uppercase text-obsidian hover:bg-emerald-400 transition-colors"
+                    className="rounded-full bg-[#065F46] px-4 py-2 text-[11px] font-bold uppercase text-white hover:bg-[#047857] transition-colors shadow-sm"
                   >
                     {sesionActiva.rol === "TURISTA"
-                      ? "IR A MIS RESERVAS"
-                      : "IR AL PORTAL DE OPERADORES"}
+                      ? "Ir a Mis Reservas"
+                      : "Ir al Portal de Operadores"}
                   </Link>
                   <button
                     type="button"
@@ -402,47 +377,47 @@ function LoginContenido() {
                       cerrarSesion();
                       setSesionActiva(null);
                     }}
-                    className="inline-flex items-center gap-1 border border-sand/30 px-3 py-1.5 text-[11px] uppercase text-sand/80 hover:border-terracotta hover:text-terracotta transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors"
                   >
                     <LogOut className="h-3.5 w-3.5" />
-                    <span>CERRAR SESIÓN ACTUAL</span>
+                    <span>Cerrar sesión</span>
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* COLUMNA DERECHA: FORMULARIO LOGIN / REGISTRO + ACORDEÓN DE EVALUACIÓN */}
-          <div className="lg:col-span-7 border border-sand/20 bg-obsidian p-6 sm:p-8 shadow-2xl">
+          {/* COLUMNA DERECHA: TARJETA REDONDEADA DE INICIO DE SESIÓN / REGISTRO */}
+          <div className="lg:col-span-7 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131C22] p-6 sm:p-8 shadow-xl">
             {redirectParam && (
-              <div className="mb-6 flex items-center gap-2.5 border border-amber-500/40 bg-amber-950/30 px-4 py-3 font-mono text-xs text-amber-200">
-                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+              <div className="mb-6 flex items-center gap-3 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 px-4 py-3.5 text-xs font-medium text-amber-950 dark:text-amber-200">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-[#EA580C] dark:text-amber-400" />
                 <span>
                   {redirectParam === "/mis-reservas"
-                    ? "Ruta protegida (/mis-reservas): Inicia sesión con tu cuenta de Viajero (Turista) para consultar tus pasaportes y reservas."
+                    ? "Para consultar tus pasaportes QR y reservas confirmadas (/mis-reservas), inicia sesión con tu cuenta de Viajero."
                     : redirectParam === "/operadores"
-                    ? "Ruta protegida (/operadores): Inicia sesión con una cuenta de Operador RNT o Autoridad Ambiental para continuar."
-                    : `Ruta protegida (${redirectParam}): Inicia sesión para continuar.`}
+                    ? "Para acceder al Portal de Operadores (/operadores), inicia sesión con tu cuenta RNT o Autoridad Ambiental."
+                    : `Inicia sesión para continuar hacia ${redirectParam}.`}
                 </span>
               </div>
             )}
 
-            {/* PESTAÑAS */}
-            <div className="grid grid-cols-2 border border-sand/20 bg-obsidian font-mono text-xs uppercase">
+            {/* PESTAÑAS AMIGABLES REDONDEADAS */}
+            <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 dark:bg-slate-900 p-1.5 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => {
                   setPestana("LOGIN");
                   limpiarErrores();
                 }}
-                className={`flex items-center justify-center gap-2 py-3.5 px-4 font-bold tracking-wider transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-3 px-4 transition-all ${
                   pestana === "LOGIN"
-                    ? "bg-terracotta text-white"
-                    : "text-sand/65 hover:text-sand"
+                    ? "bg-[#EA580C] text-white shadow-sm"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <UserCheck className="h-4 w-4" />
-                <span>01 // INICIAR SESIÓN</span>
+                <span>Iniciar sesión</span>
               </button>
               <button
                 type="button"
@@ -450,37 +425,32 @@ function LoginContenido() {
                   setPestana("REGISTRO");
                   limpiarErrores();
                 }}
-                className={`flex items-center justify-center gap-2 py-3.5 px-4 font-bold tracking-wider transition-colors border-l border-sand/20 ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-3 px-4 transition-all ${
                   pestana === "REGISTRO"
-                    ? "bg-terracotta text-white"
-                    : "text-sand/65 hover:text-sand"
+                    ? "bg-[#EA580C] text-white shadow-sm"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <UserPlus className="h-4 w-4" />
-                <span>02 // REGISTRAR CUENTA (TURISTA / RNT)</span>
+                <span>Crear cuenta</span>
               </button>
             </div>
 
-            {/* BANNER DE ERROR HTTP 401 / 400 / 409 */}
+            {/* BANNER DE ERROR CLARO Y LEGIBLE */}
             {errorMensaje && (
               <div
                 role="alert"
-                className="mt-6 border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-white"
+                className="mt-6 rounded-2xl border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-4 text-xs text-red-950 dark:text-red-200"
               >
-                <div className="flex items-center justify-between gap-2 font-bold text-terracotta">
+                <div className="flex items-center justify-between gap-2 font-extrabold text-red-700 dark:text-red-300">
                   <span className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 shrink-0" />
                     <span>
-                      ERROR HTTP {errorHttpStatus || 401} — {errorCodigo}
+                      No pudimos iniciar sesión ({errorCodigo || `HTTP ${errorHttpStatus || 401}`})
                     </span>
                   </span>
-                  <span className="text-[10px] uppercase text-sand/60">
-                    identidad-service
-                  </span>
                 </div>
-                <p className="mt-1.5 text-sand/90 leading-relaxed">
-                  {errorMensaje}
-                </p>
+                <p className="mt-1.5 leading-relaxed">{errorMensaje}</p>
               </div>
             )}
 
@@ -493,25 +463,25 @@ function LoginContenido() {
                 <div>
                   <label
                     htmlFor="login-email"
-                    className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-sand/75"
+                    className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200"
                   >
-                    <span>CORREO ELECTRÓNICO CORPORATIVO / RNT *</span>
+                    <span>Correo electrónico *</span>
                     {emailLogin && (
                       <span
                         className={
                           esEmailValido(emailLogin)
-                            ? "text-[#065F46]"
-                            : "text-terracotta"
+                            ? "text-[#065F46] dark:text-emerald-400"
+                            : "text-[#EA580C] dark:text-amber-400"
                         }
                       >
                         {esEmailValido(emailLogin)
-                          ? "FORMATO VÁLIDO"
-                          : "CORREO INCOMPLETO"}
+                          ? "Correo válido"
+                          : "Formato incompleto"}
                       </span>
                     )}
                   </label>
                   <div className="relative mt-1.5">
-                    <Mail className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-sand/45" />
+                    <Mail className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
                     <input
                       id="login-email"
                       type="email"
@@ -522,8 +492,8 @@ function LoginContenido() {
                         setEmailLogin(e.target.value);
                         setPerfilAutocompletado(null);
                       }}
-                      placeholder="operaciones@tayronasierra.co"
-                      className="w-full border border-sand/25 bg-obsidian pl-10 pr-4 py-3 font-mono text-sm text-sand placeholder:text-sand/30 focus:border-terracotta focus:outline-none"
+                      placeholder="sebastian@viajero.co"
+                      className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 pl-11 pr-4 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-[#EA580C] focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -531,13 +501,15 @@ function LoginContenido() {
                 <div>
                   <label
                     htmlFor="login-password"
-                    className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-sand/75"
+                    className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200"
                   >
-                    <span>CONTRASEÑA DE ACCESO *</span>
-                    <span className="text-sand/45">CIFRADO BCRYPT</span>
+                    <span>Contraseña *</span>
+                    <span className="text-[11px] font-normal text-slate-500 dark:text-slate-400">
+                      Conexión segura
+                    </span>
                   </label>
                   <div className="relative mt-1.5">
-                    <KeyRound className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-sand/45" />
+                    <KeyRound className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
                     <input
                       id="login-password"
                       type={mostrarPasswordLogin ? "text" : "password"}
@@ -549,14 +521,14 @@ function LoginContenido() {
                         setPerfilAutocompletado(null);
                       }}
                       placeholder="••••••••••••"
-                      className="w-full border border-sand/25 bg-obsidian pl-10 pr-12 py-3 font-mono text-sm text-sand placeholder:text-sand/30 focus:border-terracotta focus:outline-none"
+                      className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 pl-11 pr-12 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-[#EA580C] focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() =>
                         setMostrarPasswordLogin(!mostrarPasswordLogin)
                       }
-                      className="absolute right-3 top-2.5 p-1 text-sand/60 hover:text-terracotta transition-colors"
+                      className="absolute right-3.5 top-2.5 p-1 text-slate-500 dark:text-slate-400 hover:text-[#EA580C] transition-colors"
                       title={
                         mostrarPasswordLogin
                           ? "Ocultar contraseña"
@@ -573,13 +545,12 @@ function LoginContenido() {
                 </div>
 
                 {perfilAutocompletado && (
-                  <div className="flex items-center gap-2 border border-emerald-500/35 bg-emerald-50 px-3.5 py-2.5 font-mono text-[11px] text-[#065F46]">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-xs text-emerald-950 dark:text-emerald-200">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#065F46] dark:text-emerald-400" />
                     <span>
-                      Credenciales cargadas para{" "}
-                      <strong>{perfilAutocompletado}</strong>. Presiona{" "}
-                      <strong>INICIAR SESIÓN</strong> para autenticar contra{" "}
-                      <code>identidad-service</code>.
+                      Perfil seleccionado:{" "}
+                      <strong>{perfilAutocompletado}</strong>. Haz clic en{" "}
+                      <strong>Ingresar a mi cuenta</strong> para continuar.
                     </span>
                   </div>
                 )}
@@ -587,13 +558,13 @@ function LoginContenido() {
                 <button
                   type="submit"
                   disabled={procesando}
-                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-[#EA580C] py-4 px-6 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-[#C2410C] transition-all shadow-md disabled:opacity-50"
                 >
                   <Lock className="h-4 w-4" />
                   <span>
                     {procesando
-                      ? "VERIFICANDO CREDENCIALES & FIRMA JWT..."
-                      : "INICIAR SESIÓN CON CREDENCIALES REALES"}
+                      ? "Iniciando sesión..."
+                      : "Ingresar a mi cuenta"}
                   </span>
                 </button>
               </form>
@@ -605,58 +576,58 @@ function LoginContenido() {
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                      NOMBRE O RAZÓN SOCIAL *
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                      Nombre completo o agencia *
                     </label>
                     <input
                       type="text"
                       required
                       value={nombreReg}
                       onChange={(e) => setNombreReg(e.target.value)}
-                      placeholder="Ej. Sierra Nevada Eco Tours S.A.S."
-                      className="mt-1.5 w-full border border-sand/25 bg-obsidian px-3.5 py-2.5 font-mono text-sm text-sand focus:border-terracotta focus:outline-none"
+                      placeholder="Ej. Camila Restrepo / Sierra Eco Tours"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:border-[#EA580C] focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                      CORREO ELECTRÓNICO *
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                      Correo electrónico *
                     </label>
                     <input
                       type="email"
                       required
                       value={emailReg}
                       onChange={(e) => setEmailReg(e.target.value)}
-                      placeholder="reservas@sierraecotours.co"
-                      className="mt-1.5 w-full border border-sand/25 bg-obsidian px-3.5 py-2.5 font-mono text-sm text-sand focus:border-terracotta focus:outline-none"
+                      placeholder="camila@viajera.co"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:border-[#EA580C] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                      TIPO DE CUENTA *
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                      Tipo de perfil *
                     </label>
                     <select
                       value={rolReg}
                       onChange={(e) =>
                         setRolReg(e.target.value as RolAutenticado)
                       }
-                      className="mt-1.5 w-full border border-sand/25 bg-obsidian px-3.5 py-2.5 font-mono text-sm text-sand focus:border-terracotta focus:outline-none"
+                      className="mt-1.5 w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:border-[#EA580C] focus:outline-none"
                     >
-                      <option value="OPERADOR">
-                        OPERADOR TURÍSTICO CERTIFICADO (RNT)
-                      </option>
                       <option value="TURISTA">
-                        VIAJERO / EXPEDICIONARIO (TURISTA)
+                        Viajero / Expedicionario (Turista)
+                      </option>
+                      <option value="OPERADOR">
+                        Operador Turístico Certificado (RNT)
                       </option>
                     </select>
                   </div>
 
                   {rolReg === "OPERADOR" ? (
                     <div>
-                      <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                        LICENCIA RNT (MINCIT) *
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                        Licencia RNT (MINCIT) *
                       </label>
                       <input
                         type="text"
@@ -664,24 +635,24 @@ function LoginContenido() {
                         value={rntReg}
                         onChange={(e) => setRntReg(e.target.value)}
                         placeholder="RNT-64120"
-                        className="mt-1.5 w-full border border-sand/25 bg-obsidian px-3.5 py-2.5 font-mono text-sm text-sand uppercase focus:border-terracotta focus:outline-none"
+                        className="mt-1.5 w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 uppercase focus:border-[#EA580C] focus:outline-none"
                       />
                     </div>
                   ) : (
                     <div>
-                      <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                        MODALIDAD DE VIAJERO
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                        Beneficio incluido
                       </label>
-                      <div className="mt-1.5 border border-sand/15 bg-sand/5 px-3.5 py-2.5 font-mono text-xs text-sand/70">
-                        PASAPORTE DIGITAL DE CONSERVACIÓN
+                      <div className="mt-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/80 px-4 py-2.5 text-xs font-semibold text-[#065F46] dark:text-emerald-400">
+                        Pasaporte Digital QR de Conservación
                       </div>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block font-mono text-[11px] uppercase tracking-wider text-sand/75">
-                    CONTRASEÑA (MÍNIMO 8 CARACTERES) *
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                    Contraseña (mínimo 8 caracteres) *
                   </label>
                   <div className="relative mt-1.5">
                     <input
@@ -689,13 +660,13 @@ function LoginContenido() {
                       required
                       value={passwordReg}
                       onChange={(e) => setPasswordReg(e.target.value)}
-                      placeholder="Mínimo 8 caracteres alfanuméricos"
-                      className="w-full border border-sand/25 bg-obsidian px-3.5 pr-12 py-2.5 font-mono text-sm text-sand focus:border-terracotta focus:outline-none"
+                      placeholder="Mínimo 8 caracteres"
+                      className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 pr-12 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:border-[#EA580C] focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => setMostrarPasswordReg(!mostrarPasswordReg)}
-                      className="absolute right-3 top-2.5 p-1 text-sand/60 hover:text-terracotta"
+                      className="absolute right-3.5 top-2.5 p-1 text-slate-500 hover:text-[#EA580C]"
                     >
                       {mostrarPasswordReg ? (
                         <EyeOff className="h-4 w-4" />
@@ -706,24 +677,27 @@ function LoginContenido() {
                   </div>
                 </div>
 
-                <label className="flex items-start gap-2.5 pt-1 font-mono text-xs text-sand/75 cursor-pointer">
+                <label className="flex items-start gap-2.5 pt-1 text-xs text-slate-600 dark:text-slate-300 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={aceptaTerminosReg}
                     onChange={(e) => setAceptaTerminosReg(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 accent-terracotta"
+                    className="mt-0.5 h-4 w-4 rounded accent-[#EA580C]"
                   />
                   <span>
                     Autorizo el tratamiento de datos personales conforme a la{" "}
                     <Link
                       href="/privacidad"
-                      className="underline text-terracotta"
+                      className="font-semibold underline text-[#EA580C] dark:text-amber-400"
                     >
                       Ley 1581 de 2012
                     </Link>{" "}
                     y acepto los{" "}
-                    <Link href="/terminos" className="underline text-terracotta">
-                      Términos de Operación RNT &amp; PNN
+                    <Link
+                      href="/terminos"
+                      className="font-semibold underline text-[#EA580C] dark:text-amber-400"
+                    >
+                      Términos RNT &amp; PNN
                     </Link>
                     .
                   </span>
@@ -732,47 +706,47 @@ function LoginContenido() {
                 <button
                   type="submit"
                   disabled={procesando}
-                  className="w-full flex items-center justify-center gap-2 bg-terracotta py-4 px-6 font-mono text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-ember transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-[#065F46] py-4 px-6 text-xs font-extrabold uppercase tracking-wider text-white hover:bg-[#047857] transition-all shadow-md disabled:opacity-50"
                 >
                   <UserPlus className="h-4 w-4" />
                   <span>
                     {procesando
-                      ? "REGISTRANDO CUENTA EN IDENTIDAD-SERVICE..."
-                      : "CREAR CUENTA Y EMITIR TOKEN JWT"}
+                      ? "Creando tu cuenta..."
+                      : "Crear mi cuenta ahora"}
                   </span>
                 </button>
               </form>
             )}
 
-            {/* ACORDEÓN PLEGADO Y DISCRETO: CREDENCIALES DE EVALUACIÓN */}
-            <div className="mt-8 border-t border-sand/15 pt-5">
+            {/* ACORDEÓN AMIGABLE: CUENTAS DEMO DE PRUEBA RÁPIDA */}
+            <div className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-5">
               <button
                 type="button"
                 onClick={() =>
                   setAcordeonEvaluacionAbierto(!acordeonEvaluacionAbierto)
                 }
-                className="flex w-full items-center justify-between border border-sand/20 bg-sand/5 px-4 py-3 font-mono text-xs text-sand/80 hover:border-terracotta hover:text-sand transition-colors"
+                className="flex w-full items-center justify-between rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-[#EA580C] transition-colors"
               >
                 <span className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-terracotta" />
+                  <Sparkles className="h-4 w-4 text-[#EA580C]" />
                   <span>
-                    Credenciales de evaluación (Autocompletar formulario)
+                    Cuentas de prueba rápida (Autocompletar con 1 clic)
                   </span>
                 </span>
                 {acordeonEvaluacionAbierto ? (
-                  <ChevronUp className="h-4 w-4 text-terracotta" />
+                  <ChevronUp className="h-4 w-4 text-[#EA580C]" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-sand/60" />
+                  <ChevronDown className="h-4 w-4 text-slate-400" />
                 )}
               </button>
 
               {acordeonEvaluacionAbierto && (
-                <div className="mt-3 space-y-5 border border-sand/15 bg-obsidian p-4">
+                <div className="mt-3 space-y-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 p-4">
                   {/* GRUPO 1: PERFILES DE VIAJEROS (B2C) */}
                   <div>
-                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-[#065F46]">
-                      <span>PERFILES DE VIAJEROS (B2C — /MIS-RESERVAS &amp; CHECKOUT)</span>
-                      <span>AISLAMIENTO RLS POR TURISTA</span>
+                    <div className="mb-2.5 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5 text-[11px] font-extrabold uppercase text-[#065F46] dark:text-emerald-400">
+                      <span>Viajeros (Mis Reservas &amp; Checkout)</span>
+                      <span>Pasaporte QR</span>
                     </div>
                     <div className="grid grid-cols-1 gap-2.5">
                       {PERFILES_VIAJEROS_B2C.map((perfil) => (
@@ -780,32 +754,32 @@ function LoginContenido() {
                           key={perfil.id}
                           type="button"
                           onClick={() => manejarAutocompletarPerfil(perfil)}
-                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-emerald-500/30 bg-emerald-950/15 p-3 text-left font-mono transition-colors hover:border-emerald-400 hover:bg-emerald-950/30"
+                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 bg-white dark:bg-slate-900 p-3.5 text-left transition-all hover:border-[#065F46] dark:hover:border-emerald-400 shadow-sm"
                         >
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-xs font-bold text-sand group-hover:text-[#065F46]">
+                              <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#065F46] dark:group-hover:text-emerald-400">
                                 {perfil.titulo}
                               </span>
-                              <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
+                              <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
                                 {perfil.rnt}
                               </span>
-                              <span className="bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-bold text-[#065F46]">
+                              <span className="rounded-full bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 text-[10px] font-bold text-[#065F46] dark:text-emerald-300">
                                 {perfil.rolBadge}
                               </span>
                             </div>
-                            <p className="mt-1 text-[11px] text-sand/65">
+                            <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
                               {perfil.subtitulo}
                             </p>
-                            <p className="mt-1 text-[11px] text-[#065F46]">
+                            <p className="mt-1 font-mono text-[11px] text-[#065F46] dark:text-emerald-400">
                               {perfil.email}{" "}
-                              <span className="text-sand/40">/</span>{" "}
+                              <span className="text-slate-400">/</span>{" "}
                               {perfil.password}
                             </p>
                           </div>
 
-                          <span className="shrink-0 self-start sm:self-center border border-emerald-400/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#065F46] group-hover:bg-emerald-500 group-hover:text-obsidian transition-colors">
-                            CARGAR VIAJERO
+                          <span className="shrink-0 self-start sm:self-center rounded-full bg-[#065F46]/10 dark:bg-emerald-500/20 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#065F46] dark:text-emerald-300 group-hover:bg-[#065F46] group-hover:text-white transition-colors">
+                            Usar cuenta
                           </span>
                         </button>
                       ))}
@@ -814,9 +788,9 @@ function LoginContenido() {
 
                   {/* GRUPO 2: PERFILES CORPORATIVOS RNT / AMBIENTAL (B2B) */}
                   <div>
-                    <div className="mb-2 flex items-center justify-between border-b border-sand/15 pb-1.5 font-mono text-[11px] font-bold uppercase text-terracotta">
-                      <span>PERFILES CORPORATIVOS RNT / AMBIENTAL (B2B — /OPERADORES)</span>
-                      <span>CONTROL DE TITULARIDAD</span>
+                    <div className="mb-2.5 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5 text-[11px] font-extrabold uppercase text-[#EA580C] dark:text-amber-400">
+                      <span>Operadores RNT &amp; Autoridad Ambiental</span>
+                      <span>Portal Operadores</span>
                     </div>
                     <div className="grid grid-cols-1 gap-2.5">
                       {PERFILES_CORPORATIVOS_B2B.map((perfil) => (
@@ -824,32 +798,32 @@ function LoginContenido() {
                           key={perfil.id}
                           type="button"
                           onClick={() => manejarAutocompletarPerfil(perfil)}
-                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-sand/20 bg-jungle/15 p-3 text-left font-mono transition-colors hover:border-terracotta hover:bg-terracotta/10"
+                          className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 text-left transition-all hover:border-[#EA580C] shadow-sm"
                         >
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-xs font-bold text-sand group-hover:text-terracotta">
+                              <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#EA580C] dark:group-hover:text-amber-400">
                                 {perfil.titulo}
                               </span>
-                              <span className="border border-sand/25 px-1.5 py-0.5 text-[10px] text-sand/75">
+                              <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
                                 {perfil.rnt}
                               </span>
-                              <span className="bg-terracotta/20 px-1.5 py-0.5 text-[10px] font-bold text-terracotta">
+                              <span className="rounded-full bg-amber-100 dark:bg-amber-950/80 px-2 py-0.5 text-[10px] font-bold text-[#EA580C] dark:text-amber-300">
                                 {perfil.rolBadge}
                               </span>
                             </div>
-                            <p className="mt-1 text-[11px] text-sand/60">
+                            <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
                               {perfil.subtitulo}
                             </p>
-                            <p className="mt-1 text-[11px] text-[#065F46]">
+                            <p className="mt-1 font-mono text-[11px] text-[#065F46] dark:text-emerald-400">
                               {perfil.email}{" "}
-                              <span className="text-sand/40">/</span>{" "}
+                              <span className="text-slate-400">/</span>{" "}
                               {perfil.password}
                             </p>
                           </div>
 
-                          <span className="shrink-0 self-start sm:self-center border border-sand/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-sand group-hover:border-terracotta group-hover:bg-terracotta group-hover:text-white transition-colors">
-                            CARGAR OPERADOR
+                          <span className="shrink-0 self-start sm:self-center rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200 group-hover:bg-[#EA580C] group-hover:text-white transition-colors">
+                            Usar operador
                           </span>
                         </button>
                       ))}
@@ -863,20 +837,31 @@ function LoginContenido() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-sand/15 px-4 py-5 font-mono text-[11px] text-sand/50">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 sm:px-2">
+      <footer className="border-t border-slate-200 dark:border-slate-800 px-4 py-6 font-mono text-xs text-slate-600 dark:text-slate-300">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 sm:px-6">
           <span>
-            TYRONAWILDS™ // PASARELA DE IDENTIDAD CORPORATIVA &amp; RNT · SANTA
-            MARTA, CO
+            <strong className="text-slate-900 dark:text-white">
+              TYRONAWILDS™
+            </strong>{" "}
+            · SANTA MARTA D.T.C.H., COLOMBIA
           </span>
-          <div className="flex items-center gap-4">
-            <Link href="/privacidad" className="hover:text-terracotta">
+          <div className="flex items-center gap-5">
+            <Link
+              href="/privacidad"
+              className="hover:text-[#EA580C] dark:hover:text-amber-400"
+            >
               Privacidad (Ley 1581)
             </Link>
-            <Link href="/terminos" className="hover:text-terracotta">
+            <Link
+              href="/terminos"
+              className="hover:text-[#EA580C] dark:hover:text-amber-400"
+            >
               Términos RNT
             </Link>
-            <Link href="/lab" className="hover:text-terracotta">
+            <Link
+              href="/lab"
+              className="hover:text-[#EA580C] dark:hover:text-amber-400"
+            >
               System Status / Lab
             </Link>
           </div>
@@ -890,8 +875,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-obsidian text-sand flex items-center justify-center font-mono text-xs uppercase tracking-widest">
-          CARGANDO PASARELA DE IDENTIDAD RNT...
+        <div className="min-h-screen bg-[#FAF8F5] dark:bg-slate-950 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold uppercase tracking-widest">
+          Cargando acceso a Tyrona Wilds...
         </div>
       }
     >

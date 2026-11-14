@@ -10,9 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        obsidian: "#FAF8F5",
-        jungle: "#F3EFE6",
-        sand: "#0F172A",
+        obsidian: "rgb(var(--tw-obsidian) / <alpha-value>)",
+        jungle: "rgb(var(--tw-jungle) / <alpha-value>)",
+        sand: "rgb(var(--tw-sand) / <alpha-value>)",
         terracotta: "#EA580C",
         ember: "#F59E0B",
         ivory: "#FAF8F5",
