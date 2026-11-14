@@ -156,24 +156,24 @@ export default function PasaporteExpedicionQr({
   };
 
   return (
-    <div className="pasaporte-oficial-imprimible border-2 border-terracotta bg-obsidian text-sand shadow-2xl">
+    <div className="pasaporte-oficial-imprimible rounded-2xl border-2 border-[#EA580C] bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl overflow-hidden">
       {/* CABECERA DEL BOARDING PASS */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-terracotta bg-terracotta/15 px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#EA580C] bg-orange-50 dark:bg-orange-950/35 px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <ShieldCheck className="h-5 w-5 text-emerald-400" />
+          <ShieldCheck className="h-5 w-5 text-[#065F46] dark:text-emerald-400" />
           <div>
-            <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-terracotta font-bold">
+            <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#EA580C] dark:text-amber-400 font-bold">
               TYRONAWILDS™ // BOARDING PASS &amp; PERMISO AMBIENTAL PNN
             </span>
-            <h4 className="font-display text-2xl sm:text-3xl uppercase leading-none text-sand">
+            <h4 className="font-display text-2xl sm:text-3xl uppercase leading-none text-slate-900 dark:text-white">
               PASAPORTE OFICIAL DE EXPEDICIÓN · {reserva.codigoReserva}
             </h4>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-          <span className="inline-flex items-center gap-1.5 border border-emerald-400/50 bg-emerald-950/60 px-2.5 py-1 font-bold uppercase text-emerald-300">
-            <CheckCircle2 className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 font-bold uppercase text-emerald-950 dark:text-emerald-200">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#065F46] dark:text-emerald-400" />
             CONFIRMADA // PAGO VERIFICADO
           </span>
         </div>
@@ -184,89 +184,89 @@ export default function PasaporteExpedicionQr({
         {/* COLUMNA IZQUIERDA (8 COL): FICHA DE EMBARQUE Y PAGO WOMPI */}
         <div className="lg:col-span-8 flex flex-col justify-between space-y-5">
           <div>
-            <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase text-terracotta">
+            <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] font-bold uppercase text-[#EA580C] dark:text-amber-400">
               <span className="flex items-center gap-1.5">
                 <Compass className="h-3.5 w-3.5" />
                 {coordenadasHud}
               </span>
-              <span className="flex items-center gap-1 text-sand/80">
-                <Mountain className="h-3.5 w-3.5 text-terracotta" />
+              <span className="flex items-center gap-1 text-slate-700 dark:text-slate-200">
+                <Mountain className="h-3.5 w-3.5 text-[#EA580C]" />
                 ALTITUD MÁX: {altitudMsnm} MSNM
               </span>
             </div>
 
-            <h5 className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none text-sand">
+            <h5 className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none text-slate-900 dark:text-white">
               {nombreActividad}
             </h5>
 
-            <div className="mt-4 grid grid-cols-1 gap-3 border border-sand/15 bg-jungle/20 p-3.5 font-mono text-xs sm:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-3.5 font-mono text-xs sm:grid-cols-3">
               <div>
-                <span className="block text-[10px] uppercase text-sand/55">
+                <span className="block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">
                   EXPEDICIONARIO TITULAR
                 </span>
-                <strong className="mt-0.5 block text-sand">
+                <strong className="mt-0.5 block text-slate-900 dark:text-white">
                   {nombreViajero}
                 </strong>
-                <span className="text-[11px] text-sand/70">
+                <span className="text-[11px] text-slate-600 dark:text-slate-300">
                   {documentoViajero}
                 </span>
               </div>
 
               <div>
-                <span className="block text-[10px] uppercase text-sand/55">
+                <span className="block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">
                   FECHA Y HORA DE SALIDA
                 </span>
-                <strong className="mt-0.5 flex items-center gap-1.5 text-sand">
-                  <Calendar className="h-3.5 w-3.5 text-terracotta" />
+                <strong className="mt-0.5 flex items-center gap-1.5 text-slate-900 dark:text-white">
+                  <Calendar className="h-3.5 w-3.5 text-[#EA580C]" />
                   {fechaSalida}
                 </strong>
-                <span className="mt-0.5 flex items-center gap-1 text-[11px] text-emerald-300">
+                <span className="mt-0.5 flex items-center gap-1 text-[11px] font-bold text-[#065F46] dark:text-emerald-400">
                   <Clock className="h-3 w-3" />
                   {horaSalida} HRS
                 </span>
               </div>
 
               <div>
-                <span className="block text-[10px] uppercase text-sand/55">
+                <span className="block text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">
                   CUPOS AUTORIZADOS
                 </span>
-                <strong className="mt-0.5 flex items-center gap-1.5 text-sand">
-                  <Users className="h-3.5 w-3.5 text-terracotta" />
+                <strong className="mt-0.5 flex items-center gap-1.5 text-slate-900 dark:text-white">
+                  <Users className="h-3.5 w-3.5 text-[#EA580C]" />
                   {reserva.cantidadCupos}{" "}
                   {reserva.cantidadCupos === 1
                     ? "EXPEDICIONARIO"
                     : "EXPEDICIONARIOS"}
                 </strong>
-                <span className="text-[11px] text-emerald-300">
+                <span className="text-[11px] font-bold text-[#065F46] dark:text-emerald-400">
                   PÓLIZA EXTREMA ACTIVA
                 </span>
               </div>
             </div>
 
             {/* NÓMINA OFICIAL DE PASAJEROS ASEGURADOS PNN / ICANH */}
-            <div className="mt-3 border border-sand/15 bg-obsidian p-3 font-mono text-xs">
-              <span className="block text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+            <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 font-mono text-xs">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-[#065F46] dark:text-emerald-400">
                 // NÓMINA NOMINAL DE EXPEDICIONARIOS ASEGURADOS PNN / ICANH ({listaPasajeros.length})
               </span>
               <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {listaPasajeros.map((pax, idx) => (
                   <div
                     key={`${pax.documento}-${idx}`}
-                    className="flex items-center justify-between border border-sand/15 bg-jungle/15 px-2.5 py-1.5 text-[11px]"
+                    className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 px-2.5 py-1.5 text-[11px]"
                   >
                     <div>
-                      <strong className="text-sand">
+                      <strong className="text-slate-900 dark:text-white">
                         #{idx + 1} · {pax.nombre}
                       </strong>
-                      <span className="block text-[10px] text-sand/65">
+                      <span className="block text-[10px] text-slate-600 dark:text-slate-300">
                         {pax.documento}
                       </span>
                     </div>
                     <span
-                      className={`px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                      className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase ${
                         pax.esTitular
-                          ? "bg-terracotta/25 text-terracotta border border-terracotta/40"
-                          : "bg-emerald-500/20 text-emerald-300 border border-emerald-400/35"
+                          ? "bg-orange-50 dark:bg-orange-950/60 text-orange-950 dark:text-orange-200 border border-orange-300 dark:border-orange-700"
+                          : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700"
                       }`}
                     >
                       {pax.esTitular ? "TITULAR" : `ACOMPAÑANTE #${idx + 1}`}
@@ -277,22 +277,22 @@ export default function PasaporteExpedicionQr({
             </div>
 
             <div className="mt-3 grid grid-cols-1 gap-3 font-mono text-xs sm:grid-cols-2">
-              <div className="border border-sand/15 bg-obsidian p-3">
-                <span className="flex items-center gap-1 text-[10px] uppercase text-terracotta">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-3">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#EA580C] dark:text-amber-400">
                   <MapPin className="h-3.5 w-3.5" />
                   PUNTO DE ENCUENTRO EN SANTA MARTA
                 </span>
-                <strong className="mt-1 block text-sand/90">
+                <strong className="mt-1 block text-slate-900 dark:text-white">
                   {puntoEncuentro}
                 </strong>
               </div>
 
-              <div className="border border-sand/15 bg-obsidian p-3">
-                <span className="flex items-center gap-1 text-[10px] uppercase text-emerald-400">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-3">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-[#065F46] dark:text-emerald-400">
                   <Award className="h-3.5 w-3.5" />
                   OPERADOR RNT CERTIFICADO
                 </span>
-                <strong className="mt-1 block text-sand/90">
+                <strong className="mt-1 block text-slate-900 dark:text-white">
                   {operadorRnt}
                 </strong>
               </div>
@@ -300,40 +300,40 @@ export default function PasaporteExpedicionQr({
           </div>
 
           {/* SELLO TRANSACCIONAL WOMPI SANDBOX */}
-          <div className="border border-sand/20 bg-obsidian p-3.5 font-mono text-xs">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sand/15 pb-2">
-              <span className="flex items-center gap-1.5 font-bold uppercase text-sand">
-                <CreditCard className="h-3.5 w-3.5 text-terracotta" />
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-3.5 font-mono text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span className="flex items-center gap-1.5 font-bold uppercase text-slate-900 dark:text-white">
+                <CreditCard className="h-3.5 w-3.5 text-[#EA580C]" />
                 TRANSACCIÓN WOMPI SANDBOX: {referenciaWompi}
               </span>
-              <span className="bg-sand/10 px-2 py-0.5 text-[10px] font-bold uppercase text-terracotta">
+              <span className="rounded bg-orange-100 dark:bg-orange-950 px-2 py-0.5 text-[10px] font-bold uppercase text-[#EA580C] dark:text-amber-300">
                 MÉTODO: {metodoPago}
               </span>
             </div>
 
             <div className="mt-2.5 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-3">
               <div>
-                <span className="block text-sand/50">TARIFA OPERADOR RNT:</span>
-                <strong className="text-sand">
+                <span className="block text-slate-500 dark:text-slate-400">TARIFA OPERADOR RNT:</span>
+                <strong className="text-slate-900 dark:text-white">
                   {formatearCop(tarifaBaseOperadorCop)}
                 </strong>
               </div>
               <div>
-                <span className="block text-sand/50">
+                <span className="block text-slate-500 dark:text-slate-400">
                   TASA PNN / COMUNIDAD:
                 </span>
-                <strong className="text-emerald-300">
+                <strong className="text-[#065F46] dark:text-emerald-400">
                   {formatearCop(tasaAmbientalCop)}
                 </strong>
               </div>
               <div>
-                <span className="block text-sand/50">TOTAL PAGADO (COP):</span>
-                <strong className="text-sm text-terracotta">
+                <span className="block text-slate-500 dark:text-slate-400">TOTAL PAGADO (COP):</span>
+                <strong className="text-sm text-[#EA580C] dark:text-amber-400">
                   {formatearCop(reserva.montoTotalCop)}
                 </strong>
               </div>
             </div>
-            <div className="mt-2 text-[10px] text-sand/60">
+            <div className="mt-2 text-[10px] text-slate-600 dark:text-slate-300">
               instrumento={detalleMetodoPago} · fecha=
               {new Date(reserva.fechaOperacion).toLocaleString("es-CO")}
             </div>
@@ -341,16 +341,16 @@ export default function PasaporteExpedicionQr({
         </div>
 
         {/* COLUMNA DERECHA (4 COL): CÓDIGO QR VECTORIAL SVG DINÁMICO */}
-        <div className="lg:col-span-4 flex flex-col items-center justify-between border border-sand/20 bg-sand p-4 text-obsidian">
-          <div className="w-full flex items-center justify-between border-b border-obsidian/20 pb-2 font-mono text-[10px] font-bold uppercase">
+        <div className="lg:col-span-4 flex flex-col items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-[#FAF8F5] dark:bg-white p-4 text-slate-900">
+          <div className="w-full flex items-center justify-between border-b border-slate-300 pb-2 font-mono text-[10px] font-bold uppercase text-slate-900">
             <span className="flex items-center gap-1">
-              <QrCode className="h-3.5 w-3.5 text-terracotta" />
+              <QrCode className="h-3.5 w-3.5 text-[#EA580C]" />
               QR CONTROL PNN
             </span>
             <span>{reserva.codigoReserva}</span>
           </div>
 
-          <div className="my-3 p-2 bg-sand border border-obsidian/15">
+          <div className="my-3 p-2 bg-white border border-slate-300 rounded-lg">
             <svg
               viewBox="0 0 21 21"
               className="h-40 w-40 sm:h-44 sm:w-44"
@@ -375,11 +375,11 @@ export default function PasaporteExpedicionQr({
             </svg>
           </div>
 
-          <div className="w-full border-t border-obsidian/20 pt-2 text-center font-mono text-[10px] leading-tight">
-            <div className="font-bold uppercase text-obsidian">
+          <div className="w-full border-t border-slate-300 pt-2 text-center font-mono text-[10px] leading-tight">
+            <div className="font-bold uppercase text-slate-900">
               ESCANEO EN PUESTO DE CONTROL
             </div>
-            <div className="mt-0.5 text-obsidian/70 truncate">
+            <div className="mt-0.5 text-slate-600 truncate">
               {referenciaWompi} · {coordenadasHud}
             </div>
           </div>
@@ -387,11 +387,11 @@ export default function PasaporteExpedicionQr({
       </div>
 
       {/* BARRA DE ACCIONES DEL PASAPORTE (OCULTA AL IMPRIMIR) */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-3 border-t border-sand/15 bg-jungle/25 px-5 py-3.5 font-mono text-xs">
+      <div className="no-print flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-5 py-3.5 font-mono text-xs">
         <button
           type="button"
           onClick={manejarImprimirPasaporte}
-          className="inline-flex items-center gap-2 bg-sand px-4 py-2.5 font-bold uppercase tracking-wider text-obsidian hover:bg-terracotta hover:text-sand transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#065F46] px-4 py-2.5 font-bold uppercase tracking-wider text-white hover:bg-[#047857] transition-colors"
         >
           <Printer className="h-4 w-4" />
           <span>IMPRIMIR / GUARDAR PASAPORTE (PDF)</span>
@@ -400,7 +400,7 @@ export default function PasaporteExpedicionQr({
         {mostrarEnlaceMisReservas && (
           <Link
             href="/mis-reservas"
-            className="inline-flex items-center gap-2 border border-terracotta bg-terracotta/20 px-4 py-2.5 font-bold uppercase tracking-wider text-sand hover:bg-terracotta transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl border border-[#EA580C] bg-[#EA580C] px-4 py-2.5 font-bold uppercase tracking-wider text-white hover:bg-[#C2410C] transition-colors"
           >
             <span>VER EN MIS RESERVAS</span>
             <ExternalLink className="h-4 w-4" />

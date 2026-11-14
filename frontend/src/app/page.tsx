@@ -2867,12 +2867,12 @@ export default function TyronaWildsCommercialStorefront() {
                   </div>
 
                   {sesionUsuario && (
-                    <div className="flex items-center justify-between border border-emerald-500/35 bg-emerald-50 px-3.5 py-2 font-mono text-[11px] text-[#065F46]">
+                    <div className="flex items-center justify-between rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-700/60 px-3.5 py-2.5 font-mono text-[11px]">
                       <span>
                         Datos sincronizados desde tu sesión activa JWT (
                         <strong>{sesionUsuario.email}</strong>)
                       </span>
-                      <span className="uppercase font-bold">
+                      <span className="uppercase font-extrabold">
                         {sesionUsuario.rol}
                       </span>
                     </div>
@@ -2880,46 +2880,57 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Selección de Fecha y Horario */}
                   <div>
-                    <label className="block font-mono text-xs uppercase tracking-wider text-sand/75">
+                    <label className="block font-mono text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
                       1. SELECCIONA FECHA DE SALIDA PROGRAMADA:
                     </label>
                     <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {horariosModal.map((h) => (
-                        <button
-                          key={h.id}
-                          type="button"
-                          onClick={() => {
-                            setHorarioSeleccionadoId(h.id);
-                            setResultadoReserva(null);
-                          }}
-                          className={`border p-3.5 text-left font-mono text-xs transition-colors ${
-                            horarioSeleccionadoId === h.id
-                              ? "border-terracotta bg-terracotta/15 text-white"
-                              : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between font-bold">
-                            <span className="flex items-center gap-1.5">
-                              <Calendar className="h-3.5 w-3.5 text-terracotta" />
-                              {h.fecha}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5 text-terracotta" />
-                              {h.horaInicio.slice(0, 5)}
-                            </span>
-                          </div>
-                          <div className="mt-2 flex items-center justify-between text-[11px]">
-                            <span>
-                              CUPOS RESTANTES:{" "}
-                              <strong className="text-[#065F46]">
-                                {h.cuposDisponibles}
-                              </strong>{" "}
-                              DE {h.capacidadTotal}
-                            </span>
-                            <span>{formatearCop(h.precioUnitarioCop)}</span>
-                          </div>
-                        </button>
-                      ))}
+                      {horariosModal.map((h) => {
+                        const activa = horarioSeleccionadoId === h.id;
+                        return (
+                          <button
+                            key={h.id}
+                            type="button"
+                            onClick={() => {
+                              setHorarioSeleccionadoId(h.id);
+                              setResultadoReserva(null);
+                            }}
+                            className={`rounded-xl border p-3.5 text-left font-mono text-xs transition-all ${
+                              activa
+                                ? "border-2 border-[#EA580C] bg-orange-50 dark:bg-orange-950/40 text-slate-900 dark:text-white shadow-sm"
+                                : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:border-[#EA580C]/60"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between font-extrabold text-slate-900 dark:text-white">
+                              <span className="flex items-center gap-1.5">
+                                <Calendar className="h-3.5 w-3.5 text-[#EA580C]" />
+                                {h.fecha}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3.5 w-3.5 text-[#EA580C]" />
+                                {h.horaInicio.slice(0, 5)}
+                              </span>
+                            </div>
+                            <div className="mt-2 flex items-center justify-between text-[11px]">
+                              <span
+                                className={
+                                  activa
+                                    ? "font-bold text-orange-950 dark:text-orange-200"
+                                    : "text-slate-700 dark:text-slate-300"
+                                }
+                              >
+                                CUPOS RESTANTES:{" "}
+                                <strong className="text-[#065F46] dark:text-emerald-400">
+                                  {h.cuposDisponibles}
+                                </strong>{" "}
+                                DE {h.capacidadTotal}
+                              </span>
+                              <span className="font-extrabold text-slate-900 dark:text-white">
+                                {formatearCop(h.precioUnitarioCop)}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -2929,12 +2940,12 @@ export default function TyronaWildsCommercialStorefront() {
                       <div>
                         <label
                           htmlFor="checkout-cupos"
-                          className="block font-mono text-[11px] uppercase text-sand/70"
+                          className="block font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200"
                         >
                           VIAJEROS (CUPOS)
                         </label>
                         <div className="mt-1.5 flex items-center gap-2">
-                          <Users className="h-4 w-4 text-terracotta" />
+                          <Users className="h-4 w-4 text-[#EA580C]" />
                           <input
                             id="checkout-cupos"
                             type="number"
@@ -2956,10 +2967,10 @@ export default function TyronaWildsCommercialStorefront() {
                                 integridadGrupo: undefined,
                               }));
                             }}
-                            className={`w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                            className={`w-full rounded-xl border bg-white dark:bg-slate-900 px-3 py-2 font-mono text-xs font-bold text-slate-900 dark:text-white focus:outline-none ${
                               erroresCheckout.cupos
                                 ? "border-terracotta"
-                                : "border-sand/30 focus:border-terracotta"
+                                : "border-slate-300 dark:border-slate-700 focus:border-[#EA580C]"
                             }`}
                           />
                         </div>
@@ -2973,11 +2984,11 @@ export default function TyronaWildsCommercialStorefront() {
                       <div>
                         <label
                           htmlFor="checkout-nombre"
-                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                          className="flex items-center justify-between font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200"
                         >
                           <span>VIAJERO #1 (TITULAR)</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46] dark:text-emerald-400">
                               <Lock className="h-2.5 w-2.5" />
                               JWT VERIFICADO
                             </span>
@@ -2997,12 +3008,12 @@ export default function TyronaWildsCommercialStorefront() {
                               integridadGrupo: undefined,
                             }));
                           }}
-                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                          className={`mt-1.5 w-full rounded-xl border px-3 py-2 font-mono text-xs font-semibold focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
+                              ? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-700 cursor-not-allowed"
                               : erroresCheckout.nombre
-                              ? "border-terracotta bg-obsidian text-sand"
-                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
+                              ? "border-terracotta bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                              : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-[#EA580C]"
                           }`}
                         />
                         {erroresCheckout.nombre && (
@@ -3015,11 +3026,11 @@ export default function TyronaWildsCommercialStorefront() {
                       <div>
                         <label
                           htmlFor="checkout-doc"
-                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                          className="flex items-center justify-between font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200"
                         >
                           <span>DOCUMENTO TITULAR #1</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46] dark:text-emerald-400">
                               <Lock className="h-2.5 w-2.5" />
                               SOLO LECTURA
                             </span>
@@ -3043,12 +3054,12 @@ export default function TyronaWildsCommercialStorefront() {
                               integridadGrupo: undefined,
                             }));
                           }}
-                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                          className={`mt-1.5 w-full rounded-xl border px-3 py-2 font-mono text-xs font-semibold focus:outline-none ${
                             sesionUsuario?.documento
-                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
+                              ? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-700 cursor-not-allowed"
                               : erroresCheckout.documento
-                              ? "border-terracotta bg-obsidian text-sand"
-                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
+                              ? "border-terracotta bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                              : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-[#EA580C]"
                           }`}
                         />
                         {erroresCheckout.documento && (
@@ -3061,11 +3072,11 @@ export default function TyronaWildsCommercialStorefront() {
                       <div>
                         <label
                           htmlFor="checkout-email"
-                          className="flex items-center justify-between font-mono text-[11px] uppercase text-sand/70"
+                          className="flex items-center justify-between font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200"
                         >
                           <span>EMAIL DE CONFIRMACIÓN</span>
                           {sesionUsuario && (
-                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46]">
+                            <span className="inline-flex items-center gap-1 text-[9px] text-[#065F46] dark:text-emerald-400">
                               <Lock className="h-2.5 w-2.5" />
                               CUENTA ACTIVA
                             </span>
@@ -3084,12 +3095,12 @@ export default function TyronaWildsCommercialStorefront() {
                               email: undefined,
                             }));
                           }}
-                          className={`mt-1.5 w-full border px-3 py-2 font-mono text-xs focus:outline-none ${
+                          className={`mt-1.5 w-full rounded-xl border px-3 py-2 font-mono text-xs font-semibold focus:outline-none ${
                             sesionUsuario
-                              ? "border-emerald-500/40 bg-emerald-50 text-[#065F46] cursor-not-allowed"
+                              ? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-700 cursor-not-allowed"
                               : erroresCheckout.email
-                              ? "border-terracotta bg-obsidian text-sand"
-                              : "border-sand/30 bg-obsidian text-sand focus:border-terracotta"
+                              ? "border-terracotta bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                              : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:border-[#EA580C]"
                           }`}
                         />
                         {erroresCheckout.email && (
@@ -3102,12 +3113,12 @@ export default function TyronaWildsCommercialStorefront() {
 
                     {/* Listado Dinámico de Acompañantes (#2 hasta #N) */}
                     {cantidadCupos > 1 && (
-                      <div className="border border-sand/20 bg-obsidian p-4 space-y-3">
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sand/15 pb-2.5 font-mono text-[11px]">
-                          <span className="font-bold uppercase text-terracotta">
+                      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/90 p-4 space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2.5 font-mono text-[11px]">
+                          <span className="font-bold uppercase text-[#EA580C] dark:text-amber-400">
                             // NÓMINA DE ACOMPAÑANTES DE EXPEDICIÓN PNN / ICANH (VIAJEROS #2 AL #{cantidadCupos})
                           </span>
-                          <span className="text-[10px] text-sand/60">
+                          <span className="text-[10px] text-slate-600 dark:text-slate-300">
                             Regla Civil: 1 Documento = 1 Persona · Sin duplicados en el grupo
                           </span>
                         </div>
@@ -3127,10 +3138,10 @@ export default function TyronaWildsCommercialStorefront() {
                               return (
                                 <div
                                   key={`acomp-${numViajero}`}
-                                  className="grid grid-cols-1 gap-3 border border-sand/15 bg-jungle/15 p-3 sm:grid-cols-2"
+                                  className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/70 p-3.5 sm:grid-cols-2"
                                 >
                                   <div>
-                                    <label className="block font-mono text-[11px] uppercase text-sand/75">
+                                    <label className="block font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                                       Nombre Completo del Acompañante #{numViajero}
                                     </label>
                                     <input
@@ -3168,10 +3179,10 @@ export default function TyronaWildsCommercialStorefront() {
                                             : undefined,
                                         }));
                                       }}
-                                      className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                                      className={`mt-1.5 w-full rounded-xl border bg-white dark:bg-slate-900 px-3 py-2 font-mono text-xs text-slate-900 dark:text-white focus:outline-none ${
                                         errAcomp?.nombre
                                           ? "border-terracotta"
-                                          : "border-sand/30 focus:border-terracotta"
+                                          : "border-slate-300 dark:border-slate-700 focus:border-[#EA580C]"
                                       }`}
                                     />
                                     {errAcomp?.nombre && (
@@ -3182,7 +3193,7 @@ export default function TyronaWildsCommercialStorefront() {
                                   </div>
 
                                   <div>
-                                    <label className="block font-mono text-[11px] uppercase text-sand/75">
+                                    <label className="block font-mono text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                                       Documento / Pasaporte #{numViajero}
                                     </label>
                                     <input
@@ -3220,10 +3231,10 @@ export default function TyronaWildsCommercialStorefront() {
                                             : undefined,
                                         }));
                                       }}
-                                      className={`mt-1.5 w-full border bg-obsidian px-3 py-2 font-mono text-xs text-sand focus:outline-none ${
+                                      className={`mt-1.5 w-full rounded-xl border bg-white dark:bg-slate-900 px-3 py-2 font-mono text-xs text-slate-900 dark:text-white focus:outline-none ${
                                         errAcomp?.documento
                                           ? "border-terracotta"
-                                          : "border-sand/30 focus:border-terracotta"
+                                          : "border-slate-300 dark:border-slate-700 focus:border-[#EA580C]"
                                       }`}
                                     />
                                     {errAcomp?.documento && (
@@ -3242,19 +3253,19 @@ export default function TyronaWildsCommercialStorefront() {
 
                     {/* Alerta Visual del Motor de Validación de Identidad Civil y Anti-Duplicidad */}
                     {erroresCheckout.integridadGrupo && (
-                      <div className="border-2 border-terracotta bg-terracotta/15 p-4 font-mono text-xs text-white">
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-2">
-                          <span className="flex items-center gap-2 font-bold text-terracotta">
+                      <div className="rounded-2xl border-2 border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/40 p-4 font-mono text-xs text-slate-900 dark:text-white">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-red-200 dark:border-red-800/60 pb-2">
+                          <span className="flex items-center gap-2 font-bold text-[#EA580C] dark:text-amber-400">
                             <ShieldAlert className="h-4 w-4" />
                             HTTP {erroresCheckout.integridadGrupo.httpStatus || 422}{" "}
                             {erroresCheckout.integridadGrupo.codigo ||
                               "INTEGRIDAD_IDENTIDAD"}
                           </span>
-                          <span className="bg-obsidian px-2 py-0.5 text-[10px] text-amber-800 border border-amber-400/40">
+                          <span className="rounded bg-amber-100 dark:bg-amber-950 px-2 py-0.5 text-[10px] font-bold text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
                             BLOQUEO PREVENTIVO DE INTEGRIDAD PNN
                           </span>
                         </div>
-                        <p className="mt-2.5 text-sand/95 leading-relaxed">
+                        <p className="mt-2.5 text-slate-800 dark:text-slate-100 leading-relaxed">
                           {erroresCheckout.integridadGrupo.mensaje}
                         </p>
                       </div>
@@ -3263,7 +3274,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Casilla de Consentimiento Habeas Data (Ley 1581 de 2012) */}
                   <div>
-                    <label className="flex items-start gap-2.5 font-mono text-xs text-sand/80 cursor-pointer">
+                    <label className="flex items-start gap-2.5 font-mono text-xs text-slate-700 dark:text-slate-200 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={aceptaHabeasData}
@@ -3274,21 +3285,21 @@ export default function TyronaWildsCommercialStorefront() {
                             habeasData: undefined,
                           }));
                         }}
-                        className="mt-0.5 h-4 w-4 accent-terracotta"
+                        className="mt-0.5 h-4 w-4 accent-[#EA580C]"
                       />
                       <span>
                         Autorizo el tratamiento de mis datos personales conforme
                         a la{" "}
                         <Link
                           href="/privacidad"
-                          className="text-terracotta underline hover:text-sand"
+                          className="text-[#EA580C] font-bold underline hover:text-slate-900 dark:hover:text-white"
                         >
                           Ley 1581 de 2012 (Política de Privacidad)
                         </Link>{" "}
                         y acepto los{" "}
                         <Link
                           href="/terminos"
-                          className="text-terracotta underline hover:text-sand"
+                          className="text-[#EA580C] font-bold underline hover:text-slate-900 dark:hover:text-white"
                         >
                           Términos y Condiciones RNT
                         </Link>
@@ -3305,7 +3316,7 @@ export default function TyronaWildsCommercialStorefront() {
                   <button
                     type="button"
                     onClick={avanzarAPaso2Wompi}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#EA580C] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-[#C2410C] transition-colors shadow-md"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -3323,18 +3334,18 @@ export default function TyronaWildsCommercialStorefront() {
                   PASO 2: PASARELA DE PAGO SEGURA (TYRONAWILDS PAY // WOMPI SANDBOX)
               ================================================================ */}
               {pasoCheckout === 2 && (
-                <div className="mt-6 space-y-5 font-mono text-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border border-sand/20 bg-obsidian px-4 py-3">
+                <div className="mt-6 space-y-5 font-mono text-xs text-slate-900 dark:text-white">
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <Lock className="h-4 w-4 text-[#065F46]" />
-                      <span className="font-bold uppercase tracking-wider text-sand">
+                      <Lock className="h-4 w-4 text-[#065F46] dark:text-emerald-400" />
+                      <span className="font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                         TYRONAWILDS PAY // WOMPI SANDBOX GATEWAY
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setPasoCheckout(1)}
-                      className="text-[11px] text-terracotta underline hover:text-sand"
+                      className="text-[11px] font-bold text-[#EA580C] dark:text-amber-400 underline hover:text-slate-900 dark:hover:text-white"
                     >
                       EDITAR DATOS DEL VIAJERO ({nombreViajero})
                     </button>
@@ -3342,7 +3353,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Selector de los 3 Métodos de Pago */}
                   <div>
-                    <label className="block text-[11px] uppercase text-sand/70">
+                    <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                       SELECCIONA INSTRUMENTO FINANCIERO COLOMBIA (MODO SANDBOX 1-CLIC):
                     </label>
                     <div className="mt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
@@ -3352,17 +3363,17 @@ export default function TyronaWildsCommercialStorefront() {
                           setMetodoPagoWompi("NEQUI");
                           setErrorPagoWompi(null);
                         }}
-                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                        className={`flex items-center justify-between rounded-xl border p-3.5 text-left transition-all ${
                           metodoPagoWompi === "NEQUI"
-                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
-                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                            ? "border-2 border-[#EA580C] bg-orange-50 dark:bg-orange-950/40 text-slate-900 dark:text-white font-extrabold shadow-sm"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:border-[#EA580C]/50"
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <Smartphone className="h-4 w-4 text-terracotta" />
+                          <Smartphone className="h-4 w-4 text-[#EA580C]" />
                           <span>NEQUI PUSH</span>
                         </span>
-                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                        <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] text-slate-800 dark:text-slate-100">
                           1.5s
                         </span>
                       </button>
@@ -3373,17 +3384,17 @@ export default function TyronaWildsCommercialStorefront() {
                           setMetodoPagoWompi("PSE");
                           setErrorPagoWompi(null);
                         }}
-                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                        className={`flex items-center justify-between rounded-xl border p-3.5 text-left transition-all ${
                           metodoPagoWompi === "PSE"
-                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
-                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                            ? "border-2 border-[#EA580C] bg-orange-50 dark:bg-orange-950/40 text-slate-900 dark:text-white font-extrabold shadow-sm"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:border-[#EA580C]/50"
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <Landmark className="h-4 w-4 text-terracotta" />
+                          <Landmark className="h-4 w-4 text-[#EA580C]" />
                           <span>PSE BANCARIO</span>
                         </span>
-                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                        <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] text-slate-800 dark:text-slate-100">
                           ACH
                         </span>
                       </button>
@@ -3394,17 +3405,17 @@ export default function TyronaWildsCommercialStorefront() {
                           setMetodoPagoWompi("TARJETA");
                           setErrorPagoWompi(null);
                         }}
-                        className={`flex items-center justify-between border p-3.5 text-left transition-colors ${
+                        className={`flex items-center justify-between rounded-xl border p-3.5 text-left transition-all ${
                           metodoPagoWompi === "TARJETA"
-                            ? "border-terracotta bg-terracotta/15 text-white font-bold"
-                            : "border-sand/20 bg-obsidian text-sand/70 hover:border-sand/40"
+                            ? "border-2 border-[#EA580C] bg-orange-50 dark:bg-orange-950/40 text-slate-900 dark:text-white font-extrabold shadow-sm"
+                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:border-[#EA580C]/50"
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <CreditCard className="h-4 w-4 text-terracotta" />
+                          <CreditCard className="h-4 w-4 text-[#EA580C]" />
                           <span>TARJETA CRÉDITO/DÉBITO</span>
                         </span>
-                        <span className="bg-sand/10 px-1.5 py-0.5 text-[10px]">
+                        <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] text-slate-800 dark:text-slate-100">
                           4242
                         </span>
                       </button>
@@ -3412,17 +3423,17 @@ export default function TyronaWildsCommercialStorefront() {
                   </div>
 
                   {/* Formulario Específico por Método con Botón Autocompletar 1-Clic */}
-                  <div className="border border-sand/20 bg-obsidian p-4">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
                     {metodoPagoWompi === "NEQUI" && (
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-bold uppercase text-sand">
+                          <span className="font-bold uppercase text-slate-900 dark:text-white">
                             PAGO RÁPIDO CON NOTIFICACIÓN PUSH NEQUI
                           </span>
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("NEQUI")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1 rounded-lg border border-[#EA580C]/60 bg-orange-50 dark:bg-orange-950/40 px-2.5 py-1 text-[10px] font-bold uppercase text-[#EA580C] dark:text-amber-300 hover:bg-[#EA580C] hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -3430,7 +3441,7 @@ export default function TyronaWildsCommercialStorefront() {
                         </div>
 
                         <div>
-                          <label className="block text-[11px] uppercase text-sand/70">
+                          <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                             NÚMERO DE CELULAR VINCULADO A NEQUI (10 DÍGITOS)
                           </label>
                           <input
@@ -3438,16 +3449,16 @@ export default function TyronaWildsCommercialStorefront() {
                             value={celularNequi}
                             onChange={(e) => setCelularNequi(e.target.value)}
                             placeholder="3005550199"
-                            className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                            className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                           />
                         </div>
 
                         {estadoPushNequi !== "IDLE" && (
                           <div
-                            className={`border p-3 text-[11px] ${
+                            className={`rounded-xl border p-3 text-[11px] font-semibold ${
                               estadoPushNequi === "APROBADO"
-                                ? "border-emerald-400 bg-emerald-50 text-[#065F46]"
-                                : "border-amber-400 bg-amber-50 text-amber-900 animate-pulse"
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200"
+                                : "border-amber-300 bg-amber-50 text-amber-950 dark:bg-amber-950/40 dark:text-amber-200 animate-pulse"
                             }`}
                           >
                             {estadoPushNequi === "ENVIANDO"
@@ -3461,13 +3472,13 @@ export default function TyronaWildsCommercialStorefront() {
                     {metodoPagoWompi === "PSE" && (
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-bold uppercase text-sand">
+                          <span className="font-bold uppercase text-slate-900 dark:text-white">
                             DÉBITO INTERBANCARIO PSE (ACH COLOMBIA)
                           </span>
                           <button
                             type="button"
                             onClick={() => autocompletarMetodoWompiDemo("PSE")}
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1 rounded-lg border border-[#EA580C]/60 bg-orange-50 dark:bg-orange-950/40 px-2.5 py-1 text-[10px] font-bold uppercase text-[#EA580C] dark:text-amber-300 hover:bg-[#EA580C] hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -3476,13 +3487,13 @@ export default function TyronaWildsCommercialStorefront() {
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                           <div>
-                            <label className="block text-[11px] uppercase text-sand/70">
+                            <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                               ENTIDAD FINANCIERA
                             </label>
                             <select
                               value={bancoPse}
                               onChange={(e) => setBancoPse(e.target.value)}
-                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                             >
                               <option value="Nu Colombia">Nu Colombia</option>
                               <option value="Bancolombia">Bancolombia</option>
@@ -3495,7 +3506,7 @@ export default function TyronaWildsCommercialStorefront() {
                           </div>
 
                           <div>
-                            <label className="block text-[11px] uppercase text-sand/70">
+                            <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                               TIPO DE PERSONA
                             </label>
                             <select
@@ -3505,7 +3516,7 @@ export default function TyronaWildsCommercialStorefront() {
                                   e.target.value as "NATURAL" | "JURIDICA"
                                 )
                               }
-                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                             >
                               <option value="NATURAL">Persona Natural</option>
                               <option value="JURIDICA">Persona Jurídica</option>
@@ -3513,7 +3524,7 @@ export default function TyronaWildsCommercialStorefront() {
                           </div>
 
                           <div>
-                            <label className="block text-[11px] uppercase text-sand/70">
+                            <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                               DOCUMENTO TITULAR
                             </label>
                             <input
@@ -3521,7 +3532,7 @@ export default function TyronaWildsCommercialStorefront() {
                               value={documentoPse}
                               onChange={(e) => setDocumentoPse(e.target.value)}
                               placeholder="1082940182"
-                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                             />
                           </div>
                         </div>
@@ -3531,7 +3542,7 @@ export default function TyronaWildsCommercialStorefront() {
                     {metodoPagoWompi === "TARJETA" && (
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-bold uppercase text-sand">
+                          <span className="font-bold uppercase text-slate-900 dark:text-white">
                             TARJETA DE CRÉDITO / DÉBITO (WOMPI SANDBOX)
                           </span>
                           <button
@@ -3539,7 +3550,7 @@ export default function TyronaWildsCommercialStorefront() {
                             onClick={() =>
                               autocompletarMetodoWompiDemo("TARJETA")
                             }
-                            className="inline-flex items-center gap-1 border border-terracotta/60 bg-terracotta/15 px-2.5 py-1 text-[10px] font-bold uppercase text-terracotta hover:bg-terracotta hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1 rounded-lg border border-[#EA580C]/60 bg-orange-50 dark:bg-orange-950/40 px-2.5 py-1 text-[10px] font-bold uppercase text-[#EA580C] dark:text-amber-300 hover:bg-[#EA580C] hover:text-white transition-colors"
                           >
                             <Zap className="h-3 w-3" />
                             <span>Autocompletar datos de prueba</span>
@@ -3548,7 +3559,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                           <div className="sm:col-span-2">
-                            <label className="block text-[11px] uppercase text-sand/70">
+                            <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                               NÚMERO DE TARJETA SANDBOX
                             </label>
                             <input
@@ -3556,12 +3567,12 @@ export default function TyronaWildsCommercialStorefront() {
                               value={numeroTarjeta}
                               onChange={(e) => setNumeroTarjeta(e.target.value)}
                               placeholder="4242 4242 4242 4242"
-                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-[11px] uppercase text-sand/70">
+                            <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                               EXPIRACIÓN
                             </label>
                             <input
@@ -3571,13 +3582,13 @@ export default function TyronaWildsCommercialStorefront() {
                                 setExpiracionTarjeta(e.target.value)
                               }
                               placeholder="12/28"
-                              className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                              className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                             />
                           </div>
 
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <label className="block text-[11px] uppercase text-sand/70">
+                              <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                                 CVC
                               </label>
                               <input
@@ -3585,11 +3596,11 @@ export default function TyronaWildsCommercialStorefront() {
                                 value={cvcTarjeta}
                                 onChange={(e) => setCvcTarjeta(e.target.value)}
                                 placeholder="842"
-                                className="mt-1.5 w-full border border-sand/30 bg-obsidian px-2.5 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                                className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                               />
                             </div>
                             <div>
-                              <label className="block text-[11px] uppercase text-sand/70">
+                              <label className="block text-[11px] font-bold uppercase text-slate-700 dark:text-slate-200">
                                 CUOTAS
                               </label>
                               <select
@@ -3597,7 +3608,7 @@ export default function TyronaWildsCommercialStorefront() {
                                 onChange={(e) =>
                                   setCuotasTarjeta(e.target.value)
                                 }
-                                className="mt-1.5 w-full border border-sand/30 bg-obsidian px-2 py-2.5 text-sand focus:border-terracotta focus:outline-none"
+                                className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2 py-2.5 text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                               >
                                 <option value="1">1</option>
                                 <option value="3">3</option>
@@ -3612,7 +3623,7 @@ export default function TyronaWildsCommercialStorefront() {
                   </div>
 
                   {errorPagoWompi && (
-                    <div className="border border-terracotta bg-terracotta/15 p-3 text-terracotta">
+                    <div className="rounded-xl border border-red-300 bg-red-50 dark:bg-red-950/40 p-3 font-bold text-red-800 dark:text-red-200">
                       {errorPagoWompi}
                     </div>
                   )}
@@ -3624,25 +3635,25 @@ export default function TyronaWildsCommercialStorefront() {
                     const tasaPnnCop = Math.round(totalCop * 0.12);
                     const baseOperadorCop = totalCop - tasaPnnCop;
                     return (
-                      <div className="border border-sand/20 bg-obsidian p-4">
-                        <div className="text-[10px] uppercase tracking-wider text-sand/55 mb-2">
+                      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                           DESGLOSE FINANCIERO TRANSPARENTE (RNT &amp; PNN)
                         </div>
-                        <div className="flex justify-between text-sand/80">
+                        <div className="flex justify-between text-slate-800 dark:text-slate-200">
                           <span>
                             Tarifa Base Operador RNT ({cantidadCupos} PAX)
                           </span>
-                          <span>{formatearCop(baseOperadorCop)}</span>
+                          <span className="font-bold">{formatearCop(baseOperadorCop)}</span>
                         </div>
-                        <div className="mt-1.5 flex justify-between text-[#065F46]">
+                        <div className="mt-1.5 flex justify-between font-bold text-[#065F46] dark:text-emerald-400">
                           <span>
                             Tasa Ambiental PNN / Contribución Indígena (12%)
                           </span>
                           <span>{formatearCop(tasaPnnCop)}</span>
                         </div>
-                        <div className="mt-3 flex items-center justify-between border-t border-sand/15 pt-3 text-sm font-bold text-sand">
+                        <div className="mt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-700 pt-3 text-sm font-extrabold text-slate-900 dark:text-white">
                           <span>TOTAL TRANSACCIÓN WOMPI (COP)</span>
-                          <span className="text-lg text-terracotta">
+                          <span className="text-lg text-[#EA580C] dark:text-amber-400">
                             {formatearCop(totalCop)}
                           </span>
                         </div>
@@ -3651,10 +3662,10 @@ export default function TyronaWildsCommercialStorefront() {
                   })()}
 
                   {/* Selector Discreto de Escenario de Demostración (201 vs 409) */}
-                  <div className="border border-sand/20 bg-sand/5 p-3.5">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/70 p-3.5">
                     <label
                       htmlFor="selector-escenario-wompi"
-                      className="block text-[10px] uppercase tracking-wider text-sand/65"
+                      className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300"
                     >
                       MODO DE DEMOSTRACIÓN EN VIVO (TRANSACCIONALIDAD ACID &amp;
                       CONCURRENCIA):
@@ -3668,7 +3679,7 @@ export default function TyronaWildsCommercialStorefront() {
                         );
                         setResultadoReserva(null);
                       }}
-                      className="mt-1.5 w-full border border-sand/30 bg-obsidian px-3 py-2 text-xs font-bold text-sand focus:border-terracotta focus:outline-none"
+                      className="mt-1.5 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-bold text-slate-900 dark:text-white focus:border-[#EA580C] focus:outline-none"
                     >
                       <option value="EXITO_201">
                         ESCENARIO 1: PAGO APROBADO + RESERVA ACID (201 CREATED)
@@ -3685,7 +3696,7 @@ export default function TyronaWildsCommercialStorefront() {
                     type="button"
                     disabled={procesandoReserva}
                     onClick={manejarConfirmarCheckout}
-                    className="w-full flex items-center justify-center gap-2 bg-terracotta px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-ember transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#EA580C] px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white hover:bg-[#C2410C] transition-colors shadow-md disabled:opacity-50"
                   >
                     <CreditCard className="h-4 w-4" />
                     <span>
@@ -3697,25 +3708,25 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Resultado de Error Transaccional o Integridad (409 / 422) + Reverso Automático Wompi */}
                   {resultadoReserva && !resultadoReserva.exito && (
-                    <div className="border-2 border-terracotta bg-terracotta/15 p-5 text-white space-y-4">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-terracotta/40 pb-3">
-                        <span className="flex items-center gap-2 font-bold text-terracotta text-sm">
+                    <div className="rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 p-5 text-slate-900 dark:text-white space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-300 dark:border-amber-700/60 pb-3">
+                        <span className="flex items-center gap-2 font-extrabold text-[#EA580C] dark:text-amber-300 text-sm">
                           <ShieldAlert className="h-5 w-5" />
                           HTTP {resultadoReserva.httpStatus}{" "}
                           {resultadoReserva.errorCodigo || "CONFLICT"}
                         </span>
-                        <span className="bg-obsidian px-2.5 py-1 text-[10px] font-bold text-[#065F46] border border-emerald-400/40">
+                        <span className="rounded-lg bg-emerald-50 dark:bg-emerald-950 px-2.5 py-1 text-[10px] font-bold text-emerald-950 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700">
                           ROLLBACK ACID + WOMPI REVERSADO
                         </span>
                       </div>
 
-                      <p className="text-xs text-sand/90 leading-relaxed">
+                      <p className="text-xs text-slate-900 dark:text-slate-100 leading-relaxed">
                         {resultadoReserva.errorMensaje}
                       </p>
 
                       {resultadoReserva.referenciaWompiReversada && (
-                        <div className="flex items-center gap-2.5 border border-emerald-400/40 bg-emerald-950/40 p-3 text-emerald-200">
-                          <RotateCcw className="h-4 w-4 shrink-0 text-[#065F46]" />
+                        <div className="flex items-center gap-2.5 rounded-xl border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/50 p-3 text-emerald-950 dark:text-emerald-200">
+                          <RotateCcw className="h-4 w-4 shrink-0 text-[#065F46] dark:text-emerald-400" />
                           <div>
                             <strong className="block uppercase">
                               COBRO REVERSADO AUTOMÁTICAMENTE EN WOMPI SANDBOX
