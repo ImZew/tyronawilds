@@ -196,10 +196,8 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
       "Donde los senderos de piedra ancestral y la selva húmeda tropical desembocan en el azul turquesa cristalino de Cabo San Juan del Guía.",
     fraseEn:
       "Where ancient stone trails and tropical rainforest meet the crystal-clear turquoise waters of Cabo San Juan del Guia.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85",
+    imagen: "/images/destinos/tayrona.jpg",
+    fallbackImagen: "/images/destinos/tayrona.jpg",
   },
   {
     id: "02",
@@ -219,10 +217,8 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
       "Camina junto a baquianos locales y guías indígenas hacia las 169 terrazas sagradas construidas hace más de mil años en el corazón de la Sierra.",
     fraseEn:
       "Walk alongside local and indigenous guides to the 169 sacred stone terraces built over a thousand years ago in the heart of the Sierra.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85",
+    imagen: "/images/destinos/teyuna.jpg",
+    fallbackImagen: "/images/destinos/teyuna.jpg",
   },
   {
     id: "03",
@@ -242,10 +238,8 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
       "Cascadas de agua pura entre montañas verdes, fincas de café orgánico de sombra y más de trescientas especies de aves al amanecer.",
     fraseEn:
       "Pure mountain waterfalls among lush green hills, organic shade-grown coffee estates, and over three hundred bird species at dawn.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=85",
+    imagen: "/images/destinos/minca.jpg",
+    fallbackImagen: "/images/destinos/minca.jpg",
   },
   {
     id: "04",
@@ -265,10 +259,8 @@ const DESTINOS_HERO: DestinoHeroItem[] = [
       "Contempla el amanecer sobre un mar de nubes desde Cerro Kennedy frente a los picos nevados Colón y Bolívar junto al mar Caribe.",
     fraseEn:
       "Watch the sunrise above a sea of clouds from Cerro Kennedy facing the snowcapped Colón and Bolívar peaks right beside the Caribbean Sea.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/8/8e/Sierra_Nevada_de_Santa_Marta.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
+    imagen: "/images/destinos/sierra.jpg",
+    fallbackImagen: "/images/destinos/sierra.jpg",
   },
 ];
 
@@ -339,22 +331,20 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Caminata suave",
     nivelEn: "Easy walk",
     precioDesde: "$290.000",
-    svgPos: { x: 300, y: 145 },
+    svgPos: { x: 28, y: 22 },
     tempCelsius: 29,
     cuposDisponibles: 18,
     descripcionEs:
       "Senderos sombreados que desembocan en las bahías de aguas turquesa más icónicas del Caribe colombiano.",
     descripcionEn:
       "Shaded trails leading into the most iconic turquoise bays of the Colombian Caribbean.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
+    imagen: "/images/destinos/tayrona.jpg",
+    fallbackImagen: "/images/destinos/tayrona.jpg",
   },
   {
     id: "don-diego",
     codigoServicio: 105,
-    nombre: "Río Don Diego & Encuentro con el Mar",
+    nombre: "Río Don Diego · Encuentro con el Mar",
     region: "Piedemonte Caribe",
     pisoTermico: "LITORAL",
     pisoLabelEs: "Río y Naturaleza",
@@ -365,22 +355,20 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Muy suave",
     nivelEn: "Very easy",
     precioDesde: "$245.000",
-    svgPos: { x: 750, y: 165 },
+    svgPos: { x: 74, y: 25 },
     tempCelsius: 28,
     cuposDisponibles: 22,
     descripcionEs:
       "Descenso sereno en kayak por aguas cristalinas rodeadas de monos aulladores hasta tocar las olas del mar.",
     descripcionEn:
       "Serene kayak float down crystal-clear waters surrounded by howler monkeys all the way to the ocean surf.",
-    imagen:
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=85",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=85",
+    imagen: "/images/destinos/dondiego.jpg",
+    fallbackImagen: "/images/destinos/dondiego.jpg",
   },
   {
     id: "minca",
     codigoServicio: 103,
-    nombre: "Minca & Cascadas de Marinka",
+    nombre: "Minca · Cascadas de Marinka",
     region: "Bosque de Niebla",
     pisoTermico: "SELVA_HUMEDA",
     pisoLabelEs: "Cascadas y Café Orgánico",
@@ -391,22 +379,20 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Para todos",
     nivelEn: "All levels",
     precioDesde: "$210.000",
-    svgPos: { x: 280, y: 310 },
+    svgPos: { x: 23, y: 54 },
     tempCelsius: 23,
     cuposDisponibles: 28,
     descripcionEs:
       "Pozos naturales de agua fresca, fincas cafeteras tradicionales y avistamiento de tucanes y colibríes.",
     descripcionEn:
       "Refreshing natural waterfall pools, traditional coffee estates, and toucan and hummingbird watching.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85",
+    imagen: "/images/destinos/minca.jpg",
+    fallbackImagen: "/images/destinos/minca.jpg",
   },
   {
     id: "teyuna",
     codigoServicio: 9,
-    nombre: "Ciudad Perdida (Teyuna)",
+    nombre: "Ciudad Perdida · Teyuna",
     region: "Corazón de la Sierra",
     pisoTermico: "SELVA_HUMEDA",
     pisoLabelEs: "Arqueología y Selva",
@@ -417,17 +403,15 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Reto de montaña",
     nivelEn: "Mountain trek",
     precioDesde: "$1.850.000",
-    svgPos: { x: 600, y: 345 },
+    svgPos: { x: 66, y: 56 },
     tempCelsius: 20,
     cuposDisponibles: 12,
     descripcionEs:
       "La gran travesía hacia las 169 terrazas circulares de piedra en el corazón sagrado de la Sierra Nevada.",
     descripcionEn:
       "The iconic multi-day trek to 169 circular stone terraces in the sacred heart of the Sierra Nevada.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85",
+    imagen: "/images/destinos/teyuna.jpg",
+    fallbackImagen: "/images/destinos/teyuna.jpg",
   },
   {
     id: "cerro-kennedy",
@@ -443,17 +427,15 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Caminata media",
     nivelEn: "Moderate hike",
     precioDesde: "$340.000",
-    svgPos: { x: 450, y: 465 },
+    svgPos: { x: 46, y: 80 },
     tempCelsius: 11,
     cuposDisponibles: 14,
     descripcionEs:
       "El balcón natural más imponente del Caribe para contemplar los picos nevados Colón y Bolívar al amanecer.",
     descripcionEn:
       "The most breathtaking natural balcony in the Caribbean facing the snowcapped Colón and Bolívar peaks at dawn.",
-    imagen:
-      "https://upload.wikimedia.org/wikipedia/commons/8/8e/Sierra_Nevada_de_Santa_Marta.jpg",
-    fallbackImagen:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85",
+    imagen: "/images/destinos/sierra.jpg",
+    fallbackImagen: "/images/destinos/sierra.jpg",
   },
 ];
 
@@ -478,6 +460,11 @@ export default function TyronaWildsCommercialStorefront() {
   const [pisoSeleccionado, setPisoSeleccionado] =
     useState<PisoTermicoFiltro>("TODOS");
   const [nodoActivoId, setNodoActivoId] = useState<string>("tayrona");
+  const [vistaMapa3D, setVistaMapa3D] = useState<boolean>(true);
+  const [mouseTilt, setMouseTilt] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
 
   // Barra rápida de reserva debajo del Hero
   const [reservaRapidaCodigo, setReservaRapidaCodigo] = useState<number>(102);
@@ -1081,7 +1068,7 @@ export default function TyronaWildsCommercialStorefront() {
   const destActual = DESTINOS_HERO[destinoHeroIndex];
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#FAF8F5] text-[#0F172A] selection:bg-[#EA580C] selection:text-white font-sans">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#FAF8F5] dark:bg-slate-950 text-[#0F172A] dark:text-slate-100 selection:bg-[#EA580C] selection:text-white font-sans transition-colors duration-300">
       {/* =====================================================================
           BARRA SUPERIOR GLOBAL (CRISTALINA SOBRE EL HERO / BLANCO MARFIL EN SCROLL)
       ====================================================================== */}
@@ -1416,7 +1403,7 @@ export default function TyronaWildsCommercialStorefront() {
       >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#065F46]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#065F46]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#065F46]/10 dark:bg-emerald-500/15 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#065F46] dark:text-emerald-400">
               <Compass className="h-3.5 w-3.5" />
               <span>
                 {idioma === "es"
@@ -1424,7 +1411,7 @@ export default function TyronaWildsCommercialStorefront() {
                   : "Destination Magazine · Caribbean & Sierra Nevada"}
               </span>
             </span>
-            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A]">
+            <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A] dark:text-white">
               {idioma === "es"
                 ? "Experiencias reales entre el mar y las cumbres"
                 : "Authentic experiences between sea and summits"}
@@ -1454,11 +1441,11 @@ export default function TyronaWildsCommercialStorefront() {
             return (
               <article
                 key={`mag-${dest.id}`}
-                className="group flex flex-col justify-between overflow-hidden rounded-3xl bg-white border border-[#0F172A]/10 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)] transition-all duration-300"
+                className="group flex flex-col justify-between overflow-hidden rounded-3xl bg-white dark:bg-slate-900 border border-[#0F172A]/10 dark:border-slate-800 shadow-[0_12px_35px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)] transition-all duration-300"
               >
                 <div>
                   {/* Fotografía Real Verificada de Alta Luminosidad */}
-                  <div className="relative h-64 w-full overflow-hidden bg-[#F3EFE6]">
+                  <div className="relative h-64 w-full overflow-hidden bg-[#F3EFE6] dark:bg-slate-800">
                     <img
                       src={dest.imagen}
                       alt={dest.tituloEditorialEs}
@@ -1470,7 +1457,7 @@ export default function TyronaWildsCommercialStorefront() {
                       }}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute top-3 left-3 rounded-full bg-white/95 px-3.5 py-1 text-xs font-bold text-[#065F46] shadow-sm">
+                    <div className="absolute top-3 left-3 rounded-full bg-white/95 dark:bg-slate-900/95 px-3.5 py-1 text-xs font-bold text-[#065F46] dark:text-emerald-400 shadow-sm">
                       {idioma === "es" ? dest.duracionEs : dest.duracionEn}
                     </div>
                     <div className="absolute bottom-3 right-3 rounded-full bg-[#0F172A]/85 px-3.5 py-1 text-xs font-semibold text-white backdrop-blur-md">
@@ -1480,29 +1467,29 @@ export default function TyronaWildsCommercialStorefront() {
 
                   {/* Contenido Editorial */}
                   <div className="p-6">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#0D9488]">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#0D9488] dark:text-teal-400">
                       {idioma === "es"
                         ? dest.ubicacionAltitudEs
                         : dest.ubicacionAltitudEn}
                     </div>
-                    <h3 className="mt-1.5 text-2xl font-extrabold tracking-tight text-[#0F172A] group-hover:text-[#065F46] transition-colors">
+                    <h3 className="mt-1.5 text-2xl font-extrabold tracking-tight text-[#0F172A] dark:text-white group-hover:text-[#065F46] dark:group-hover:text-emerald-400 transition-colors">
                       {idioma === "es"
                         ? dest.tituloEditorialEs
                         : dest.tituloEditorialEn}
                     </h3>
-                    <p className="mt-2.5 text-sm text-[#0F172A]/75 leading-relaxed line-clamp-3">
+                    <p className="mt-2.5 text-sm text-[#0F172A]/75 dark:text-slate-300 leading-relaxed line-clamp-3">
                       {idioma === "es" ? dest.fraseEs : dest.fraseEn}
                     </p>
                   </div>
                 </div>
 
                 {/* Pie de Tarjeta con Precio Transparente y Reserva Directa */}
-                <div className="px-6 pb-6 pt-4 border-t border-[#0F172A]/10 flex items-center justify-between gap-3">
+                <div className="px-6 pb-6 pt-4 border-t border-[#0F172A]/10 dark:border-slate-800 flex items-center justify-between gap-3">
                   <div>
-                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#0F172A]/55">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#0F172A]/55 dark:text-slate-400">
                       {idioma === "es" ? "Tarifa oficial" : "Official rate"}
                     </span>
-                    <span className="text-lg font-extrabold text-[#065F46]">
+                    <span className="text-lg font-extrabold text-[#065F46] dark:text-emerald-400">
                       {dest.precioDesde}
                     </span>
                   </div>
@@ -1525,26 +1512,26 @@ export default function TyronaWildsCommercialStorefront() {
       </section>
 
       {/* =====================================================================
-          SECCIÓN 3: MAPA INTERACTIVO DE LA REGIÓN EN ARENA SUAVE (#F3EFE6)
-          Rutas en Verde Esmeralda (#065F46 / #0D9488) y Azul Turquesa Caribe (#0284C7)
+          SECCIÓN 3: MAQUETA TOPOGRÁFICA 3D INTERACTIVA DE LA SIERRA NEVADA Y EL CARIBE
+          Perspectiva 3D Real (perspective: 1200px, preserve-3d), Capas Z y Pines Elevados
       ====================================================================== */}
       <section
         id="cartografia"
-        aria-label="Mapa Interactivo de Santa Marta y la Sierra Nevada"
-        className="w-full bg-[#F3EFE6] py-16 sm:py-20 border-y border-[#0F172A]/10"
+        aria-label="Maqueta Topográfica 3D Interactiva de Santa Marta y la Sierra Nevada"
+        className="w-full bg-[#F3EFE6] dark:bg-slate-900/90 py-16 sm:py-20 border-y border-[#0F172A]/10 dark:border-slate-800 transition-colors"
       >
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#0284C7]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#0284C7]">
-                <MapPin className="h-3.5 w-3.5" />
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#0284C7]/10 dark:bg-sky-500/15 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#0284C7] dark:text-sky-400">
+                <Layers className="h-3.5 w-3.5" />
                 <span>
                   {idioma === "es"
-                    ? "Geografía Viva en 3 Segundos"
-                    : "Interactive Regional Map"}
+                    ? "Maqueta Topográfica 3D Interactiva"
+                    : "Interactive 3D Topographic Relief Map"}
                 </span>
               </span>
-              <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A]">
+              <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0F172A] dark:text-white">
                 {idioma === "es"
                   ? "Del Arrecife Coralino a las Cumbres Nevadas"
                   : "From Coral Reefs to Snowcapped Summits"}
@@ -1571,7 +1558,7 @@ export default function TyronaWildsCommercialStorefront() {
                     className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
                       activo
                         ? "bg-[#065F46] text-white shadow-sm"
-                        : "bg-white text-[#0F172A]/80 hover:bg-[#065F46]/10 border border-[#0F172A]/10"
+                        : "bg-white dark:bg-slate-800 text-[#0F172A]/80 dark:text-slate-200 hover:bg-[#065F46]/10 border border-[#0F172A]/10 dark:border-slate-700"
                     }`}
                   >
                     {idioma === "es" ? opc.labelEs : opc.labelEn}
@@ -1582,215 +1569,419 @@ export default function TyronaWildsCommercialStorefront() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            {/* Mapa Luminoso en Arena Suave y Turquesa Caribe */}
-            <div className="lg:col-span-7 flex flex-col justify-between overflow-hidden rounded-3xl bg-white p-5 sm:p-7 text-[#0F172A] shadow-lg border border-[#0F172A]/10">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#0F172A]/75 pb-4 border-b border-[#0F172A]/10">
+            {/* Maqueta Topográfica 3D con Perspectiva Real y Capas Superpuestas */}
+            <div className="lg:col-span-7 flex flex-col justify-between overflow-hidden rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-7 text-[#0F172A] dark:text-white shadow-lg border border-[#0F172A]/10 dark:border-slate-800">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#0F172A]/75 dark:text-slate-300 pb-4 border-b border-[#0F172A]/10 dark:border-slate-800">
                 <span>
                   {idioma === "es"
-                    ? "Selecciona cualquier destino en el mapa para explorar sus detalles"
-                    : "Select any destination on the map to explore its details"}
+                    ? "Mueve el cursor para inclinar el relieve 3D o selecciona un destino"
+                    : "Move your cursor to tilt the 3D relief or select a destination"}
                 </span>
-                <div className="flex items-center gap-3 text-[11px]">
-                  <span className="inline-flex items-center gap-1.5 text-[#0284C7] font-bold">
+                <div className="flex flex-wrap items-center gap-3 text-[11px]">
+                  <span className="inline-flex items-center gap-1.5 text-[#0284C7] dark:text-sky-400 font-bold">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#0284C7]" />
-                    Costa Caribe
+                    Costa 0m
                   </span>
-                  <span className="inline-flex items-center gap-1.5 text-[#065F46] font-bold">
+                  <span className="inline-flex items-center gap-1.5 text-[#0D9488] dark:text-teal-400 font-bold">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#0D9488]" />
+                    Selva 1.200m
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[#065F46] dark:text-emerald-400 font-bold">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#065F46]" />
-                    Bosque y Sierra
+                    Cumbres 3.100m+
                   </span>
                 </div>
               </div>
 
-              <div className="relative my-4 w-full aspect-[16/10] overflow-hidden rounded-2xl bg-[#FAF8F5] border border-[#0F172A]/10">
-                <svg
-                  viewBox="0 0 1000 620"
-                  className="w-full h-full select-none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient
-                      id="caribeBrightSea"
-                      x1="0%"
-                      y1="0%"
-                      x2="0%"
-                      y2="100%"
-                    >
-                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.28" />
-                      <stop offset="80%" stopColor="#38BDF8" stopOpacity="0.14" />
-                      <stop offset="100%" stopColor="#FAF8F5" stopOpacity="0.0" />
-                    </linearGradient>
-                    <radialGradient
-                      id="sierraEmeraldRelief"
-                      cx="60%"
-                      cy="70%"
-                      r="60%"
-                    >
-                      <stop offset="0%" stopColor="#065F46" stopOpacity="0.18" />
-                      <stop offset="55%" stopColor="#0D9488" stopOpacity="0.09" />
-                      <stop offset="100%" stopColor="#F3EFE6" stopOpacity="0.4" />
-                    </radialGradient>
-                  </defs>
+              {/* Escenario de Perspectiva 3D Real */}
+              <div
+                className="relative my-4 w-full aspect-[16/10] overflow-hidden rounded-2xl bg-gradient-to-b from-[#082F49] via-[#0F172A] to-[#064E3B] border border-[#0F172A]/15 dark:border-slate-700 select-none"
+                style={{ perspective: "1200px" }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const normX =
+                    ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+                  const normY =
+                    ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+                  setMouseTilt({
+                    x: Math.round(normX * 9 * 10) / 10,
+                    y: Math.round(-normY * 7 * 10) / 10,
+                  });
+                }}
+                onMouseLeave={() => setMouseTilt({ x: 0, y: 0 })}
+              >
+                <style>{`
+                  @keyframes wavePulse3D {
+                    0%, 100% { transform: translateY(0px); opacity: 0.72; }
+                    50% { transform: translateY(5px); opacity: 0.96; }
+                  }
+                  @keyframes riverFlow3D {
+                    to { stroke-dashoffset: -120; }
+                  }
+                  @keyframes cloudDrift3D {
+                    0%, 100% { transform: translate3d(0px, 0px, 90px); }
+                    50% { transform: translate3d(18px, -6px, 90px); }
+                  }
+                `}</style>
 
-                  <style>{`
-                    @keyframes emeraldFlow {
-                      to { stroke-dashoffset: -100; }
-                    }
-                    .emerald-route {
-                      animation: emeraldFlow 16s linear infinite;
-                    }
-                  `}</style>
-
-                  <rect
-                    x="0"
-                    y="0"
-                    width="1000"
-                    height="620"
-                    fill="url(#sierraEmeraldRelief)"
-                  />
-
-                  {/* Mar Caribe */}
-                  <path
-                    d="M 0,0 L 1000,0 L 1000,170 Q 820,140 680,155 T 420,135 T 150,180 L 0,180 Z"
-                    fill="url(#caribeBrightSea)"
-                  />
-                  <text
-                    x="55"
-                    y="75"
-                    fill="#0284C7"
-                    fontSize="14"
-                    fontWeight="800"
-                    letterSpacing="3"
+                {/* Control en Esquina para Alternar entre "Vista Relieve 3D" y "Vista Satelital/Aérea 2D" */}
+                <div className="absolute top-3.5 right-3.5 z-30 flex items-center gap-1.5 rounded-full bg-slate-950/80 p-1 backdrop-blur-md border border-white/20 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => setVistaMapa3D(true)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
+                      vistaMapa3D
+                        ? "bg-[#EA580C] text-white shadow-sm"
+                        : "text-white/75 hover:text-white"
+                    }`}
                   >
-                    MAR CARIBE · SANTA MARTA
-                  </text>
+                    {idioma === "es" ? "Vista Relieve 3D" : "3D Relief View"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVistaMapa3D(false)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
+                      !vistaMapa3D
+                        ? "bg-[#0284C7] text-white shadow-sm"
+                        : "text-white/75 hover:text-white"
+                    }`}
+                  >
+                    {idioma === "es"
+                      ? "Vista Satelital/Aérea 2D"
+                      : "2D Aerial View"}
+                  </button>
+                </div>
 
-                  {/* Curvas de Nivel Topográficas Claras */}
-                  <path
-                    d="M 0,180 Q 150,180 320,142 Q 500,122 680,155 T 850,158 T 1000,165"
-                    fill="none"
-                    stroke="#0284C7"
-                    strokeWidth="2.5"
-                    strokeOpacity="0.65"
-                  />
-                  <path
-                    d="M 80,285 Q 260,250 440,240 Q 640,225 800,265 T 950,285"
-                    fill="none"
-                    stroke="#0D9488"
-                    strokeWidth="1.5"
-                    strokeOpacity="0.35"
-                  />
-                  <path
-                    d="M 140,355 Q 300,310 500,300 Q 700,295 860,360"
-                    fill="none"
-                    stroke="#065F46"
-                    strokeWidth="1.8"
-                    strokeOpacity="0.4"
-                  />
-                  <path
-                    d="M 290,490 Q 430,440 590,435 Q 710,450 780,495"
-                    fill="none"
-                    stroke="#065F46"
-                    strokeWidth="2"
-                    strokeOpacity="0.55"
-                    strokeDasharray="6 4"
-                  />
+                {/* Indicador de Enfoque e Inclinación en Esquina Superior Izquierda */}
+                <div className="pointer-events-none absolute top-3.5 left-3.5 z-30 inline-flex items-center gap-2 rounded-full bg-slate-950/75 px-3.5 py-1.5 text-[11px] font-bold text-white backdrop-blur-md border border-white/15">
+                  <Mountain className="h-3.5 w-3.5 text-[#FBBF24]" />
+                  <span>
+                    {vistaMapa3D
+                      ? `RELIEVE 3D · ${nodoActivo.altitudMsnm} MSNM`
+                      : `VISTA AÉREA 2D · ${nodoActivo.altitudMsnm} MSNM`}
+                  </span>
+                </div>
 
-                  {/* Rutas Conectadas en Turquesa (#0284C7), Esmeralda (#065F46) y Coral (#EA580C) */}
-                  <path
-                    d="M 160,200 Q 230,170 300,145 Q 550,135 750,165"
-                    fill="none"
-                    stroke="#0284C7"
-                    strokeWidth="3"
-                    strokeDasharray="8 6"
-                    className="emerald-route"
-                  />
-                  <path
-                    d="M 160,200 Q 210,270 280,310 Q 440,335 600,345"
-                    fill="none"
-                    stroke="#0D9488"
-                    strokeWidth="3"
-                    strokeDasharray="8 6"
-                    className="emerald-route"
-                  />
-                  <path
-                    d="M 280,310 Q 360,410 450,465 Q 580,505 710,535"
-                    fill="none"
-                    stroke="#065F46"
-                    strokeWidth="3"
-                    strokeDasharray="8 6"
-                    className="emerald-route"
-                  />
+                {/* Tablero Topográfico 3D con Transform-Style Preserve-3D y Zoom hacia Zona Activa */}
+                {(() => {
+                  const focusOffsetX = vistaMapa3D
+                    ? (50 - nodoActivo.svgPos.x) * 0.14
+                    : 0;
+                  const focusOffsetY = vistaMapa3D
+                    ? (50 - nodoActivo.svgPos.y) * 0.1
+                    : 0;
+                  const rotX = vistaMapa3D ? 48 + mouseTilt.y : 0;
+                  const rotZ = vistaMapa3D ? -8 + mouseTilt.x : 0;
+                  const scaleVal = vistaMapa3D ? 0.92 : 0.96;
 
-                  {/* Nodos Interactivos del Mapa */}
-                  {NODOS_TOPOGRAFICOS.map((nodo) => {
-                    const esActivo = nodoActivoId === nodo.id;
-                    const visible =
-                      pisoSeleccionado === "TODOS" ||
-                      nodo.pisoTermico === pisoSeleccionado;
-
-                    const colorNodo =
-                      nodo.pisoTermico === "LITORAL"
-                        ? "#0284C7"
-                        : nodo.pisoTermico === "SELVA_HUMEDA"
-                        ? "#0D9488"
-                        : "#065F46";
-
-                    return (
-                      <g
-                        key={nodo.id}
-                        transform={`translate(${nodo.svgPos.x}, ${nodo.svgPos.y})`}
-                        onClick={() => setNodoActivoId(nodo.id)}
-                        className="cursor-pointer transition-opacity duration-300"
-                        style={{ opacity: visible ? 1 : 0.3 }}
+                  return (
+                    <div
+                      className="relative h-full w-full transition-transform duration-500 ease-out"
+                      style={{
+                        transformStyle: "preserve-3d",
+                        transform: `translate3d(${focusOffsetX}%, ${focusOffsetY}%, 0px) rotateX(${rotX}deg) rotateZ(${rotZ}deg) scale(${scaleVal})`,
+                      }}
+                    >
+                      {/* =====================================================
+                          CAPA 0 (translateZ(0px)): COSTA DEL MAR CARIBE CON OLEAJE TURQUESA ANIMADO
+                      ====================================================== */}
+                      <div
+                        className="absolute inset-3 rounded-2xl overflow-hidden border border-sky-300/30 shadow-[0_25px_60px_rgba(0,0,0,0.65)]"
+                        style={{
+                          transform: "translateZ(0px)",
+                          background:
+                            "linear-gradient(180deg, #0284C7 0%, #0EA5E9 26%, #134E4A 52%, #064E3B 100%)",
+                        }}
                       >
-                        {esActivo && (
-                          <circle
-                            r="24"
-                            fill="#EA580C"
-                            fillOpacity="0.25"
-                            className="animate-ping"
-                          />
-                        )}
-                        <circle
-                          r={esActivo ? 14 : 10}
-                          fill={esActivo ? "#EA580C" : "#FFFFFF"}
-                          stroke={esActivo ? "#FFFFFF" : colorNodo}
-                          strokeWidth="3"
-                        />
-                        <circle
-                          r={esActivo ? 5 : 4}
-                          fill={esActivo ? "#FFFFFF" : colorNodo}
-                        />
-                        <g
-                          transform={`translate(${
-                            nodo.svgPos.x > 580 ? -145 : 18
-                          }, -14)`}
+                        <svg
+                          viewBox="0 0 1000 620"
+                          className="h-full w-full"
+                          preserveAspectRatio="none"
                         >
-                          <rect
-                            x="0"
-                            y="0"
-                            width="136"
-                            height="28"
-                            rx="14"
-                            fill={esActivo ? "#065F46" : "#FFFFFF"}
-                            stroke={esActivo ? "#065F46" : "#CBD5E1"}
-                            strokeWidth="1.5"
+                          {/* Olas Turquesa Animadas del Mar Caribe */}
+                          <path
+                            d="M 0,0 L 1000,0 L 1000,210 Q 820,175 660,192 T 340,175 T 0,210 Z"
+                            fill="#0284C7"
+                            fillOpacity="0.85"
+                          />
+                          <path
+                            d="M 0,145 Q 180,120 350,148 T 700,138 T 1000,158 L 1000,220 L 0,220 Z"
+                            fill="#38BDF8"
+                            fillOpacity="0.45"
+                            style={{
+                              animation: "wavePulse3D 4.5s ease-in-out infinite",
+                            }}
+                          />
+                          <path
+                            d="M 0,185 Q 210,162 420,184 T 820,176 T 1000,195"
+                            fill="none"
+                            stroke="#E0F2FE"
+                            strokeWidth="3"
+                            strokeDasharray="14 8"
+                            strokeOpacity="0.8"
                           />
                           <text
-                            x="12"
-                            y="18"
-                            fill={esActivo ? "#FFFFFF" : "#0F172A"}
-                            fontSize="11"
-                            fontWeight="700"
+                            x="48"
+                            y="62"
+                            fill="#E0F2FE"
+                            fontSize="15"
+                            fontWeight="800"
+                            letterSpacing="3.5"
                           >
-                            {nodo.nombre.split("·")[0].trim()}
+                            MAR CARIBE · ARRECIFES DEL TAYRONA (0 MSNM)
                           </text>
-                        </g>
-                      </g>
-                    );
-                  })}
-                </svg>
+                        </svg>
+                      </div>
+
+                      {/* =====================================================
+                          CAPA 1 (translateZ(20px)): PIEDEMONTE Y RÍO DON DIEGO CON TRAZO FLUVIAL ANIMADO
+                      ====================================================== */}
+                      <div
+                        className="pointer-events-none absolute inset-3"
+                        style={{
+                          transform: vistaMapa3D
+                            ? "translateZ(20px)"
+                            : "translateZ(2px)",
+                        }}
+                      >
+                        <svg
+                          viewBox="0 0 1000 620"
+                          className="h-full w-full drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)]"
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M 35,235 Q 240,185 480,195 Q 740,182 965,225 L 950,585 L 50,585 Z"
+                            fill="#0F766E"
+                            fillOpacity="0.86"
+                            stroke="#5EEAD4"
+                            strokeWidth="2"
+                            strokeOpacity="0.55"
+                          />
+                          {/* Río Don Diego Desembocando al Mar Caribe */}
+                          <path
+                            d="M 650,490 Q 690,390 715,315 T 745,220 T 765,160"
+                            fill="none"
+                            stroke="#38BDF8"
+                            strokeWidth="7"
+                            strokeLinecap="round"
+                            strokeOpacity="0.45"
+                          />
+                          <path
+                            d="M 650,490 Q 690,390 715,315 T 745,220 T 765,160"
+                            fill="none"
+                            stroke="#E0F2FE"
+                            strokeWidth="3.5"
+                            strokeDasharray="10 8"
+                            strokeLinecap="round"
+                            style={{
+                              animation: "riverFlow3D 8s linear infinite",
+                            }}
+                          />
+                        </svg>
+                      </div>
+
+                      {/* =====================================================
+                          CAPA 2 (translateZ(45px)): BOSQUE DE NIEBLA EN MINCA Y TERRAZAS DE TEYUNA
+                      ====================================================== */}
+                      <div
+                        className="pointer-events-none absolute inset-3"
+                        style={{
+                          transform: vistaMapa3D
+                            ? "translateZ(45px)"
+                            : "translateZ(4px)",
+                        }}
+                      >
+                        <svg
+                          viewBox="0 0 1000 620"
+                          className="h-full w-full drop-shadow-[0_18px_24px_rgba(0,0,0,0.55)]"
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M 115,320 Q 310,265 520,278 Q 740,275 885,345 L 865,560 L 135,560 Z"
+                            fill="#065F46"
+                            fillOpacity="0.92"
+                            stroke="#6EE7B7"
+                            strokeWidth="2.2"
+                            strokeOpacity="0.65"
+                          />
+                          {/* Anillos Arqueológicos de las Terrazas de Teyuna */}
+                          <circle
+                            cx="660"
+                            cy="350"
+                            r="38"
+                            fill="none"
+                            stroke="#FBBF24"
+                            strokeWidth="1.8"
+                            strokeDasharray="5 4"
+                            strokeOpacity="0.7"
+                          />
+                          <circle
+                            cx="660"
+                            cy="350"
+                            r="22"
+                            fill="none"
+                            stroke="#FBBF24"
+                            strokeWidth="1.8"
+                            strokeOpacity="0.85"
+                          />
+                          {/* Ruta Conectada entre Minca, Teyuna y Tayrona */}
+                          <path
+                            d="M 280,155 Q 250,245 230,335 Q 440,350 660,350"
+                            fill="none"
+                            stroke="#FBBF24"
+                            strokeWidth="2.8"
+                            strokeDasharray="8 6"
+                            style={{
+                              animation: "riverFlow3D 11s linear infinite",
+                            }}
+                          />
+                        </svg>
+                      </div>
+
+                      {/* =====================================================
+                          CAPA 3 (translateZ(75px)): CUMBRES Y PICOS NEVADOS DE LA SIERRA NEVADA + NUBES VOLUMÉTRICAS
+                      ====================================================== */}
+                      <div
+                        className="pointer-events-none absolute inset-3"
+                        style={{
+                          transform: vistaMapa3D
+                            ? "translateZ(75px)"
+                            : "translateZ(6px)",
+                        }}
+                      >
+                        <svg
+                          viewBox="0 0 1000 620"
+                          className="h-full w-full drop-shadow-[0_24px_28px_rgba(0,0,0,0.65)]"
+                          preserveAspectRatio="none"
+                        >
+                          {/* Macizo de Alta Montaña */}
+                          <path
+                            d="M 230,520 L 350,395 L 435,445 L 515,365 L 605,440 L 690,390 L 785,525 Z"
+                            fill="#047857"
+                            stroke="#A7F3D0"
+                            strokeWidth="2.2"
+                          />
+                          {/* Glaciares y Cumbres Nevadas Colón y Bolívar */}
+                          <path
+                            d="M 350,395 L 318,432 L 352,424 L 382,434 Z"
+                            fill="#F8FAFC"
+                          />
+                          <path
+                            d="M 515,365 L 476,415 L 515,402 L 552,416 Z"
+                            fill="#FFFFFF"
+                          />
+                          <path
+                            d="M 690,390 L 658,428 L 690,418 L 722,428 Z"
+                            fill="#F1F5F9"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Nubes Volumétricas Flotantes sobre la Sierra Nevada */}
+                      <div
+                        className="pointer-events-none absolute left-[18%] top-[44%] h-10 w-28 rounded-full bg-white/20 blur-md"
+                        style={{
+                          animation: "cloudDrift3D 9s ease-in-out infinite",
+                        }}
+                      />
+                      <div
+                        className="pointer-events-none absolute left-[52%] top-[66%] h-12 w-36 rounded-full bg-white/25 blur-md"
+                        style={{
+                          animation:
+                            "cloudDrift3D 12s ease-in-out infinite reverse",
+                        }}
+                      />
+
+                      {/* =====================================================
+                          PINES VERTICALES 3D ELEVADOS SOBRE EL TERRENO (CERO SOLAPAMIENTO)
+                      ====================================================== */}
+                      {NODOS_TOPOGRAFICOS.map((nodo) => {
+                        const esActivo = nodoActivoId === nodo.id;
+                        const visible =
+                          pisoSeleccionado === "TODOS" ||
+                          nodo.pisoTermico === pisoSeleccionado;
+
+                        const elevacionZ =
+                          nodo.pisoTermico === "LITORAL"
+                            ? 28
+                            : nodo.pisoTermico === "SELVA_HUMEDA"
+                            ? 56
+                            : 86;
+
+                        const nombreCorto = nodo.nombre.split("·")[0].trim();
+
+                        return (
+                          <div
+                            key={nodo.id}
+                            style={{
+                              left: `${nodo.svgPos.x}%`,
+                              top: `${nodo.svgPos.y}%`,
+                              transform: vistaMapa3D
+                                ? `translate(-50%, -50%) translateZ(${elevacionZ}px) rotateX(-38deg)`
+                                : "translate(-50%, -50%) translateZ(12px)",
+                              opacity: visible ? 1 : 0.28,
+                            }}
+                            className={`absolute transition-all duration-300 ${
+                              esActivo ? "z-30" : "z-20 hover:z-30"
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setNodoActivoId(nodo.id)}
+                              className="group relative flex flex-col items-center focus:outline-none"
+                            >
+                              {/* Etiqueta Flotante Limpia (Sin Solapamientos ni Recortes) */}
+                              <span
+                                className={`mb-1.5 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-extrabold shadow-lg transition-all ${
+                                  esActivo
+                                    ? "bg-[#EA580C] text-white ring-2 ring-white scale-105"
+                                    : "bg-white/95 text-[#0F172A] hover:bg-[#065F46] hover:text-white border border-[#0F172A]/15"
+                                }`}
+                              >
+                                <span
+                                  className={`h-2 w-2 rounded-full ${
+                                    esActivo
+                                      ? "bg-white animate-ping"
+                                      : nodo.pisoTermico === "LITORAL"
+                                      ? "bg-[#0284C7]"
+                                      : nodo.pisoTermico === "SELVA_HUMEDA"
+                                      ? "bg-[#0D9488]"
+                                      : "bg-[#065F46]"
+                                  }`}
+                                />
+                                <span>{nombreCorto}</span>
+                                <span className="text-[10px] opacity-80">
+                                  {nodo.altitudMsnm}m
+                                </span>
+                              </span>
+
+                              {/* Vástago Vertical 3D del Pin */}
+                              <span
+                                className={`w-0.5 transition-all ${
+                                  esActivo
+                                    ? "h-6 bg-[#EA580C]"
+                                    : "h-4 bg-white/85 group-hover:h-5"
+                                }`}
+                              />
+
+                              {/* Base Luminosa con Pulso sobre el Relieve */}
+                              <span className="relative flex h-4 w-4 items-center justify-center">
+                                {esActivo && (
+                                  <span className="absolute inline-flex h-7 w-7 animate-ping rounded-full bg-[#EA580C] opacity-60" />
+                                )}
+                                <span
+                                  className={`relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-white shadow ${
+                                    esActivo ? "bg-[#EA580C]" : "bg-[#065F46]"
+                                  }`}
+                                />
+                              </span>
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Píldoras Rápidas de Nodos */}
@@ -1803,7 +1994,7 @@ export default function TyronaWildsCommercialStorefront() {
                     className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
                       nodoActivoId === n.id
                         ? "bg-[#EA580C] text-white shadow-sm"
-                        : "bg-[#F3EFE6] text-[#0F172A]/80 hover:bg-[#065F46]/15"
+                        : "bg-[#F3EFE6] dark:bg-slate-800 text-[#0F172A]/80 dark:text-slate-200 hover:bg-[#065F46]/15"
                     }`}
                   >
                     {n.nombre.split("·")[0].trim()}
@@ -1813,9 +2004,9 @@ export default function TyronaWildsCommercialStorefront() {
             </div>
 
             {/* Panel Derecho del Mapa: Fotografía Luminosa y Reserva Directa */}
-            <div className="lg:col-span-5 flex flex-col justify-between overflow-hidden rounded-3xl bg-white p-6 sm:p-7 text-[#0F172A] shadow-lg border border-[#0F172A]/10">
+            <div className="lg:col-span-5 flex flex-col justify-between overflow-hidden rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-7 text-[#0F172A] dark:text-white shadow-lg border border-[#0F172A]/10 dark:border-slate-800">
               <div>
-                <div className="relative h-60 sm:h-64 w-full overflow-hidden rounded-2xl bg-[#F3EFE6]">
+                <div className="relative h-60 sm:h-64 w-full overflow-hidden rounded-2xl bg-[#F3EFE6] dark:bg-slate-800">
                   <img
                     src={nodoActivo.imagen}
                     alt={nodoActivo.nombre}
@@ -1827,7 +2018,7 @@ export default function TyronaWildsCommercialStorefront() {
                     }}
                     className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute top-3 left-3 rounded-full bg-white/95 px-3.5 py-1 text-xs font-bold text-[#065F46] shadow-sm">
+                  <div className="absolute top-3 left-3 rounded-full bg-white/95 dark:bg-slate-900/95 px-3.5 py-1 text-xs font-bold text-[#065F46] dark:text-emerald-400 shadow-sm">
                     {idioma === "es"
                       ? nodoActivo.pisoLabelEs
                       : nodoActivo.pisoLabelEn}
@@ -1838,13 +2029,13 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
 
                 <div className="mt-5">
-                  <div className="text-xs font-bold uppercase tracking-wider text-[#0D9488]">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[#0D9488] dark:text-teal-400">
                     {nodoActivo.region}
                   </div>
-                  <h3 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+                  <h3 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] dark:text-white">
                     {nodoActivo.nombre}
                   </h3>
-                  <p className="mt-2 text-sm text-[#0F172A]/75 leading-relaxed">
+                  <p className="mt-2 text-sm text-[#0F172A]/75 dark:text-slate-300 leading-relaxed">
                     {idioma === "es"
                       ? nodoActivo.descripcionEs
                       : nodoActivo.descripcionEn}
@@ -1852,25 +2043,25 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#F3EFE6] px-3.5 py-1.5 text-xs font-bold text-[#0F172A]">
+                  <span className="rounded-full bg-[#F3EFE6] dark:bg-slate-800 px-3.5 py-1.5 text-xs font-bold text-[#0F172A] dark:text-slate-200">
                     {idioma === "es"
                       ? nodoActivo.duracionEs
                       : nodoActivo.duracionEn}
                   </span>
-                  <span className="rounded-full bg-[#F3EFE6] px-3.5 py-1.5 text-xs font-bold text-[#0F172A]">
+                  <span className="rounded-full bg-[#F3EFE6] dark:bg-slate-800 px-3.5 py-1.5 text-xs font-bold text-[#0F172A] dark:text-slate-200">
                     {idioma === "es" ? nodoActivo.nivelEs : nodoActivo.nivelEn}
                   </span>
-                  <span className="rounded-full bg-[#065F46]/10 px-3.5 py-1.5 text-xs font-extrabold text-[#065F46]">
+                  <span className="rounded-full bg-[#065F46]/10 dark:bg-emerald-500/15 px-3.5 py-1.5 text-xs font-extrabold text-[#065F46] dark:text-emerald-400">
                     {idioma === "es" ? "Desde" : "From"} {nodoActivo.precioDesde}
                   </span>
-                  <span className="rounded-full bg-emerald-100 px-3.5 py-1.5 text-xs font-bold text-[#065F46]">
+                  <span className="rounded-full bg-emerald-100 dark:bg-emerald-950/80 px-3.5 py-1.5 text-xs font-bold text-[#065F46] dark:text-emerald-300">
                     {nodoActivo.cuposDisponibles}{" "}
                     {idioma === "es" ? "cupos disponibles" : "spots available"}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-[#0F172A]/10 flex flex-wrap items-center gap-3">
+              <div className="mt-6 pt-5 border-t border-[#0F172A]/10 dark:border-slate-800 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => manejarReservaNodo(nodoActivo)}
@@ -1886,7 +2077,7 @@ export default function TyronaWildsCommercialStorefront() {
 
                 <Link
                   href="/expediciones"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-[#0F172A]/15 bg-[#FAF8F5] px-4 py-3.5 text-xs font-bold text-[#0F172A] hover:bg-[#F3EFE6] transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[#0F172A]/15 dark:border-slate-700 bg-[#FAF8F5] dark:bg-slate-800 px-4 py-3.5 text-xs font-bold text-[#0F172A] dark:text-slate-200 hover:bg-[#F3EFE6] dark:hover:bg-slate-700 transition-colors"
                 >
                   <span>{idioma === "es" ? "Ver todos" : "See all"}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -2032,8 +2223,7 @@ export default function TyronaWildsCommercialStorefront() {
                   alt={actividadSeleccionada.nombreEs}
                   onError={(e) => {
                     const target = e.currentTarget;
-                    const fallback =
-                      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85";
+                    const fallback = "/images/destinos/tayrona.jpg";
                     if (target.src !== fallback) {
                       target.src = fallback;
                     }
@@ -2063,8 +2253,7 @@ export default function TyronaWildsCommercialStorefront() {
                       alt={`Vista ${idx + 1}`}
                       onError={(e) => {
                         const target = e.currentTarget;
-                        const fallback =
-                          "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85";
+                        const fallback = "/images/destinos/teyuna.jpg";
                         if (target.src !== fallback) {
                           target.src = fallback;
                         }

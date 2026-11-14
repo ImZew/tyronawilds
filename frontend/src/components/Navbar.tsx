@@ -8,7 +8,9 @@ import {
   Globe,
   LogOut,
   Menu,
+  Moon,
   ShieldCheck,
+  Sun,
   User,
   X,
 } from "lucide-react";
@@ -39,6 +41,29 @@ export default function Navbar({
   const [misReservasCount, setMisReservasCount] = useState<number>(0);
   const [menuMovilAbierto, setMenuMovilAbierto] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+  const [modoOscuro, setModoOscuro] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const guardado = window.localStorage.getItem("tyronawilds_theme");
+      const activo = guardado === "dark";
+      setModoOscuro(activo);
+      document.documentElement.classList.toggle("dark", activo);
+    } catch {
+      // Ignorar errores de almacenamiento
+    }
+  }, []);
+
+  const alternarModoOscuro = () => {
+    const siguiente = !modoOscuro;
+    setModoOscuro(siguiente);
+    document.documentElement.classList.toggle("dark", siguiente);
+    try {
+      window.localStorage.setItem("tyronawilds_theme", siguiente ? "dark" : "light");
+    } catch {
+      // Ignorar
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,7 +156,7 @@ export default function Navbar({
       } z-50 w-full transition-all duration-300 ${
         modoCristalHero
           ? "bg-gradient-to-b from-black/65 via-black/30 to-transparent border-b border-white/15 text-white"
-          : "bg-[#FAF8F5]/95 backdrop-blur-xl border-b border-[#0F172A]/10 text-[#0F172A] shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
+          : "bg-[#FAF8F5]/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-[#0F172A]/10 dark:border-slate-800 text-[#0F172A] dark:text-white shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
       }`}
     >
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3.5 sm:px-8">
@@ -179,14 +204,14 @@ export default function Navbar({
           <div className="flex flex-col">
             <span
               className={`text-base sm:text-lg font-extrabold tracking-tight leading-none ${
-                modoCristalHero ? "text-white" : "text-[#0F172A]"
+                modoCristalHero ? "text-white" : "text-[#0F172A] dark:text-white"
               }`}
             >
               TYRONA WILDS
             </span>
             <span
               className={`mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                modoCristalHero ? "text-[#FBBF24]" : "text-[#065F46]"
+                modoCristalHero ? "text-[#FBBF24]" : "text-[#065F46] dark:text-emerald-400"
               }`}
             >
               Santa Marta · Caribe
@@ -200,7 +225,7 @@ export default function Navbar({
           className={`hidden lg:flex items-center gap-1 rounded-full px-2.5 py-1.5 transition-all ${
             modoCristalHero
               ? "bg-white/12 backdrop-blur-md border border-white/20"
-              : "bg-[#F3EFE6] border border-[#0F172A]/10"
+              : "bg-[#F3EFE6] dark:bg-slate-800/90 border border-[#0F172A]/10 dark:border-slate-700"
           }`}
         >
           {enlacesPrincipales.map((item) => {
@@ -214,7 +239,7 @@ export default function Navbar({
                     ? "bg-[#065F46] text-white shadow-sm"
                     : modoCristalHero
                     ? "text-white/90 hover:bg-white/15 hover:text-white"
-                    : "text-[#0F172A]/80 hover:bg-white hover:text-[#0F172A]"
+                    : "text-[#0F172A]/80 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-[#0F172A] dark:hover:text-white"
                 }`}
               >
                 {idioma === "es" ? item.etiquetaEs : item.etiquetaEn}
@@ -287,6 +312,33 @@ export default function Navbar({
             </div>
           )}
 
+          <button
+            type="button"
+            onClick={alternarModoOscuro}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition-colors ${
+              modoCristalHero
+                ? "border-white/20 bg-white/12 text-white backdrop-blur-md hover:bg-white/20"
+                : "border-[#0F172A]/15 dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-slate-100 hover:bg-[#F3EFE6] dark:hover:bg-slate-700"
+            }`}
+            title={modoOscuro ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+            aria-label={modoOscuro ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
+          >
+            {modoOscuro ? (
+              <Sun className="h-3.5 w-3.5 text-amber-400" />
+            ) : (
+              <Moon className="h-3.5 w-3.5 text-[#065F46] dark:text-emerald-400" />
+            )}
+            <span className="hidden xl:inline">
+              {modoOscuro
+                ? idioma === "es"
+                  ? "Claro"
+                  : "Light"
+                : idioma === "es"
+                ? "Oscuro"
+                : "Dark"}
+            </span>
+          </button>
+
           {onCambiarIdioma && (
             <button
               type="button"
@@ -294,7 +346,7 @@ export default function Navbar({
               className={`hidden sm:inline-flex items-center gap-1 rounded-full border px-3 py-2 text-xs font-semibold transition-colors ${
                 modoCristalHero
                   ? "border-white/20 bg-white/12 text-white backdrop-blur-md hover:bg-white/20"
-                  : "border-[#0F172A]/15 bg-white text-[#0F172A] hover:bg-[#F3EFE6]"
+                  : "border-[#0F172A]/15 dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-slate-100 hover:bg-[#F3EFE6] dark:hover:bg-slate-700"
               }`}
               title="Idioma / Language"
             >
@@ -312,7 +364,7 @@ export default function Navbar({
                   ? "border-[#065F46] bg-[#065F46] text-white font-bold"
                   : modoCristalHero
                   ? "border-white/20 bg-white/12 text-white hover:bg-white/20"
-                  : "border-[#0F172A]/15 bg-white text-[#0F172A] hover:bg-[#F3EFE6]"
+                  : "border-[#0F172A]/15 dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-slate-100 hover:bg-[#F3EFE6] dark:hover:bg-slate-700"
               }`}
               title="Alto contraste"
             >
@@ -341,7 +393,7 @@ export default function Navbar({
 
       {/* MENÚ DESPLEGABLE MÓVIL */}
       {menuMovilAbierto && (
-        <div className="lg:hidden border-t border-[#0F172A]/10 bg-[#FAF8F5] px-5 py-4 text-[#0F172A] shadow-xl">
+        <div className="lg:hidden border-t border-[#0F172A]/10 dark:border-slate-800 bg-[#FAF8F5] dark:bg-slate-900 px-5 py-4 text-[#0F172A] dark:text-white shadow-xl">
           <div className="flex flex-col gap-1.5">
             {enlacesPrincipales.map((item) => {
               const activo = esRutaActiva(item.href);
@@ -353,7 +405,7 @@ export default function Navbar({
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold ${
                     activo
                       ? "bg-[#065F46] text-white"
-                      : "text-[#0F172A] hover:bg-[#F3EFE6]"
+                      : "text-[#0F172A] dark:text-slate-200 hover:bg-[#F3EFE6] dark:hover:bg-slate-800"
                   }`}
                 >
                   {idioma === "es" ? item.etiquetaEs : item.etiquetaEn}
