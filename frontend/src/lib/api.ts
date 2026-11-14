@@ -263,8 +263,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 16,
     nivelOcupacionActual: 42,
     esSostenible: true,
-    imagenUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
+    imagenUrl: "/images/destinos/teyuna.jpg",
     descripcionEs:
       "Ascenso de 4 días al corazón sagrado de Teyuna junto a guías indígenas Kogui y Wiwa. Selva húmeda tropical, terrazas líticas milenarias y desconexión total.",
     descripcionEn:
@@ -288,8 +287,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 40,
     nivelOcupacionActual: 88,
     esSostenible: true,
-    imagenUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
+    imagenUrl: "/images/destinos/tayrona.jpg",
     descripcionEs:
       "Travesía entre bloques graníticos gigantes donde la selva de la Sierra Nevada se funde con el oleaje del Caribe en Cabo San Juan del Guía.",
     descripcionEn:
@@ -312,8 +310,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 24,
     nivelOcupacionActual: 28,
     esSostenible: true,
-    imagenUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
+    imagenUrl: "/images/destinos/minca.jpg",
     descripcionEs:
       "Ruta de bosque nublado y cafetales orgánicos de sombra diseñada para viajeros que buscan desconexión en pozos de agua glaciar y avistamiento de aves endémicas.",
     descripcionEn:
@@ -337,8 +334,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 12,
     nivelOcupacionActual: 45,
     esSostenible: true,
-    imagenUrl:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=80",
+    imagenUrl: "/images/destinos/taganga.jpg",
     descripcionEs:
       "Buceo de conservación y apnea en arrecifes coralinos protegidos entre Taganga e Isla Aguja con pescadores artesanales locales.",
     descripcionEn:
@@ -361,8 +357,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 18,
     nivelOcupacionActual: 30,
     esSostenible: true,
-    imagenUrl:
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=80",
+    imagenUrl: "/images/destinos/dondiego.jpg",
     descripcionEs:
       "Navegación silenciosa desde los ríos sagrados de la Sierra hasta la desembocadura en el mar Caribe, guiada por familias anfitrionas y comunidades locales.",
     descripcionEn:
@@ -385,8 +380,7 @@ export const SEED_ACTIVIDADES: ActividadTuristica[] = [
     capacidadMaxima: 25,
     nivelOcupacionActual: 35,
     esSostenible: true,
-    imagenUrl:
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=80",
+    imagenUrl: "/images/destinos/sierra.jpg",
     descripcionEs:
       "Recorrido arquitectónico, gastronómico y sonoro por la ciudad más antigua de Sudamérica, el Callejón del Correo y el Camellón de la Bahía.",
     descripcionEn:
@@ -1224,10 +1218,30 @@ async function fetchConRespaldo<T>(
   };
 }
 
-const LS_OFERTAS_KEY = "tyronawilds_b2b_ofertas_v1";
+const LS_OFERTAS_KEY = "tyronawilds_b2b_ofertas_v2_2";
 const LS_DISPONIBILIDAD_KEY = "tyronawilds_b2b_disponibilidad_v1";
 const LS_RESERVAS_KEY = "tyronawilds_b2b_reservas_v2";
 const LS_AUDITORIA_KEY = "tyronawilds_b2b_auditoria_v1";
+
+function resolverImagenLocalPorActividad(a: Partial<ActividadTuristica>): string {
+  if (a.imagenUrl && a.imagenUrl.startsWith("/images/destinos/")) {
+    return a.imagenUrl;
+  }
+  const codigo = Number(a.codigoServicio);
+  if (codigo === 9) return "/images/destinos/teyuna.jpg";
+  if (codigo === 102) return "/images/destinos/tayrona.jpg";
+  if (codigo === 103) return "/images/destinos/minca.jpg";
+  if (codigo === 104) return "/images/destinos/taganga.jpg";
+  if (codigo === 105) return "/images/destinos/dondiego.jpg";
+  if (codigo === 106) return "/images/destinos/sierra.jpg";
+  const texto = `${a.nombreEs || ""} ${a.ubicacion || ""}`.toLowerCase();
+  if (texto.includes("teyuna") || texto.includes("ciudad perdida")) return "/images/destinos/teyuna.jpg";
+  if (texto.includes("minca") || texto.includes("marinka")) return "/images/destinos/minca.jpg";
+  if (texto.includes("don diego") || texto.includes("arhuac")) return "/images/destinos/dondiego.jpg";
+  if (texto.includes("taganga") || texto.includes("granate") || texto.includes("aguja")) return "/images/destinos/taganga.jpg";
+  if (texto.includes("sierra") || texto.includes("centro")) return "/images/destinos/sierra.jpg";
+  return "/images/destinos/tayrona.jpg";
+}
 
 function leerCatalogoLocal(): ActividadTuristica[] {
   if (typeof window === "undefined") return SEED_ACTIVIDADES;
@@ -1235,7 +1249,11 @@ function leerCatalogoLocal(): ActividadTuristica[] {
     const raw = window.localStorage.getItem(LS_OFERTAS_KEY);
     if (!raw) return SEED_ACTIVIDADES;
     const parsed = JSON.parse(raw) as ActividadTuristica[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : SEED_ACTIVIDADES;
+    if (!Array.isArray(parsed) || parsed.length === 0) return SEED_ACTIVIDADES;
+    return parsed.map((item) => ({
+      ...item,
+      imagenUrl: resolverImagenLocalPorActividad(item),
+    }));
   } catch {
     return SEED_ACTIVIDADES;
   }
@@ -1618,7 +1636,7 @@ function registrarEventoAuditoriaLocal(evento: RegistroAuditoria): void {
 export async function obtenerCatalogoOfertas(): Promise<
   ApiCallResult<ActividadTuristica[]>
 > {
-  return fetchConRespaldo(
+  const res = await fetchConRespaldo(
     [
       `${GATEWAY_URL}/api/v1/ofertas`,
       "http://localhost:8082/api/v1/ofertas",
@@ -1626,6 +1644,13 @@ export async function obtenerCatalogoOfertas(): Promise<
     { method: "GET" },
     () => leerCatalogoLocal()
   );
+  return {
+    ...res,
+    data: res.data.map((item) => ({
+      ...item,
+      imagenUrl: resolverImagenLocalPorActividad(item),
+    })),
+  };
 }
 
 export async function obtenerContextoTerritorial(): Promise<
@@ -3005,9 +3030,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "05:30 AM · Casa Expedicionaria Centro Histórico -> El Mamey",
     puntoEncuentroEn: "05:30 AM · Historic Center Basecamp -> El Mamey Trailhead",
     galeriaImagenes: [
-      "https://upload.wikimedia.org/wikipedia/commons/0/0e/Lost_City_Ruins.jpg",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/teyuna.jpg",
+      "/images/destinos/sierra.jpg",
+      "/images/destinos/dondiego.jpg",
     ],
     incluyeEs: [
       "Guía baquiano certificado + traductor espiritual Kogui/Wiwa",
@@ -3046,9 +3071,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "06:30 AM · Sector El Zaino (Entrada Principal PNN Tayrona)",
     puntoEncuentroEn: "06:30 AM · El Zaino Main Gate (Tayrona National Park)",
     galeriaImagenes: [
-      "https://upload.wikimedia.org/wikipedia/commons/2/20/Cabo_San_Juan_de_Gu%C3%ADa_%284167032917%29.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/a/aa/Cabo_San_Juan_de_Gu%C3%ADa_%284167793296%29.jpg",
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/tayrona.jpg",
+      "/images/destinos/taganga.jpg",
+      "/images/destinos/dondiego.jpg",
     ],
     incluyeEs: [
       "Brazalete oficial de ingreso a Parque Nacional Natural Tayrona",
@@ -3083,9 +3108,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "07:45 AM · Plaza de la Iglesia de Minca (650 msnm)",
     puntoEncuentroEn: "07:45 AM · Minca Town Square (650 masl)",
     galeriaImagenes: [
-      "https://upload.wikimedia.org/wikipedia/commons/1/1f/Minca_Banner.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/8/82/Tangara_cyanoptera%2C_Minca%2C_Santa_Marta%2C_Colombia_1.jpg",
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/minca.jpg",
+      "/images/destinos/sierra.jpg",
+      "/images/destinos/dondiego.jpg",
     ],
     incluyeEs: [
       "Avistamiento matutino de tucanes y colibríes endémicos con binoculares profesionales",
@@ -3120,9 +3145,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "08:00 AM · Muelle Embarcadero Artesanal de Taganga",
     puntoEncuentroEn: "08:00 AM · Taganga Artisanal Pier",
     galeriaImagenes: [
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/taganga.jpg",
+      "/images/destinos/tayrona.jpg",
+      "/images/destinos/dondiego.jpg",
     ],
     incluyeEs: [
       "Navegación en lancha tradicional hacia Isla Aguja y Bahía de Granate",
@@ -3157,9 +3182,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "07:30 AM · Puente del Río Don Diego (Km 56 Vía Troncal del Caribe)",
     puntoEncuentroEn: "07:30 AM · Don Diego River Bridge (Km 56 Coastal Highway)",
     galeriaImagenes: [
-      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/dondiego.jpg",
+      "/images/destinos/sierra.jpg",
+      "/images/destinos/tayrona.jpg",
     ],
     incluyeEs: [
       "Visita al sitio arqueológico Tayronaka y diálogo con sabedores Arhuacos",
@@ -3194,9 +3219,9 @@ const FICHAS_POR_CODIGO: Record<number, FichaTecnicaExpedicion> = {
     puntoEncuentroEs: "06:00 PM · Parque de los Novios / Camellón de la Bahía",
     puntoEncuentroEn: "06:00 PM · Parque de los Novios / Bay Boardwalk",
     galeriaImagenes: [
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1400&q=85",
+      "/images/destinos/sierra.jpg",
+      "/images/destinos/taganga.jpg",
+      "/images/destinos/tayrona.jpg",
     ],
     incluyeEs: [
       "Recorrido guiado por un historiador local por la ciudad más antigua de Sudamérica (1525)",
