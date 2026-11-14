@@ -21,6 +21,12 @@ html {
 body {
   background-color: #faf8f5;
   color: #0f172a;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+  background-color: #0b1120;
+  color: #f8fafc;
 }
 
 /* Modo Alto Contraste Accesible (WCAG 2.1 AA) */

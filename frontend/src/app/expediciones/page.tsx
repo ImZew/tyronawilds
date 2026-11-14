@@ -775,7 +775,7 @@ function ExpedicionesCatalogoContenido() {
     : 78;
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian text-sand selection:bg-terracotta selection:text-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-obsidian dark:bg-slate-950 text-sand dark:text-slate-100 selection:bg-terracotta selection:text-white transition-colors duration-300">
       <Navbar
         idioma={idioma}
         onCambiarIdioma={setIdioma}
@@ -943,8 +943,7 @@ function ExpedicionesCatalogoContenido() {
                       loading="lazy"
                       onError={(e) => {
                         const target = e.currentTarget;
-                        const fallback =
-                          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85";
+                        const fallback = "/images/destinos/tayrona.jpg";
                         if (target.src !== fallback) {
                           target.src = fallback;
                         }
@@ -1012,7 +1011,7 @@ function ExpedicionesCatalogoContenido() {
                   </div>
 
                   {altaCongestion && (
-                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-white/90">
+                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-slate-900 dark:text-white">
                       <span className="font-bold text-terracotta">
                         AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}% —
                         SUGERIMOS RUTA DE BAJO IMPACTO:
