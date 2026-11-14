@@ -331,7 +331,7 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Caminata suave",
     nivelEn: "Easy walk",
     precioDesde: "$290.000",
-    svgPos: { x: 28, y: 22 },
+    svgPos: { x: 43, y: 27 },
     tempCelsius: 29,
     cuposDisponibles: 18,
     descripcionEs:
@@ -355,7 +355,7 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Muy suave",
     nivelEn: "Very easy",
     precioDesde: "$245.000",
-    svgPos: { x: 74, y: 25 },
+    svgPos: { x: 78, y: 28 },
     tempCelsius: 28,
     cuposDisponibles: 22,
     descripcionEs:
@@ -379,7 +379,7 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Para todos",
     nivelEn: "All levels",
     precioDesde: "$210.000",
-    svgPos: { x: 23, y: 54 },
+    svgPos: { x: 22, y: 55 },
     tempCelsius: 23,
     cuposDisponibles: 28,
     descripcionEs:
@@ -403,7 +403,7 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Reto de montaña",
     nivelEn: "Mountain trek",
     precioDesde: "$1.850.000",
-    svgPos: { x: 66, y: 56 },
+    svgPos: { x: 67, y: 56 },
     tempCelsius: 20,
     cuposDisponibles: 12,
     descripcionEs:
@@ -427,7 +427,7 @@ const NODOS_TOPOGRAFICOS: NodoTopografico[] = [
     nivelEs: "Caminata media",
     nivelEn: "Moderate hike",
     precioDesde: "$340.000",
-    svgPos: { x: 46, y: 80 },
+    svgPos: { x: 47, y: 80 },
     tempCelsius: 11,
     cuposDisponibles: 14,
     descripcionEs:
@@ -1569,22 +1569,26 @@ export default function TyronaWildsCommercialStorefront() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            {/* Maqueta Topográfica 3D con Perspectiva Real y Capas Superpuestas */}
+            {/* Diorama Topográfico 3D Multicapa de Alta Precisión + Vista Satelital/Híbrida 2D */}
             <div className="lg:col-span-7 flex flex-col justify-between overflow-hidden rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-7 text-[#0F172A] dark:text-white shadow-lg border border-[#0F172A]/10 dark:border-slate-800">
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-[#0F172A]/75 dark:text-slate-300 pb-4 border-b border-[#0F172A]/10 dark:border-slate-800">
                 <span>
-                  {idioma === "es"
-                    ? "Mueve el cursor para inclinar el relieve 3D o selecciona un destino"
-                    : "Move your cursor to tilt the 3D relief or select a destination"}
+                  {vistaMapa3D
+                    ? idioma === "es"
+                      ? "Diorama 3D de 7 cotas topográficas · Inclina con el cursor o elige un nodo"
+                      : "7-layer 3D topographic diorama · Tilt with cursor or select a node"
+                    : idioma === "es"
+                    ? "Cartografía Satelital/Híbrida 2D · Retícula GPS, radios de distancia y tiempos desde Santa Marta"
+                    : "2D Satellite/Hybrid Cartography · GPS grid, distance rings & travel times from Santa Marta"}
                 </span>
                 <div className="flex flex-wrap items-center gap-3 text-[11px]">
                   <span className="inline-flex items-center gap-1.5 text-[#0284C7] dark:text-sky-400 font-bold">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#0284C7]" />
-                    Costa 0m
+                    Litoral 0–100m
                   </span>
                   <span className="inline-flex items-center gap-1.5 text-[#0D9488] dark:text-teal-400 font-bold">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#0D9488]" />
-                    Selva 1.200m
+                    Bosque 650–1.200m
                   </span>
                   <span className="inline-flex items-center gap-1.5 text-[#065F46] dark:text-emerald-400 font-bold">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#065F46]" />
@@ -1593,10 +1597,10 @@ export default function TyronaWildsCommercialStorefront() {
                 </div>
               </div>
 
-              {/* Escenario de Perspectiva 3D Real */}
+              {/* Escenario de Perspectiva 3D Real / Cartografía Satelital 2D */}
               <div
-                className="relative my-4 w-full aspect-[16/10] overflow-hidden rounded-2xl bg-gradient-to-b from-[#082F49] via-[#0F172A] to-[#064E3B] border border-[#0F172A]/15 dark:border-slate-700 select-none"
-                style={{ perspective: "1200px" }}
+                className="relative my-4 w-full aspect-[16/10] overflow-hidden rounded-2xl bg-gradient-to-b from-[#041E30] via-[#0A2738] to-[#071A14] border border-[#0F172A]/15 dark:border-slate-700 select-none"
+                style={{ perspective: "1300px" }}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const normX =
@@ -1604,28 +1608,31 @@ export default function TyronaWildsCommercialStorefront() {
                   const normY =
                     ((e.clientY - rect.top) / rect.height - 0.5) * 2;
                   setMouseTilt({
-                    x: Math.round(normX * 9 * 10) / 10,
-                    y: Math.round(-normY * 7 * 10) / 10,
+                    x: Math.round(normX * 8 * 10) / 10,
+                    y: Math.round(-normY * 6 * 10) / 10,
                   });
                 }}
                 onMouseLeave={() => setMouseTilt({ x: 0, y: 0 })}
               >
                 <style>{`
-                  @keyframes wavePulse3D {
-                    0%, 100% { transform: translateY(0px); opacity: 0.72; }
-                    50% { transform: translateY(5px); opacity: 0.96; }
+                  @keyframes waveFoamDiorama {
+                    0%, 100% { stroke-dashoffset: 0; opacity: 0.55; }
+                    50% { stroke-dashoffset: -28; opacity: 0.92; }
                   }
-                  @keyframes riverFlow3D {
-                    to { stroke-dashoffset: -120; }
+                  @keyframes riverFlowDiorama {
+                    to { stroke-dashoffset: -140; }
                   }
-                  @keyframes cloudDrift3D {
-                    0%, 100% { transform: translate3d(0px, 0px, 90px); }
-                    50% { transform: translate3d(18px, -6px, 90px); }
+                  @keyframes routeParticleDiorama {
+                    to { stroke-dashoffset: -96; }
+                  }
+                  @keyframes cloudDriftDiorama {
+                    0%, 100% { transform: translate3d(0px, 0px, 95px); }
+                    50% { transform: translate3d(20px, -6px, 95px); }
                   }
                 `}</style>
 
                 {/* Control en Esquina para Alternar entre "Vista Relieve 3D" y "Vista Satelital/Aérea 2D" */}
-                <div className="absolute top-3.5 right-3.5 z-30 flex items-center gap-1.5 rounded-full bg-slate-950/80 p-1 backdrop-blur-md border border-white/20 shadow-lg">
+                <div className="absolute top-3.5 right-3.5 z-40 flex items-center gap-1.5 rounded-full bg-slate-950/85 p-1 backdrop-blur-md border border-white/20 shadow-lg">
                   <button
                     type="button"
                     onClick={() => setVistaMapa3D(true)}
@@ -1648,358 +1655,758 @@ export default function TyronaWildsCommercialStorefront() {
                   >
                     {idioma === "es"
                       ? "Vista Satelital/Aérea 2D"
-                      : "2D Aerial View"}
+                      : "2D Satellite/Aerial"}
                   </button>
                 </div>
 
                 {/* Indicador de Enfoque e Inclinación en Esquina Superior Izquierda */}
-                <div className="pointer-events-none absolute top-3.5 left-3.5 z-30 inline-flex items-center gap-2 rounded-full bg-slate-950/75 px-3.5 py-1.5 text-[11px] font-bold text-white backdrop-blur-md border border-white/15">
+                <div className="pointer-events-none absolute top-3.5 left-3.5 z-40 inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-3.5 py-1.5 text-[11px] font-bold text-white backdrop-blur-md border border-white/15">
                   <Mountain className="h-3.5 w-3.5 text-[#FBBF24]" />
                   <span>
                     {vistaMapa3D
-                      ? `RELIEVE 3D · ${nodoActivo.altitudMsnm} MSNM`
-                      : `VISTA AÉREA 2D · ${nodoActivo.altitudMsnm} MSNM`}
+                      ? `DIORAMA 3D · ${nodoActivo.altitudMsnm} MSNM`
+                      : `SATELITAL 2D · 11°14'N 74°12'W · ${nodoActivo.altitudMsnm}M`}
                   </span>
                 </div>
 
-                {/* Tablero Topográfico 3D con Transform-Style Preserve-3D y Zoom hacia Zona Activa */}
-                {(() => {
-                  const focusOffsetX = vistaMapa3D
-                    ? (50 - nodoActivo.svgPos.x) * 0.14
-                    : 0;
-                  const focusOffsetY = vistaMapa3D
-                    ? (50 - nodoActivo.svgPos.y) * 0.1
-                    : 0;
-                  const rotX = vistaMapa3D ? 48 + mouseTilt.y : 0;
-                  const rotZ = vistaMapa3D ? -8 + mouseTilt.x : 0;
-                  const scaleVal = vistaMapa3D ? 0.92 : 0.96;
+                {vistaMapa3D ? (
+                  /* =========================================================
+                     MODO 1: DIORAMA TOPOGRÁFICO 3D MULTICAPA DE ALTA PRECISIÓN
+                     Corte geológico de terreno + Batimetría + 7 cotas SVG + Ríos + Pines Holográficos
+                  ========================================================== */
+                  (() => {
+                    const focusOffsetX = (50 - nodoActivo.svgPos.x) * 0.1;
+                    const focusOffsetY = (50 - nodoActivo.svgPos.y) * 0.08;
+                    const rotX = 46 + mouseTilt.y;
+                    const rotZ = -7 + mouseTilt.x;
 
-                  return (
-                    <div
-                      className="relative h-full w-full transition-transform duration-500 ease-out"
-                      style={{
-                        transformStyle: "preserve-3d",
-                        transform: `translate3d(${focusOffsetX}%, ${focusOffsetY}%, 0px) rotateX(${rotX}deg) rotateZ(${rotZ}deg) scale(${scaleVal})`,
-                      }}
-                    >
-                      {/* =====================================================
-                          CAPA 0 (translateZ(0px)): COSTA DEL MAR CARIBE CON OLEAJE TURQUESA ANIMADO
-                      ====================================================== */}
+                    return (
                       <div
-                        className="absolute inset-3 rounded-2xl overflow-hidden border border-sky-300/30 shadow-[0_25px_60px_rgba(0,0,0,0.65)]"
+                        className="relative h-full w-full transition-transform duration-500 ease-out"
                         style={{
-                          transform: "translateZ(0px)",
-                          background:
-                            "linear-gradient(180deg, #0284C7 0%, #0EA5E9 26%, #134E4A 52%, #064E3B 100%)",
+                          transformStyle: "preserve-3d",
+                          transform: `translate3d(${focusOffsetX}%, ${focusOffsetY}%, 0px) rotateX(${rotX}deg) rotateZ(${rotZ}deg) scale(0.91)`,
                         }}
                       >
-                        <svg
-                          viewBox="0 0 1000 620"
-                          className="h-full w-full"
-                          preserveAspectRatio="none"
+                        {/* CORTE GEOLÓGICO / GROSOR DE CORTEZA TERRESTRE EN 3D (Bordes inferiores y laterales) */}
+                        <div
+                          className="pointer-events-none absolute inset-3 rounded-2xl"
+                          style={{
+                            transform: "translate3d(6px, 14px, -14px)",
+                            background:
+                              "linear-gradient(135deg, #1E293B 0%, #334155 45%, #475569 75%, #0F172A 100%)",
+                            boxShadow:
+                              "0 36px 70px rgba(0,0,0,0.85), inset 0 -6px 0 #78350F, inset 0 -12px 0 #451A03",
+                          }}
+                        />
+
+                        {/* BASE OCEÁNICA Y BATIMETRÍA MARINA + LÍNEA DE COSTA ORGÁNICA (translateZ(0px)) */}
+                        <div
+                          className="absolute inset-3 rounded-2xl overflow-hidden border border-sky-300/35 border-b-[12px] border-r-[8px] border-b-[#3B2F2F] border-r-[#27272A]"
+                          style={{
+                            transform: "translateZ(0px)",
+                            background:
+                              "linear-gradient(180deg, #032B44 0%, #0369A1 22%, #0284C7 38%, #0E7490 50%, #064E3B 100%)",
+                          }}
                         >
-                          {/* Olas Turquesa Animadas del Mar Caribe */}
-                          <path
-                            d="M 0,0 L 1000,0 L 1000,210 Q 820,175 660,192 T 340,175 T 0,210 Z"
-                            fill="#0284C7"
-                            fillOpacity="0.85"
-                          />
-                          <path
-                            d="M 0,145 Q 180,120 350,148 T 700,138 T 1000,158 L 1000,220 L 0,220 Z"
-                            fill="#38BDF8"
-                            fillOpacity="0.45"
-                            style={{
-                              animation: "wavePulse3D 4.5s ease-in-out infinite",
-                            }}
-                          />
-                          <path
-                            d="M 0,185 Q 210,162 420,184 T 820,176 T 1000,195"
-                            fill="none"
-                            stroke="#E0F2FE"
-                            strokeWidth="3"
-                            strokeDasharray="14 8"
-                            strokeOpacity="0.8"
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full"
+                            preserveAspectRatio="none"
+                          >
+                            {/* Batimetría profunda del Mar Caribe */}
+                            <path
+                              d="M 0,0 L 1000,0 L 1000,130 C 850,155 720,108 580,128 C 430,148 310,105 180,135 C 95,152 40,175 0,185 Z"
+                              fill="#075985"
+                              fillOpacity="0.92"
+                            />
+                            {/* Plataforma de arrecifes coralinos (Taganga, Cabo San Juan, Bahía Concha) */}
+                            <path
+                              d="M 0,115 C 85,130 140,195 215,172 C 285,150 355,115 435,132 C 510,148 560,118 655,138 C 755,158 860,145 1000,172 L 1000,265 L 0,265 Z"
+                              fill="#06B6D4"
+                              fillOpacity="0.65"
+                            />
+                            {/* Masa Continental Base (Playas, Bahía de Santa Marta, Taganga, Ensenadas Tayrona y Desembocadura Don Diego) */}
+                            <path
+                              d="M 0,248 C 48,242 75,212 108,218 C 138,224 152,188 188,184 C 225,180 250,204 292,190 C 338,174 372,148 422,154 C 468,160 498,182 548,172 C 612,160 668,175 735,168 C 795,162 835,188 892,182 C 942,178 972,192 1000,198 L 1000,620 L 0,620 Z"
+                              fill="#115E59"
+                            />
+                            {/* Espuma de Olas Animada bordeando Bahía de Santa Marta, Taganga y Cabo San Juan */}
+                            <path
+                              d="M 0,242 C 48,236 75,206 108,212 C 138,218 152,182 188,178 C 225,174 250,198 292,184 C 338,168 372,142 422,148 C 468,154 498,176 548,166 C 612,154 668,169 735,162 C 795,156 835,182 892,176 C 942,172 972,186 1000,192"
+                              fill="none"
+                              stroke="#E0F2FE"
+                              strokeWidth="3.5"
+                              strokeDasharray="16 10"
+                              style={{
+                                animation:
+                                  "waveFoamDiorama 4.2s ease-in-out infinite",
+                              }}
+                            />
+                            {/* Etiqueta Marina Ubicada Arriba a la Izquierda lejos de los Pines */}
+                            <text
+                              x="36"
+                              y="44"
+                              fill="#BAE6FD"
+                              fontSize="13"
+                              fontWeight="800"
+                              letterSpacing="3"
+                            >
+                              MAR CARIBE · BATIMETRÍA CORALINA (0 MSNM)
+                            </text>
+                            <text
+                              x="44"
+                              y="228"
+                              fill="#A7F3D0"
+                              fontSize="10"
+                              fontWeight="700"
+                              letterSpacing="1.5"
+                            >
+                              BAHÍA STA. MARTA &amp; TAGANGA
+                            </text>
+                          </svg>
+                        </div>
+
+                        {/* ===================================================
+                            7 CAPAS SVG DE CURVAS DE NIVEL TOPOGRÁFICAS ORGÁNICAS (translateZ(8px) -> translateZ(85px))
+                        ==================================================== */}
+
+                        {/* CAPA TOPOGRÁFICA 1: translateZ(8px) · Piedemonte Costero y Bosque Seco (100m - 300m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(8px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_8px_12px_rgba(0,0,0,0.45)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 42,282 C 125,248 210,235 315,212 C 415,190 520,205 635,196 C 745,188 855,212 958,236 C 972,340 964,485 942,592 L 58,592 C 36,490 32,368 42,282 Z"
+                              fill="#0F766E"
+                              fillOpacity="0.9"
+                              stroke="#5EEAD4"
+                              strokeWidth="1.6"
+                              strokeOpacity="0.55"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 2: translateZ(20px) · Selva Húmeda Baja y Cuencas Fluviales (400m - 750m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(20px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_11px_15px_rgba(0,0,0,0.5)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 88,326 C 175,292 268,265 372,254 C 475,242 585,252 695,246 C 792,240 875,274 914,322 C 928,412 918,505 896,574 L 104,574 C 82,502 74,398 88,326 Z"
+                              fill="#0D9488"
+                              fillOpacity="0.88"
+                              stroke="#99F6E4"
+                              strokeWidth="1.6"
+                              strokeOpacity="0.6"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 3: translateZ(33px) · Bosque de Niebla Minca y Cañón del Buritaca (900m - 1.400m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(33px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_14px_18px_rgba(0,0,0,0.55)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 142,368 C 228,328 320,304 422,298 C 525,292 632,302 732,312 C 808,320 852,358 862,408 C 870,468 855,522 835,556 L 164,556 C 142,512 128,425 142,368 Z"
+                              fill="#047857"
+                              fillOpacity="0.92"
+                              stroke="#6EE7B7"
+                              strokeWidth="1.8"
+                              strokeOpacity="0.68"
+                            />
+                            {/* Terrazas Arqueológicas de Teyuna (Ciudad Perdida) */}
+                            <circle
+                              cx="670"
+                              cy="348"
+                              r="34"
+                              fill="none"
+                              stroke="#FBBF24"
+                              strokeWidth="1.8"
+                              strokeDasharray="5 4"
+                              strokeOpacity="0.8"
+                            />
+                            <circle
+                              cx="670"
+                              cy="348"
+                              r="19"
+                              fill="none"
+                              stroke="#FDE68A"
+                              strokeWidth="1.8"
+                              strokeOpacity="0.9"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 4: translateZ(46px) · Serranía de San Lorenzo y Alto Buritaca (1.800m - 2.400m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(46px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_16px_20px_rgba(0,0,0,0.58)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 205,412 C 282,374 368,352 465,346 C 562,340 658,354 734,382 C 782,400 804,442 792,488 C 782,522 752,542 715,544 L 245,544 C 212,528 192,458 205,412 Z"
+                              fill="#065F46"
+                              fillOpacity="0.95"
+                              stroke="#A7F3D0"
+                              strokeWidth="1.9"
+                              strokeOpacity="0.72"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 5: translateZ(60px) · Cuchilla de Cerro Kennedy y Páramo de Macotama (2.800m - 3.600m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(60px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_18px_22px_rgba(0,0,0,0.62)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 278,448 C 342,412 415,392 495,388 C 578,384 652,402 698,436 C 724,456 728,492 702,518 C 678,532 622,534 555,534 L 335,534 C 288,524 258,476 278,448 Z"
+                              fill="#15803D"
+                              fillOpacity="0.95"
+                              stroke="#BEF264"
+                              strokeWidth="2"
+                              strokeOpacity="0.75"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 6: translateZ(73px) · Superpáramo Rocoso de la Sierra Nevada (4.200m - 5.000m) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(73px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_22px_26px_rgba(0,0,0,0.68)]"
+                            preserveAspectRatio="none"
+                          >
+                            <path
+                              d="M 348,474 C 398,438 452,418 512,416 C 572,414 624,434 648,468 C 662,488 648,512 612,520 L 385,520 C 352,512 332,492 348,474 Z"
+                              fill="#334155"
+                              fillOpacity="0.96"
+                              stroke="#CBD5E1"
+                              strokeWidth="2.2"
+                              strokeOpacity="0.85"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAPA TOPOGRÁFICA 7: translateZ(85px) · Glaciares y Cumbres Nevadas Colón y Bolívar (5.775m MSNM) */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(85px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full drop-shadow-[0_26px_30px_rgba(0,0,0,0.75)]"
+                            preserveAspectRatio="none"
+                          >
+                            {/* Cumbre Pico Cristóbal Colón (5.775m) */}
+                            <path
+                              d="M 412,492 L 458,428 L 498,464 L 538,422 L 588,492 Z"
+                              fill="#F8FAFC"
+                              stroke="#38BDF8"
+                              strokeWidth="2"
+                            />
+                            {/* Aristas de Hielo Glaciar */}
+                            <path
+                              d="M 458,428 L 442,472 L 474,462 Z"
+                              fill="#E0F2FE"
+                            />
+                            <path
+                              d="M 538,422 L 518,468 L 556,458 Z"
+                              fill="#BAE6FD"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* CAUDALES FLUVIALES SERPENTEANTES ANIMADOS (Río Don Diego y Río Buritaca) + RUTAS DE TREKKING */}
+                        <div
+                          className="pointer-events-none absolute inset-3"
+                          style={{ transform: "translateZ(36px)" }}
+                        >
+                          <svg
+                            viewBox="0 0 1000 620"
+                            className="h-full w-full"
+                            preserveAspectRatio="none"
+                          >
+                            {/* Caudal Río Buritaca (Nace cerca de Teyuna y desemboca al Caribe) */}
+                            <path
+                              d="M 545,455 C 585,410 635,375 652,325 C 668,275 632,225 648,168"
+                              fill="none"
+                              stroke="#38BDF8"
+                              strokeWidth="5"
+                              strokeLinecap="round"
+                              strokeOpacity="0.5"
+                            />
+                            <path
+                              d="M 545,455 C 585,410 635,375 652,325 C 668,275 632,225 648,168"
+                              fill="none"
+                              stroke="#E0F2FE"
+                              strokeWidth="2.5"
+                              strokeDasharray="9 7"
+                              strokeLinecap="round"
+                              style={{
+                                animation:
+                                  "riverFlowDiorama 7.5s linear infinite",
+                              }}
+                            />
+
+                            {/* Caudal Río Don Diego (Nace en las cumbres orientales y desemboca en Don Diego) */}
+                            <path
+                              d="M 615,465 C 675,412 728,365 758,295 C 778,245 785,208 792,172"
+                              fill="none"
+                              stroke="#06B6D4"
+                              strokeWidth="6.5"
+                              strokeLinecap="round"
+                              strokeOpacity="0.55"
+                            />
+                            <path
+                              d="M 615,465 C 675,412 728,365 758,295 C 778,245 785,208 792,172"
+                              fill="none"
+                              stroke="#ECFEFF"
+                              strokeWidth="3"
+                              strokeDasharray="11 8"
+                              strokeLinecap="round"
+                              style={{
+                                animation:
+                                  "riverFlowDiorama 6.5s linear infinite",
+                              }}
+                            />
+
+                            {/* Rutas de Trekking Iluminadas con Partículas en Movimiento entre Nodos */}
+                            <path
+                              d="M 220,342 C 295,255 360,198 430,168 C 555,165 675,170 780,174"
+                              fill="none"
+                              stroke="#FBBF24"
+                              strokeWidth="2.4"
+                              strokeDasharray="7 7"
+                              strokeOpacity="0.85"
+                              style={{
+                                animation:
+                                  "routeParticleDiorama 8s linear infinite",
+                              }}
+                            />
+                            <path
+                              d="M 220,342 C 335,418 405,468 470,496 C 555,442 615,392 670,348"
+                              fill="none"
+                              stroke="#F97316"
+                              strokeWidth="2.8"
+                              strokeDasharray="8 6"
+                              strokeOpacity="0.9"
+                              style={{
+                                animation:
+                                  "routeParticleDiorama 7s linear infinite",
+                              }}
+                            />
+                          </svg>
+                        </div>
+
+                        {/* Nubes Volumétricas Flotantes sobre la Sierra Nevada */}
+                        <div
+                          className="pointer-events-none absolute left-[16%] top-[46%] h-9 w-24 rounded-full bg-white/15 blur-md"
+                          style={{
+                            animation:
+                              "cloudDriftDiorama 9s ease-in-out infinite",
+                          }}
+                        />
+                        <div
+                          className="pointer-events-none absolute left-[54%] top-[68%] h-11 w-32 rounded-full bg-white/20 blur-md"
+                          style={{
+                            animation:
+                              "cloudDriftDiorama 12s ease-in-out infinite reverse",
+                          }}
+                        />
+
+                        {/* ===================================================
+                            PINES VERTICALES 3D CON CONTRARROTACIÓN (transform: translateZ(55px) rotateX(-35deg))
+                            Cero deformación y cero solapamiento con MAR CARIBE o entre destinos
+                        ==================================================== */}
+                        {NODOS_TOPOGRAFICOS.map((nodo) => {
+                          const esActivo = nodoActivoId === nodo.id;
+                          const visible =
+                            pisoSeleccionado === "TODOS" ||
+                            nodo.pisoTermico === pisoSeleccionado;
+
+                          const elevacionPinZ =
+                            nodo.pisoTermico === "LITORAL"
+                              ? 55
+                              : nodo.pisoTermico === "SELVA_HUMEDA"
+                              ? 68
+                              : 92;
+
+                          const nombreCorto = nodo.nombre.split("·")[0].trim();
+
+                          return (
+                            <div
+                              key={nodo.id}
+                              style={{
+                                left: `${nodo.svgPos.x}%`,
+                                top: `${nodo.svgPos.y}%`,
+                                transform: `translate(-50%, -100%) translateZ(${elevacionPinZ}px) rotateX(-35deg)`,
+                                transformOrigin: "bottom center",
+                                opacity: visible ? 1 : 0.28,
+                              }}
+                              className={`absolute transition-all duration-300 ${
+                                esActivo ? "z-30" : "z-20 hover:z-30"
+                              }`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => setNodoActivoId(nodo.id)}
+                                className="group relative flex flex-col items-center focus:outline-none"
+                              >
+                                {/* Etiqueta Holográfica Vertical de Frente a la Cámara */}
+                                <span
+                                  className={`mb-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-extrabold shadow-[0_10px_25px_rgba(0,0,0,0.55)] transition-all ${
+                                    esActivo
+                                      ? "bg-[#EA580C] text-white ring-2 ring-white scale-105"
+                                      : "bg-slate-950/90 text-white hover:bg-[#065F46] border border-white/25"
+                                  }`}
+                                >
+                                  <span
+                                    className={`h-2 w-2 rounded-full ${
+                                      esActivo
+                                        ? "bg-white animate-ping"
+                                        : nodo.pisoTermico === "LITORAL"
+                                        ? "bg-[#38BDF8]"
+                                        : nodo.pisoTermico === "SELVA_HUMEDA"
+                                        ? "bg-[#2DD4BF]"
+                                        : "bg-[#4ADE80]"
+                                    }`}
+                                  />
+                                  <span>{nombreCorto}</span>
+                                  <span className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-mono text-amber-200">
+                                    {nodo.altitudMsnm}m
+                                  </span>
+                                </span>
+
+                                {/* Pedestal / Vástago Vertical Holográfico */}
+                                <span
+                                  className={`w-[2px] transition-all ${
+                                    esActivo
+                                      ? "h-7 bg-gradient-to-b from-[#EA580C] to-amber-300 shadow-[0_0_10px_#EA580C]"
+                                      : "h-5 bg-gradient-to-b from-white/90 to-emerald-300/60 group-hover:h-6"
+                                  }`}
+                                />
+
+                                {/* Anillo de Anclaje sobre la Cota Topográfica */}
+                                <span className="relative flex h-4 w-4 items-center justify-center">
+                                  {esActivo && (
+                                    <span className="absolute inline-flex h-8 w-8 animate-ping rounded-full bg-[#EA580C] opacity-65" />
+                                  )}
+                                  <span
+                                    className={`relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-white shadow ${
+                                      esActivo ? "bg-[#EA580C]" : "bg-[#0D9488]"
+                                    }`}
+                                  />
+                                </span>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()
+                ) : (
+                  /* =========================================================
+                     MODO 2: VISTA SATELITAL / HÍBRIDA 2D CON RETÍCULA GPS, RADIOS DE DISTANCIA Y TIEMPOS
+                  ========================================================== */
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl bg-[#041C2C]">
+                    <svg
+                      viewBox="0 0 1000 620"
+                      className="h-full w-full"
+                      preserveAspectRatio="none"
+                    >
+                      {/* Fondo Satelital Híbrido Marino y Continental */}
+                      <rect
+                        x="0"
+                        y="0"
+                        width="1000"
+                        height="620"
+                        fill="#06283D"
+                      />
+                      <path
+                        d="M 0,235 C 65,228 115,196 185,184 C 265,170 345,144 435,152 C 525,160 635,168 745,164 C 845,160 925,180 1000,192 L 1000,620 L 0,620 Z"
+                        fill="#0A3628"
+                        stroke="#38BDF8"
+                        strokeWidth="2"
+                      />
+                      {/* Curvas Hipsométricas 2D */}
+                      <path
+                        d="M 95,320 C 235,265 445,245 695,252 C 825,256 895,310 905,435 L 95,565 Z"
+                        fill="#0E4D38"
+                        stroke="#34D399"
+                        strokeWidth="1.2"
+                        strokeDasharray="6 4"
+                        strokeOpacity="0.55"
+                      />
+                      <path
+                        d="M 225,415 C 345,355 545,345 715,395 C 765,435 745,515 685,535 L 265,535 Z"
+                        fill="#14532D"
+                        stroke="#86EFAC"
+                        strokeWidth="1.2"
+                        strokeOpacity="0.6"
+                      />
+                      <path
+                        d="M 385,482 L 458,425 L 502,458 L 542,418 L 605,485 Z"
+                        fill="#E2E8F0"
+                        fillOpacity="0.85"
+                      />
+
+                      {/* Retícula de Coordenadas GPS (Latitud / Longitud) */}
+                      {[140, 280, 420, 560].map((yLine, idx) => (
+                        <g key={`lat-${yLine}`}>
+                          <line
+                            x1="0"
+                            y1={yLine}
+                            x2="1000"
+                            y2={yLine}
+                            stroke="#38BDF8"
+                            strokeOpacity="0.18"
+                            strokeWidth="1"
+                            strokeDasharray="4 4"
                           />
                           <text
-                            x="48"
-                            y="62"
-                            fill="#E0F2FE"
-                            fontSize="15"
-                            fontWeight="800"
-                            letterSpacing="3.5"
+                            x="14"
+                            y={yLine - 6}
+                            fill="#7DD3FC"
+                            fontSize="10"
+                            fontFamily="monospace"
                           >
-                            MAR CARIBE · ARRECIFES DEL TAYRONA (0 MSNM)
+                            {`11°${22 - idx * 5}'N`}
                           </text>
-                        </svg>
-                      </div>
-
-                      {/* =====================================================
-                          CAPA 1 (translateZ(20px)): PIEDEMONTE Y RÍO DON DIEGO CON TRAZO FLUVIAL ANIMADO
-                      ====================================================== */}
-                      <div
-                        className="pointer-events-none absolute inset-3"
-                        style={{
-                          transform: vistaMapa3D
-                            ? "translateZ(20px)"
-                            : "translateZ(2px)",
-                        }}
-                      >
-                        <svg
-                          viewBox="0 0 1000 620"
-                          className="h-full w-full drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)]"
-                          preserveAspectRatio="none"
-                        >
-                          <path
-                            d="M 35,235 Q 240,185 480,195 Q 740,182 965,225 L 950,585 L 50,585 Z"
-                            fill="#0F766E"
-                            fillOpacity="0.86"
-                            stroke="#5EEAD4"
-                            strokeWidth="2"
-                            strokeOpacity="0.55"
-                          />
-                          {/* Río Don Diego Desembocando al Mar Caribe */}
-                          <path
-                            d="M 650,490 Q 690,390 715,315 T 745,220 T 765,160"
-                            fill="none"
+                        </g>
+                      ))}
+                      {[200, 400, 600, 800].map((xLine, idx) => (
+                        <g key={`lon-${xLine}`}>
+                          <line
+                            x1={xLine}
+                            y1="0"
+                            x2={xLine}
+                            y2="620"
                             stroke="#38BDF8"
-                            strokeWidth="7"
-                            strokeLinecap="round"
-                            strokeOpacity="0.45"
+                            strokeOpacity="0.18"
+                            strokeWidth="1"
+                            strokeDasharray="4 4"
                           />
-                          <path
-                            d="M 650,490 Q 690,390 715,315 T 745,220 T 765,160"
-                            fill="none"
-                            stroke="#E0F2FE"
-                            strokeWidth="3.5"
-                            strokeDasharray="10 8"
-                            strokeLinecap="round"
-                            style={{
-                              animation: "riverFlow3D 8s linear infinite",
-                            }}
-                          />
-                        </svg>
-                      </div>
-
-                      {/* =====================================================
-                          CAPA 2 (translateZ(45px)): BOSQUE DE NIEBLA EN MINCA Y TERRAZAS DE TEYUNA
-                      ====================================================== */}
-                      <div
-                        className="pointer-events-none absolute inset-3"
-                        style={{
-                          transform: vistaMapa3D
-                            ? "translateZ(45px)"
-                            : "translateZ(4px)",
-                        }}
-                      >
-                        <svg
-                          viewBox="0 0 1000 620"
-                          className="h-full w-full drop-shadow-[0_18px_24px_rgba(0,0,0,0.55)]"
-                          preserveAspectRatio="none"
-                        >
-                          <path
-                            d="M 115,320 Q 310,265 520,278 Q 740,275 885,345 L 865,560 L 135,560 Z"
-                            fill="#065F46"
-                            fillOpacity="0.92"
-                            stroke="#6EE7B7"
-                            strokeWidth="2.2"
-                            strokeOpacity="0.65"
-                          />
-                          {/* Anillos Arqueológicos de las Terrazas de Teyuna */}
-                          <circle
-                            cx="660"
-                            cy="350"
-                            r="38"
-                            fill="none"
-                            stroke="#FBBF24"
-                            strokeWidth="1.8"
-                            strokeDasharray="5 4"
-                            strokeOpacity="0.7"
-                          />
-                          <circle
-                            cx="660"
-                            cy="350"
-                            r="22"
-                            fill="none"
-                            stroke="#FBBF24"
-                            strokeWidth="1.8"
-                            strokeOpacity="0.85"
-                          />
-                          {/* Ruta Conectada entre Minca, Teyuna y Tayrona */}
-                          <path
-                            d="M 280,155 Q 250,245 230,335 Q 440,350 660,350"
-                            fill="none"
-                            stroke="#FBBF24"
-                            strokeWidth="2.8"
-                            strokeDasharray="8 6"
-                            style={{
-                              animation: "riverFlow3D 11s linear infinite",
-                            }}
-                          />
-                        </svg>
-                      </div>
-
-                      {/* =====================================================
-                          CAPA 3 (translateZ(75px)): CUMBRES Y PICOS NEVADOS DE LA SIERRA NEVADA + NUBES VOLUMÉTRICAS
-                      ====================================================== */}
-                      <div
-                        className="pointer-events-none absolute inset-3"
-                        style={{
-                          transform: vistaMapa3D
-                            ? "translateZ(75px)"
-                            : "translateZ(6px)",
-                        }}
-                      >
-                        <svg
-                          viewBox="0 0 1000 620"
-                          className="h-full w-full drop-shadow-[0_24px_28px_rgba(0,0,0,0.65)]"
-                          preserveAspectRatio="none"
-                        >
-                          {/* Macizo de Alta Montaña */}
-                          <path
-                            d="M 230,520 L 350,395 L 435,445 L 515,365 L 605,440 L 690,390 L 785,525 Z"
-                            fill="#047857"
-                            stroke="#A7F3D0"
-                            strokeWidth="2.2"
-                          />
-                          {/* Glaciares y Cumbres Nevadas Colón y Bolívar */}
-                          <path
-                            d="M 350,395 L 318,432 L 352,424 L 382,434 Z"
-                            fill="#F8FAFC"
-                          />
-                          <path
-                            d="M 515,365 L 476,415 L 515,402 L 552,416 Z"
-                            fill="#FFFFFF"
-                          />
-                          <path
-                            d="M 690,390 L 658,428 L 690,418 L 722,428 Z"
-                            fill="#F1F5F9"
-                          />
-                        </svg>
-                      </div>
-
-                      {/* Nubes Volumétricas Flotantes sobre la Sierra Nevada */}
-                      <div
-                        className="pointer-events-none absolute left-[18%] top-[44%] h-10 w-28 rounded-full bg-white/20 blur-md"
-                        style={{
-                          animation: "cloudDrift3D 9s ease-in-out infinite",
-                        }}
-                      />
-                      <div
-                        className="pointer-events-none absolute left-[52%] top-[66%] h-12 w-36 rounded-full bg-white/25 blur-md"
-                        style={{
-                          animation:
-                            "cloudDrift3D 12s ease-in-out infinite reverse",
-                        }}
-                      />
-
-                      {/* =====================================================
-                          PINES VERTICALES 3D ELEVADOS SOBRE EL TERRENO (CERO SOLAPAMIENTO)
-                      ====================================================== */}
-                      {NODOS_TOPOGRAFICOS.map((nodo) => {
-                        const esActivo = nodoActivoId === nodo.id;
-                        const visible =
-                          pisoSeleccionado === "TODOS" ||
-                          nodo.pisoTermico === pisoSeleccionado;
-
-                        const elevacionZ =
-                          nodo.pisoTermico === "LITORAL"
-                            ? 28
-                            : nodo.pisoTermico === "SELVA_HUMEDA"
-                            ? 56
-                            : 86;
-
-                        const nombreCorto = nodo.nombre.split("·")[0].trim();
-
-                        return (
-                          <div
-                            key={nodo.id}
-                            style={{
-                              left: `${nodo.svgPos.x}%`,
-                              top: `${nodo.svgPos.y}%`,
-                              transform: vistaMapa3D
-                                ? `translate(-50%, -50%) translateZ(${elevacionZ}px) rotateX(-38deg)`
-                                : "translate(-50%, -50%) translateZ(12px)",
-                              opacity: visible ? 1 : 0.28,
-                            }}
-                            className={`absolute transition-all duration-300 ${
-                              esActivo ? "z-30" : "z-20 hover:z-30"
-                            }`}
+                          <text
+                            x={xLine + 6}
+                            y="608"
+                            fill="#7DD3FC"
+                            fontSize="10"
+                            fontFamily="monospace"
                           >
-                            <button
-                              type="button"
-                              onClick={() => setNodoActivoId(nodo.id)}
-                              className="group relative flex flex-col items-center focus:outline-none"
-                            >
-                              {/* Etiqueta Flotante Limpia (Sin Solapamientos ni Recortes) */}
-                              <span
-                                className={`mb-1.5 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-extrabold shadow-lg transition-all ${
-                                  esActivo
-                                    ? "bg-[#EA580C] text-white ring-2 ring-white scale-105"
-                                    : "bg-white/95 text-[#0F172A] hover:bg-[#065F46] hover:text-white border border-[#0F172A]/15"
-                                }`}
-                              >
-                                <span
-                                  className={`h-2 w-2 rounded-full ${
-                                    esActivo
-                                      ? "bg-white animate-ping"
-                                      : nodo.pisoTermico === "LITORAL"
-                                      ? "bg-[#0284C7]"
-                                      : nodo.pisoTermico === "SELVA_HUMEDA"
-                                      ? "bg-[#0D9488]"
-                                      : "bg-[#065F46]"
-                                  }`}
-                                />
-                                <span>{nombreCorto}</span>
-                                <span className="text-[10px] opacity-80">
-                                  {nodo.altitudMsnm}m
-                                </span>
-                              </span>
+                            {`74°${18 - idx * 6}'W`}
+                          </text>
+                        </g>
+                      ))}
 
-                              {/* Vástago Vertical 3D del Pin */}
-                              <span
-                                className={`w-0.5 transition-all ${
-                                  esActivo
-                                    ? "h-6 bg-[#EA580C]"
-                                    : "h-4 bg-white/85 group-hover:h-5"
-                                }`}
-                              />
+                      {/* Anillos de Radio de Distancia desde el Centro Histórico de Santa Marta (x: 110, y: 235) */}
+                      {[160, 320, 490].map((radius, idx) => (
+                        <g key={`ring-${radius}`}>
+                          <circle
+                            cx="110"
+                            cy="235"
+                            r={radius}
+                            fill="none"
+                            stroke="#FBBF24"
+                            strokeOpacity="0.28"
+                            strokeWidth="1.2"
+                            strokeDasharray="6 6"
+                          />
+                          <text
+                            x={110 + radius * 0.72}
+                            y={235 + radius * 0.58}
+                            fill="#FDE68A"
+                            fontSize="10"
+                            fontFamily="monospace"
+                            fontWeight="700"
+                          >
+                            {`Radio ${(idx + 1) * 15} km`}
+                          </text>
+                        </g>
+                      ))}
 
-                              {/* Base Luminosa con Pulso sobre el Relieve */}
-                              <span className="relative flex h-4 w-4 items-center justify-center">
-                                {esActivo && (
-                                  <span className="absolute inline-flex h-7 w-7 animate-ping rounded-full bg-[#EA580C] opacity-60" />
-                                )}
-                                <span
-                                  className={`relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-white shadow ${
-                                    esActivo ? "bg-[#EA580C]" : "bg-[#065F46]"
-                                  }`}
-                                />
-                              </span>
-                            </button>
+                      {/* Vectores de Ruta y Tiempos de Viaje desde Santa Marta */}
+                      <g stroke="#38BDF8" strokeWidth="1.8" strokeDasharray="5 5">
+                        <line x1="110" y1="235" x2="430" y2="168" />
+                        <line x1="110" y1="235" x2="780" y2="174" />
+                        <line x1="110" y1="235" x2="220" y2="342" />
+                        <line x1="110" y1="235" x2="670" y2="348" />
+                        <line x1="110" y1="235" x2="470" y2="496" />
+                      </g>
+
+                      {/* Nodo Base: Centro Histórico Santa Marta */}
+                      <circle
+                        cx="110"
+                        cy="235"
+                        r="7"
+                        fill="#FBBF24"
+                        stroke="#FFFFFF"
+                        strokeWidth="2"
+                      />
+                      <text
+                        x="124"
+                        y="232"
+                        fill="#FEF08A"
+                        fontSize="11"
+                        fontWeight="800"
+                      >
+                        SANTA MARTA (KM 0)
+                      </text>
+                    </svg>
+
+                    {/* Marcadores Satelitales 2D con Tiempo de Desplazamiento */}
+                    {NODOS_TOPOGRAFICOS.map((nodo) => {
+                      const esActivo = nodoActivoId === nodo.id;
+                      const tiempoDesdeSm =
+                        nodo.id === "tayrona"
+                          ? "55 min · Troncal Caribe"
+                          : nodo.id === "don-diego"
+                          ? "1h 20m · Vía Riohacha"
+                          : nodo.id === "minca"
+                          ? "45 min · Ascenso"
+                          : nodo.id === "teyuna"
+                          ? "2h 30m 4x4 + Trek"
+                          : "2h 15m · Camperos 4x4";
+
+                      return (
+                        <button
+                          key={nodo.id}
+                          type="button"
+                          onClick={() => setNodoActivoId(nodo.id)}
+                          style={{
+                            left: `${nodo.svgPos.x}%`,
+                            top: `${nodo.svgPos.y}%`,
+                          }}
+                          className={` -translate-x-1/2 -translate-y-1/2 absolute rounded-2xl px-3 py-1.5 text-left transition-all shadow-lg border ${
+                            esActivo
+                              ? "z-30 bg-[#EA580C] text-white border-white scale-105"
+                              : "z-20 bg-slate-950/90 text-slate-100 border-sky-400/40 hover:border-white"
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 text-[11px] font-extrabold whitespace-nowrap">
+                            <span className="h-2 w-2 rounded-full bg-amber-300" />
+                            <span>{nodo.nombre.split("·")[0].trim()}</span>
+                            <span className="font-mono text-[10px] opacity-90">
+                              ({nodo.altitudMsnm}m)
+                            </span>
                           </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
+                          <div className="text-[9px] font-mono text-sky-200/90 whitespace-nowrap">
+                            {tiempoDesdeSm}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {/* Píldoras Rápidas de Nodos */}
-              <div className="flex flex-wrap items-center gap-2 pt-3">
-                {NODOS_TOPOGRAFICOS.map((n) => (
-                  <button
-                    key={n.id}
-                    type="button"
-                    onClick={() => setNodoActivoId(n.id)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
-                      nodoActivoId === n.id
-                        ? "bg-[#EA580C] text-white shadow-sm"
-                        : "bg-[#F3EFE6] dark:bg-slate-800 text-[#0F172A]/80 dark:text-slate-200 hover:bg-[#065F46]/15"
-                    }`}
-                  >
-                    {n.nombre.split("·")[0].trim()}
-                  </button>
-                ))}
+              {/* =============================================================
+                  GRÁFICO DE PERFIL DE ELEVACIÓN INTERACTIVO (0m a 3.100m MSNM)
+                  Resalta dinámicamente la altitud del destino activo
+              ============================================================== */}
+              <div className="mt-1 rounded-2xl bg-[#F8FAFC] dark:bg-slate-950/90 p-3.5 border border-[#0F172A]/10 dark:border-slate-800">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                    {idioma === "es"
+                      ? "Perfil Longitudinal de Elevación (0m → 3.100m MSNM)"
+                      : "Longitudinal Elevation Profile (0m → 3,100m AMSL)"}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EA580C]/15 px-2.5 py-0.5 text-[11px] font-bold text-[#EA580C] dark:text-amber-400">
+                    <span>{nodoActivo.nombre.split("·")[0].trim()}:</span>
+                    <span className="font-mono">
+                      {nodoActivo.altitudMsnm} msnm · {nodoActivo.tempCelsius}°C
+                    </span>
+                  </span>
+                </div>
+
+                {/* Curva de Perfil Altimétrico y Nodos Interactivos */}
+                <div className="grid grid-cols-5 gap-2 items-end pt-2">
+                  {[...NODOS_TOPOGRAFICOS]
+                    .sort((a, b) => a.altitudMsnm - b.altitudMsnm)
+                    .map((nodo) => {
+                      const activo = nodoActivoId === nodo.id;
+                      const alturaBarra =
+                        nodo.altitudMsnm <= 50
+                          ? 22
+                          : nodo.altitudMsnm <= 100
+                          ? 32
+                          : nodo.altitudMsnm <= 700
+                          ? 52
+                          : nodo.altitudMsnm <= 1300
+                          ? 74
+                          : 100;
+                      return (
+                        <button
+                          key={`elev-${nodo.id}`}
+                          type="button"
+                          onClick={() => setNodoActivoId(nodo.id)}
+                          className={`group flex flex-col items-center rounded-xl p-2 transition-all border ${
+                            activo
+                              ? "bg-[#EA580C]/10 border-[#EA580C] dark:bg-[#EA580C]/20"
+                              : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-[#065F46]"
+                          }`}
+                        >
+                          <span
+                            className={`text-[10px] font-mono font-extrabold ${
+                              activo
+                                ? "text-[#EA580C] dark:text-amber-300"
+                                : "text-slate-600 dark:text-slate-400"
+                            }`}
+                          >
+                            {nodo.altitudMsnm}m
+                          </span>
+                          <div className="my-1.5 flex h-12 w-full items-end justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 px-2 py-1">
+                            <div
+                              style={{ height: `${alturaBarra}%` }}
+                              className={`w-full rounded-t-md transition-all duration-300 ${
+                                activo
+                                  ? "bg-gradient-to-t from-[#065F46] to-[#EA580C]"
+                                  : "bg-gradient-to-t from-[#0284C7]/60 to-[#0D9488]/80 group-hover:from-[#065F46] group-hover:to-[#0D9488]"
+                              }`}
+                            />
+                          </div>
+                          <span
+                            className={`truncate max-w-full text-[11px] font-bold ${
+                              activo
+                                ? "text-slate-900 dark:text-white"
+                                : "text-slate-700 dark:text-slate-300"
+                            }`}
+                          >
+                            {nodo.nombre.split("·")[0].trim()}
+                          </span>
+                        </button>
+                      );
+                    })}
+                </div>
               </div>
             </div>
 
@@ -3405,40 +3812,43 @@ export default function TyronaWildsCommercialStorefront() {
       {/* =====================================================================
           FOOTER COMERCIAL CON PÁGINAS LEGALES (LEY 1581) + ENLACE DISCRETO /LAB
       ====================================================================== */}
-      <footer className="mx-auto max-w-[1440px] border-x border-sand/15 px-4 py-10 sm:px-6 font-mono text-xs text-sand/60">
+      <footer className="mx-auto max-w-[1440px] border-x border-slate-200 dark:border-slate-800 px-4 py-10 sm:px-6 font-mono text-xs text-slate-600 dark:text-slate-300">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div>
-            <span className="font-bold text-sand">TYRONAWILDS™</span> // SANTA
-            MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
+            <span className="font-bold text-slate-900 dark:text-white">
+              TYRONAWILDS™
+            </span>{" "}
+            · SANTA MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y
+            CARIBE
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <Link
               href="/mis-reservas"
-              className="font-bold text-terracotta hover:text-sand transition-colors"
+              className="font-bold text-[#EA580C] dark:text-amber-400 hover:underline transition-colors"
             >
               Mis Reservas &amp; Pasaportes QR
             </Link>
             <Link
               href="/operadores"
-              className="font-bold text-sand hover:text-terracotta transition-colors"
+              className="font-bold text-slate-800 dark:text-slate-200 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Portal de Operadores RNT
             </Link>
             <Link
               href="/privacidad"
-              className="hover:text-terracotta transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Privacidad &amp; Habeas Data (Ley 1581)
             </Link>
             <Link
               href="/terminos"
-              className="hover:text-terracotta transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Términos RNT &amp; PNN
             </Link>
             <Link
               href="/lab"
-              className="border border-sand/15 px-2.5 py-1 text-[10px] uppercase tracking-widest text-sand/45 hover:border-terracotta hover:text-terracotta transition-colors"
+              className="rounded-full border border-slate-300 dark:border-slate-700 px-3 py-1 text-[10px] uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors"
             >
               SYSTEM STATUS // LAB
             </Link>

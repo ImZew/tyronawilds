@@ -789,21 +789,21 @@ function ExpedicionesCatalogoContenido() {
       ====================================================================== */}
       <section
         id="expediciones"
-        className="mx-auto max-w-[1440px] border-x border-b border-sand/15 px-4 py-12 sm:px-6 sm:py-16"
+        className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-16"
       >
-        <div className="flex flex-col justify-between gap-6 border-b border-sand/15 pb-8 lg:flex-row lg:items-end">
+        <div className="flex flex-col justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8 lg:flex-row lg:items-end">
           <div>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-              // 01 · COLECCIÓN DE EXPEDICIONES CERTIFICADAS
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#065F46]/10 dark:bg-emerald-500/15 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#065F46] dark:text-emerald-400">
+              <span>COLECCIÓN DE EXPEDICIONES CERTIFICADAS</span>
             </div>
-            <h2 className="mt-2 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-sand">
+            <h2 className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-slate-900 dark:text-white">
               {idioma === "es"
                 ? "TRAVESÍAS & ESTADO DEL SENDERO"
                 : "EXPEDITIONS & TRAIL CONDITIONS"}
             </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {[
               {
                 id: "TODAS",
@@ -835,10 +835,10 @@ function ExpedicionesCatalogoContenido() {
                 key={cat.id}
                 type="button"
                 onClick={() => setFiltroCategoria(cat.id)}
-                className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
+                className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
                   filtroCategoria === cat.id
-                    ? "border-terracotta bg-terracotta text-white font-bold"
-                    : "border-sand/20 bg-obsidian text-sand/75 hover:border-sand/50"
+                    ? "border-[#EA580C] bg-[#EA580C] text-white shadow-sm"
+                    : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:border-[#065F46] dark:hover:border-emerald-400"
                 }`}
               >
                 {idioma === "es" ? cat.labelEs : cat.labelEn}
@@ -848,10 +848,10 @@ function ExpedicionesCatalogoContenido() {
             <button
               type="button"
               onClick={() => setSoloBajaCarga(!soloBajaCarga)}
-              className={`border px-3 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-wider transition-colors ${
+              className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
                 soloBajaCarga
-                  ? "border-emerald-400 bg-emerald-100 text-[#065F46] font-bold"
-                  : "border-sand/20 bg-obsidian text-sand/75 hover:border-emerald-400/50"
+                  ? "border-[#065F46] bg-[#065F46] text-white shadow-sm"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:border-emerald-500"
               }`}
             >
               {idioma === "es"
@@ -862,9 +862,9 @@ function ExpedicionesCatalogoContenido() {
         </div>
 
         {/* Buscador + Filtro por Dificultad Física */}
-        <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-12">
+        <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-12 items-center">
           <div className="relative lg:col-span-7">
-            <Search className="pointer-events-none absolute left-3.5 top-3.5 h-4 w-4 text-sand/45" />
+            <Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-slate-400 dark:text-slate-400" />
             <input
               type="search"
               value={busqueda}
@@ -874,11 +874,11 @@ function ExpedicionesCatalogoContenido() {
                   ? "Buscar por destino, ecosistema o interés (Teyuna, Minca, buceo, aves...)"
                   : "Search by destination, ecosystem or interest (Teyuna, Minca, diving...)"
               }
-              className="w-full rounded-full border border-sand/25 bg-obsidian py-3 pl-10 pr-4 font-mono text-xs text-sand placeholder:text-sand/35 focus:border-terracotta focus:outline-none"
+              className="w-full rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-3 pl-11 pr-4 text-xs font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#EA580C] focus:outline-none shadow-sm"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2 lg:col-span-5 lg:justify-end">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-sand/55">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
               {idioma === "es" ? "Dificultad:" : "Difficulty:"}
             </span>
             {(
@@ -893,10 +893,10 @@ function ExpedicionesCatalogoContenido() {
                 key={d.id}
                 type="button"
                 onClick={() => setFiltroDificultad(d.id)}
-                className={`rounded-full border px-3.5 py-1.5 font-mono text-[11px] uppercase transition-colors ${
+                className={`rounded-full border px-4 py-1.5 text-xs font-bold transition-all ${
                   filtroDificultad === d.id
-                    ? "border-sand bg-sand font-bold text-obsidian"
-                    : "border-sand/20 text-sand/75 hover:border-sand/50"
+                    ? "border-[#065F46] bg-[#065F46] text-white shadow-sm"
+                    : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:border-[#065F46] dark:hover:border-emerald-400"
                 }`}
               >
                 {idioma === "es" ? d.es : d.en}
@@ -906,37 +906,36 @@ function ExpedicionesCatalogoContenido() {
         </div>
 
         {actividadesFiltradas.length === 0 && (
-          <div className="mt-8 border border-sand/20 bg-obsidian p-10 text-center font-mono text-xs text-sand/70">
+          <div className="mt-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131C22] p-10 text-center text-sm font-medium text-slate-600 dark:text-slate-300">
             {idioma === "es"
               ? "Ninguna expedición coincide con tu búsqueda. Ajusta los filtros o explora todas las rutas."
               : "No expeditions match your search. Adjust the filters to explore all routes."}
           </div>
         )}
 
-        {/* Grilla Brutalista de Expediciones */}
-        <div className="mt-10 grid grid-cols-1 gap-0 border-t border-l border-sand/15 md:grid-cols-2 lg:grid-cols-3">
-          {actividadesFiltradas.map((act, index) => {
+        {/* Grilla de Tarjetas Redondeadas Independientes (Sin Tabla Cuadrada ni Prefijos 01 //) */}
+        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {actividadesFiltradas.map((act) => {
             const altaCongestion = act.nivelOcupacionActual >= 80;
             const ficha = obtenerFichaTecnicaExpedicion(act.codigoServicio);
             return (
               <article
                 key={act.id}
                 onClick={() => abrirDrawerExpedicion(act)}
-                className="group relative flex cursor-pointer flex-col justify-between border-r border-b border-sand/15 bg-obsidian p-5 sm:p-6 transition-colors hover:bg-jungle/25"
+                className="group relative flex cursor-pointer flex-col justify-between rounded-3xl bg-white dark:bg-[#131C22] border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wider text-sand/65">
-                    <span className="truncate">
-                      0{index + 1} //{" "}
+                  <div className="flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                    <span className="truncate rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-slate-700 dark:text-slate-200">
                       {idioma === "es" ? ficha.duracionEs : ficha.duracionEn}
                     </span>
-                    <span className="flex shrink-0 items-center gap-1 text-terracotta">
+                    <span className="flex shrink-0 items-center gap-1 text-[#EA580C] dark:text-amber-400 font-extrabold">
                       <Mountain className="h-3.5 w-3.5" />
                       {act.altitudMsnm} MSNM
                     </span>
                   </div>
 
-                  <div className="relative mt-4 h-56 w-full overflow-hidden rounded-2xl border border-sand/15 bg-jungle/30">
+                  <div className="relative mt-4 h-56 w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-100 dark:bg-slate-800">
                     <img
                       src={act.imagenUrl}
                       alt={idioma === "es" ? act.nombreEs : act.nombreEn}
@@ -951,41 +950,41 @@ function ExpedicionesCatalogoContenido() {
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
-                    <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/95 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-[#065F46] shadow-sm border border-sand/20 backdrop-blur-md">
+                    <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/95 dark:bg-slate-950/90 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#065F46] dark:text-emerald-300 shadow-sm border border-slate-200/60 dark:border-slate-700 backdrop-blur-md">
                       {act.ubicacion}
                     </div>
 
                     {altaCongestion ? (
-                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-terracotta px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 rounded-full bg-[#EA580C] px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-lg">
                         <AlertTriangle className="h-3.5 w-3.5" />
                         <span>
                           AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}%
                         </span>
                       </div>
                     ) : (
-                      <div className="absolute top-2.5 right-2.5 bg-[#065F46] border border-[#FBBF24]/40 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white rounded-full shadow-sm">
+                      <div className="absolute top-2.5 right-2.5 bg-[#065F46] border border-[#FBBF24]/40 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white rounded-full shadow-sm">
                         FLUJO ECOLÓGICO SERENO
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-terracotta">
+                  <div className="mt-4 flex items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#EA580C] dark:text-amber-400">
                     <span className="truncate">{act.ubicacion}</span>
-                    <span className="shrink-0 text-sand/55">
+                    <span className="shrink-0 text-slate-500 dark:text-slate-400">
                       {ficha.operadorLicenciaRnt.split("·")[0]}
                     </span>
                   </div>
-                  <h3 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide text-sand group-hover:text-terracotta transition-colors">
+                  <h3 className="mt-1.5 font-display text-2xl sm:text-3xl uppercase leading-tight tracking-wide text-slate-900 dark:text-white group-hover:text-[#EA580C] dark:group-hover:text-amber-400 transition-colors">
                     {idioma === "es" ? act.nombreEs : act.nombreEn}
                   </h3>
-                  <p className="mt-3 text-sm text-sand/75 leading-relaxed">
+                  <p className="mt-2.5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {idioma === "es" ? act.descripcionEs : act.descripcionEn}
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-sand/15">
-                  <div className="flex items-center justify-between font-mono text-[11px] uppercase">
-                    <span className="text-sand/70">
+                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center justify-between text-[11px] font-bold uppercase">
+                    <span className="text-slate-600 dark:text-slate-400">
                       {idioma === "es"
                         ? "AFORO ACTUAL DEL SENDERO"
                         : "CURRENT TRAIL FLOW"}
@@ -993,26 +992,26 @@ function ExpedicionesCatalogoContenido() {
                     <span
                       className={
                         altaCongestion
-                          ? "font-bold text-terracotta"
-                          : "text-[#065F46]"
+                          ? "font-extrabold text-[#EA580C] dark:text-amber-400"
+                          : "font-extrabold text-[#065F46] dark:text-emerald-400"
                       }
                     >
                       {act.nivelOcupacionActual}% · GRUPOS DE MÁX{" "}
                       {act.capacidadMaxima}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full bg-sand/10 overflow-hidden">
+                  <div className="mt-1.5 h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
                     <div
-                      className={`h-full transition-all ${
-                        altaCongestion ? "bg-terracotta" : "bg-emerald-500"
+                      className={`h-full rounded-full transition-all ${
+                        altaCongestion ? "bg-[#EA580C]" : "bg-emerald-500"
                       }`}
                       style={{ width: `${act.nivelOcupacionActual}%` }}
                     />
                   </div>
 
                   {altaCongestion && (
-                    <div className="mt-3 border border-terracotta/40 bg-terracotta/10 p-2.5 font-mono text-[11px] text-slate-900 dark:text-white">
-                      <span className="font-bold text-terracotta">
+                    <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 text-amber-950 dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-800/60 p-3 text-xs leading-relaxed">
+                      <span className="font-extrabold text-amber-900 dark:text-amber-300">
                         AFORO DEL ECOSISTEMA AL {act.nivelOcupacionActual}% —
                         SUGERIMOS RUTA DE BAJO IMPACTO:
                       </span>{" "}
@@ -1024,12 +1023,12 @@ function ExpedicionesCatalogoContenido() {
 
                   <div className="mt-5 flex items-center justify-between gap-3">
                     <div>
-                      <span className="block font-mono text-[10px] uppercase tracking-wider text-sand/50">
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         {idioma === "es"
                           ? "INVERSIÓN POR VIAJERO"
                           : "RATE PER TRAVELER"}
                       </span>
-                      <span className="font-mono text-lg font-bold text-sand">
+                      <span className="text-xl font-extrabold text-slate-900 dark:text-white">
                         {formatearCop(act.precioCop)}
                       </span>
                     </div>
@@ -1040,7 +1039,7 @@ function ExpedicionesCatalogoContenido() {
                         e.stopPropagation();
                         abrirDrawerExpedicion(act);
                       }}
-                      className="inline-flex items-center gap-1.5 bg-sand px-3.5 py-2.5 font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-obsidian group-hover:bg-terracotta group-hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#065F46] px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white group-hover:bg-[#EA580C] transition-colors shadow-sm"
                     >
                       <span>
                         {idioma === "es"
@@ -2279,40 +2278,43 @@ function ExpedicionesCatalogoContenido() {
       {/* =====================================================================
           FOOTER COMERCIAL CON PÁGINAS LEGALES (LEY 1581) + ENLACE DISCRETO /LAB
       ====================================================================== */}
-      <footer className="mx-auto max-w-[1440px] border-x border-sand/15 px-4 py-10 sm:px-6 font-mono text-xs text-sand/60">
+      <footer className="mx-auto max-w-[1440px] border-t border-slate-200 dark:border-slate-800 px-4 py-10 sm:px-6 font-mono text-xs text-slate-600 dark:text-slate-300">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div>
-            <span className="font-bold text-sand">TYRONAWILDS™</span> // SANTA
-            MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y CARIBE
+            <span className="font-bold text-slate-900 dark:text-white">
+              TYRONAWILDS™
+            </span>{" "}
+            · SANTA MARTA D.T.C.H., COLOMBIA · EXPEDICIONES DE ALTA MONTAÑA Y
+            CARIBE
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <Link
               href="/mis-reservas"
-              className="font-bold text-terracotta hover:text-sand transition-colors"
+              className="font-bold text-[#EA580C] dark:text-amber-400 hover:underline transition-colors"
             >
               Mis Reservas &amp; Pasaportes QR
             </Link>
             <Link
               href="/operadores"
-              className="font-bold text-sand hover:text-terracotta transition-colors"
+              className="font-bold text-slate-800 dark:text-slate-200 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Portal de Operadores RNT
             </Link>
             <Link
               href="/privacidad"
-              className="hover:text-terracotta transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Privacidad &amp; Habeas Data (Ley 1581)
             </Link>
             <Link
               href="/terminos"
-              className="hover:text-terracotta transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-[#EA580C] dark:hover:text-amber-400 transition-colors"
             >
               Términos RNT &amp; PNN
             </Link>
             <Link
               href="/lab"
-              className="border border-sand/15 px-2.5 py-1 text-[10px] uppercase tracking-widest text-sand/45 hover:border-terracotta hover:text-terracotta transition-colors"
+              className="rounded-full border border-slate-300 dark:border-slate-700 px-3 py-1 text-[10px] uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors"
             >
               SYSTEM STATUS // LAB
             </Link>
